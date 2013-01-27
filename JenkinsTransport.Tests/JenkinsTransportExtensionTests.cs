@@ -71,20 +71,17 @@ namespace JenkinsTransport.Tests
         [Test]
         public void TestGetProjectList()
         {
-            Transport.Configure(GetForm());
-            var list = Transport.GetProjectList(Transport.Configuration);
-            CollectionAssert.IsEmpty(list);
-        }
-
-
-        // Helper method to get the fully qualified name for an assembly
-        [Test]
-        [Explicit]
-        public void TestAssemblyName()
-        {
-            Type t = typeof(JenkinsServerManagerTests);
-            string s = t.Assembly.FullName.ToString();
-            Console.WriteLine("The fully qualified assembly name is {0}.", s);
+            var settings = new Settings()
+                               {
+                                   Username = "cssuser",
+                                   Password = "c0msc0r3",
+                                   Server = "http://build.office.comscore.com"
+                               };
+            var buildServer = new BuildServer("http://build.office.comscore.com");
+            Transport.Settings = settings.ToString();
+            Transport.Configuration = buildServer;
+            var list = Transport.GetProjectList(buildServer);
+            CollectionAssert.IsNotEmpty(list);
         }
 
         // --- Static Method Tests
@@ -115,5 +112,17 @@ namespace JenkinsTransport.Tests
             StringAssert.AreEqualIgnoringCase(settings.Server, "http://build.office.comscore.com");
             StringAssert.AreEqualIgnoringCase(settings.Project, String.Empty);
         }
+
+
+        // Helper method to get the fully qualified name for an assembly
+        [Test]
+        [Explicit]
+        public void TestAssemblyName()
+        {
+            Type t = typeof(JenkinsServerManagerTests);
+            string s = t.Assembly.FullName.ToString();
+            Console.WriteLine("The fully qualified assembly name is {0}.", s);
+        }
+
     }
 }

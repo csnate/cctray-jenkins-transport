@@ -20,7 +20,7 @@ namespace JenkinsTransport
             request.Headers["Authorization"] = "Basic " + authInfo;
             request.Method = "GET";
 
-            string result = String.Empty;
+            var result = String.Empty;
             using (var response = request.GetResponse())
             {
                 using (var responseStream = response.GetResponseStream())

@@ -61,7 +61,12 @@ namespace JenkinsTransport
         #region ITransportExtension implementations
         public CCTrayProject[] GetProjectList(BuildServer server)
         {
-            return new CCTrayProject[0];
+            var manager = new JenkinsServerManager()
+                              {
+                                  Settings = JenkinsTransport.Settings.GetSettings(Settings)
+                              };
+            manager.SetConfiguration(server);
+            return manager.GetProjectList();
         }
 
         public ICruiseProjectManager RetrieveProjectManager(string projectName)
