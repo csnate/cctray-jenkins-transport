@@ -24,11 +24,6 @@ namespace JenkinsTransport
             throw new NotImplementedException();
         }
 
-        public void AbortBuild(string sessionToken)
-        {
-            throw new NotImplementedException();
-        }
-
         public void StopProject(string sessionToken)
         {
             throw new NotImplementedException();

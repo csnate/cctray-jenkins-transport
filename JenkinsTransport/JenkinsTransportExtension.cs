@@ -9,6 +9,8 @@ namespace JenkinsTransport
 {
     public class JenkinsTransportExtension : ITransportExtension
     {
+        private const string Url = "http://build.office.comscore.com";
+
         public CCTrayProject[] GetProjectList(BuildServer server)
         {
             return new CCTrayProject[0];
@@ -26,6 +28,14 @@ namespace JenkinsTransport
 
         public bool Configure(IWin32Window owner)
         {
+            // Create the Settings object
+            var settings = new Settings()
+                               {
+                                   Project = "Build",
+                                   Server = "CVIADPZB02"
+                               };
+            Configuration = new BuildServer(Url);
+            Settings = settings.ToString();
             return true;
         }
 
