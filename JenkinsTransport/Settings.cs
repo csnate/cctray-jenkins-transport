@@ -16,6 +16,12 @@ namespace JenkinsTransport
 
         [XmlElement(ElementName = "Project")]
         public string Project { get; set; }
+
+        [XmlElement(ElementName = "Username")]
+        public string Username { get; set; }
+
+        [XmlElement(ElementName = "Password")]
+        public string Password { get; set; }
         #endregion
 
         public static Settings GetSettings(string settingsString)
