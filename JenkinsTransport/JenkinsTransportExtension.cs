@@ -11,10 +11,7 @@ namespace JenkinsTransport
     {
         public CCTrayProject[] GetProjectList(BuildServer server)
         {
-            var list = new CCTrayProject[0];
-            var a = new CCTrayProject("http://www.asd.com", DisplayName + " SERVER");
-            list[0] = a;
-            return list;
+            return new CCTrayProject[0];
         }
 
         public ICruiseProjectManager RetrieveProjectManager(string projectName)
