@@ -48,13 +48,18 @@ namespace JenkinsTransport.Tests
         [Test]
         public void TestRetrieveServerManager()
         {
+            Transport.Configure(GetForm());
             var manager = Transport.RetrieveServerManager();
             Assert.IsInstanceOf<JenkinsServerManager>(manager);
+            StringAssert.AreEqualIgnoringCase(manager.DisplayName, Transport.Configuration.DisplayName);
+            StringAssert.AreEqualIgnoringCase(manager.Configuration.Url, Transport.Configuration.Url);
+            StringAssert.AreEqualIgnoringCase(manager.SessionToken, String.Empty);
         }
 
         [Test]
         public void TestRetrieveProjectManager()
         {
+            Transport.Configure(GetForm());
             var manager = Transport.RetrieveProjectManager(String.Empty);
             Assert.IsInstanceOf<JenkinsProjectManager>(manager);
         }

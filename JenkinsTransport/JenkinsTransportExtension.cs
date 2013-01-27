@@ -18,12 +18,16 @@ namespace JenkinsTransport
 
         public ICruiseProjectManager RetrieveProjectManager(string projectName)
         {
-            return new JenkinsProjectManager();
+            var manager = new JenkinsProjectManager();
+            return manager;
         }
 
         public ICruiseServerManager RetrieveServerManager()
         {
-            return new JenkinsServerManager();
+            var manager = new JenkinsServerManager();
+            manager.SetConfiguration(Configuration);
+            manager.SetSessionToken(String.Empty);
+            return manager;
         }
 
         public bool Configure(IWin32Window owner)
