@@ -19,6 +19,7 @@ namespace JenkinsTransport
         public ICruiseProjectManager RetrieveProjectManager(string projectName)
         {
             var manager = new JenkinsProjectManager();
+            manager.SetProjectName(projectName);
             return manager;
         }
 

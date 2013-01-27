@@ -25,6 +25,16 @@ namespace JenkinsTransport.Tests
             Transport = new JenkinsTransportExtension();
         }
 
+        // Helper method to get the fully qualified name for an assembly
+        [Test]
+        [Explicit]
+        public void TestAssemblyName()
+        {
+            Type t = typeof(JenkinsServerManagerTests);
+            string s = t.Assembly.FullName.ToString();
+            Console.WriteLine("The fully qualified assembly name is {0}.", s);
+        }
+
         [Test]
         public void TestInstanciation()
         {
@@ -60,8 +70,11 @@ namespace JenkinsTransport.Tests
         public void TestRetrieveProjectManager()
         {
             Transport.Configure(GetForm());
-            var manager = Transport.RetrieveProjectManager(String.Empty);
+
+            const string projectName = "Build Project";
+            var manager = Transport.RetrieveProjectManager(projectName);
             Assert.IsInstanceOf<JenkinsProjectManager>(manager);
+            StringAssert.AreEqualIgnoringCase(manager.ProjectName, projectName);
         }
 
         [Test]

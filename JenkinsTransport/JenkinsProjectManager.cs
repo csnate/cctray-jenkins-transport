@@ -9,6 +9,16 @@ namespace JenkinsTransport
 {
     public class JenkinsProjectManager : ICruiseProjectManager
     {
+        /// <summary>
+        /// Sets the ProjectName property
+        /// </summary>
+        /// <param name="name"></param>
+        internal void SetProjectName(string name)
+        {
+            ProjectName = name;
+        }
+
+        #region ICruiseProjectManager implmentations
         public void ForceBuild(string sessionToken, Dictionary<string, string> parameters, string userName)
         {
             throw new NotImplementedException();
@@ -60,5 +70,6 @@ namespace JenkinsTransport
         }
 
         public string ProjectName { get; private set; }
+        #endregion
     }
 }
