@@ -49,6 +49,11 @@ namespace JenkinsTransport
             return true;
         }
 
+        public void Logout()
+        {
+            LoginInformation = String.Empty;
+        }
+
         public string DisplayName
         {
             get { return Configuration != null ? Configuration.DisplayName : String.Empty; }
@@ -61,11 +66,6 @@ namespace JenkinsTransport
         public void CancelPendingRequest(string projectName)
         {
             throw new NotImplementedException();
-        }
-
-        public void Logout()
-        {
-            LoginInformation = String.Empty;
         }
         #endregion
         #endregion
