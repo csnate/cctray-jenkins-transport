@@ -24,6 +24,7 @@ namespace JenkinsTransport.Tests
                                        Password = "c0msc0r3",
                                        Server = "http://build.office.comscore.com"
                                    };
+            Manager.Login();
         }
 
         [Test]

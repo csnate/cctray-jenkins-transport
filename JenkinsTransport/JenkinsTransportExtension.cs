@@ -34,22 +34,28 @@ namespace JenkinsTransport
                                                                        }, ConfigurationUserLevel.None);
         }
 
-        public static BuildServer GetBuildServerFromConfiguration()
+        public static BuildServer GetBuildServerFromConfiguration(Configuration configuration = null)
         {
-            var config = GetApplicationConfiguration();
-            var buildServer = new BuildServer(config.AppSettings.Settings["ServerUrlRoot"].Value);
+            if (configuration == null)
+            {
+                configuration = GetApplicationConfiguration();
+            }
+            var buildServer = new BuildServer(configuration.AppSettings.Settings["ServerUrlRoot"].Value);
             return buildServer;
         }
 
-        public static Settings GetSettingsFromConfiguration()
+        public static Settings GetSettingsFromConfiguration(Configuration configuration = null)
         {
-            var config = GetApplicationConfiguration();
+            if (configuration == null)
+            {
+                configuration = GetApplicationConfiguration();
+            }
             return new Settings()
             {
                 Project = String.Empty,
-                Server = config.AppSettings.Settings["ServerUrlRoot"].Value,
-                Username = config.AppSettings.Settings["Username"].Value,
-                Password = config.AppSettings.Settings["Password"].Value
+                Server = configuration.AppSettings.Settings["ServerUrlRoot"].Value,
+                Username = configuration.AppSettings.Settings["Username"].Value,
+                Password = configuration.AppSettings.Settings["Password"].Value
             };
         }
 
@@ -61,10 +67,7 @@ namespace JenkinsTransport
         #region ITransportExtension implementations
         public CCTrayProject[] GetProjectList(BuildServer server)
         {
-            var manager = new JenkinsServerManager()
-                              {
-                                  Settings = JenkinsTransport.Settings.GetSettings(Settings)
-                              };
+            var manager = (JenkinsServerManager)RetrieveServerManager();
             manager.SetConfiguration(server);
             return manager.GetProjectList();
         }
@@ -84,6 +87,7 @@ namespace JenkinsTransport
                               };
             manager.SetConfiguration(Configuration);
             manager.SetSessionToken(String.Empty);
+            manager.Login();  // This call is needed here intially. Should be overriden when we configure it again
             return manager;
         }
 
@@ -92,8 +96,9 @@ namespace JenkinsTransport
             // Create the Settings object
             if (UseConfigurationFile)
             {
-                Configuration = GetBuildServerFromConfiguration();
-                Settings = GetSettingsFromConfiguration().ToString();
+                var config = GetApplicationConfiguration();
+                Configuration = GetBuildServerFromConfiguration(config);
+                Settings = GetSettingsFromConfiguration(config).ToString();
             }
             else
             {
