@@ -38,20 +38,20 @@ namespace JenkinsTransport
 
         public CCTrayProject[] GetProjectList()
         {
-            var xmlString = XmlUtils.GetXmlFromUrl(Configuration.Url + Constants.CcXml, LoginInformation).InnerXml;
+            var xmlString = XmlUtils.GetXmlFromUrl(Configuration.Url + Constants.CcXml, AuthorizationInformation).InnerXml;
             var projects = (DashboardProjects) XmlConversionUtil.ConvertXmlToObject(typeof(DashboardProjects), xmlString);
             return projects.Projects.Select(a => new CCTrayProject(a.webUrl, a.name)).ToArray();
         }
 
         public bool Login()
         {
-            LoginInformation = Convert.ToBase64String(Encoding.Default.GetBytes(String.Format("{0}:{1}", Settings.Username, Settings.Password)));
+            AuthorizationInformation = Convert.ToBase64String(Encoding.Default.GetBytes(String.Format("{0}:{1}", Settings.Username, Settings.Password)));
             return true;
         }
 
         public void Logout()
         {
-            LoginInformation = String.Empty;
+            AuthorizationInformation = String.Empty;
         }
 
         public string DisplayName
@@ -79,6 +79,6 @@ namespace JenkinsTransport
         /// The Basic AuthInfo header string constructed from the Settings U/P information.
         /// This is set on a call to Login
         /// </summary>
-        public string LoginInformation { get; private set; }
+        public string AuthorizationInformation { get; private set; }
     }
 }

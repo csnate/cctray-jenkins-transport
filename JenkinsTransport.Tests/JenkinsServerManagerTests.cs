@@ -61,17 +61,17 @@ namespace JenkinsTransport.Tests
         }
 
         [Test]
-        [ExpectedException]
         public void TestLogin()
         {
             Manager.Login();
+            Assert.IsNotNull(Manager.AuthorizationInformation);
         }
 
         [Test]
-        [ExpectedException]
         public void TestLogout()
         {
             Manager.Logout();
+            Assert.IsNullOrEmpty(Manager.AuthorizationInformation);
         }
     }
 }
