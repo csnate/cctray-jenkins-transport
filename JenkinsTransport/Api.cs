@@ -29,6 +29,5 @@ namespace JenkinsTransport
             var list = xDoc.Descendants("job").Select(a => new JenkinsJob(a)).ToList();
             return list;
         }
-
     }
 }
