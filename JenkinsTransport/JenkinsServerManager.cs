@@ -38,9 +38,12 @@ namespace JenkinsTransport
 
         public CCTrayProject[] GetProjectList()
         {
-            var xmlString = XmlUtils.GetXmlFromUrl(Configuration.Url + Constants.CcXml, AuthorizationInformation).InnerXml;
-            var projects = (DashboardProjects) XmlConversionUtil.ConvertXmlToObject(typeof(DashboardProjects), xmlString);
-            return projects.Projects.Select(a => new CCTrayProject(a.webUrl, a.name)).ToArray();
+            var api = new Api(Configuration.Url, AuthorizationInformation);
+            var jobs = api.GetAllJobs();
+            return jobs.Select(a => new CCTrayProject(Configuration, a.Name)
+                                        {
+                                            ShowProject = true
+                                        }).ToArray();
         }
 
         public bool Login()

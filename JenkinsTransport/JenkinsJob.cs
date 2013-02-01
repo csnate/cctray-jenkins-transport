@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace JenkinsTransport
@@ -19,18 +21,13 @@ namespace JenkinsTransport
         [XmlElement(ElementName = "color")]
         public string Color { get; set; }
 
-        public static JenkinsJob GetJob(string xmlString)
-        {
-            if (String.IsNullOrEmpty(xmlString))
-            {
-                return new JenkinsJob();
-            }
+        public JenkinsJob() {}
 
-            var ser = new XmlSerializer(typeof(JenkinsJob));
-            using (var rdr = new StringReader(xmlString))
-            {
-                return ser.Deserialize(rdr) as JenkinsJob;
-            }
+        public JenkinsJob(XContainer element)
+        {
+            Name = (string) element.Element("name");
+            Url = (string) element.Element("url");
+            Color = (string) element.Element("color");
         }
     }
 }

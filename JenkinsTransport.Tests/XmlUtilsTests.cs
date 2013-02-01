@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using NUnit.Framework;
 
 namespace JenkinsTransport.Tests
@@ -20,13 +21,24 @@ namespace JenkinsTransport.Tests
         }
 
         [Test]
-        public void TestGetXmlFromUrl()
+        public void TestGetXmlDocumentFromUrl()
         {
-            var xmlDoc = XmlUtils.GetXmlFromUrl(BuildServer + Constants.AllProjects, AuthInfo);
+            var xmlDoc = XmlUtils.GetXmlDocumentFromUrl(BuildServer + "/api/xml", AuthInfo);
             Assert.IsNotNull(xmlDoc);
 
             var jobs = xmlDoc.SelectNodes("/hudson/job");
             CollectionAssert.IsNotEmpty(jobs);
+        }
+
+        [Test]
+        public void TestGetXDocumentFromUrl()
+        {
+            var xmlDoc = XmlUtils.GetXDocumentFromUrl(BuildServer + "/api/xml", AuthInfo);
+            Assert.IsNotNull(xmlDoc);
+            Assert.That(xmlDoc.Elements().Count(), Is.GreaterThan(0));
+
+            var elements = xmlDoc.Element("hudson").Elements("job");
+            Assert.That(elements.Count(), Is.EqualTo(4));
         }
     }
 }

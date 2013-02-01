@@ -52,6 +52,7 @@
     <Reference Include="ThoughtWorks.CruiseControl.Remote, Version=1.8.3.0, Culture=neutral, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiTests.cs" />
     <Compile Include="JenkinsProjectManagerTests.cs" />
     <Compile Include="JenkinsServerManagerTests.cs" />
     <Compile Include="JenkinsTransportExtensionTests.cs" />

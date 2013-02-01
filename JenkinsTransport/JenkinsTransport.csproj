@@ -51,7 +51,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Constants.cs" />
+    <Compile Include="Api.cs" />
+    <Compile Include="JenkinsJob.cs" />
     <Compile Include="JenkinsProjectManager.cs" />
     <Compile Include="JenkinsServerManager.cs" />
     <Compile Include="JenkinsTransportExtension.cs" />
