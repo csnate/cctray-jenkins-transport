@@ -23,5 +23,19 @@ namespace JenkinsTransport.Tests
             var list = api.GetAllJobs();
             CollectionAssert.IsNotEmpty(list);
         }
+
+        [Test]
+        public void TestGetProjectStatusGood()
+        {
+            var projectStatus = api.GetProjectStatus("http://build.office.comscore.com/job/Direct%20-%20INT/");
+            Assert.IsNotNull(projectStatus);
+        }
+
+        [Test]
+        public void TestGetProjectStatusDisabled()
+        {
+            var projectStatus = api.GetProjectStatus("http://build.office.comscore.com/job/MyMetrix%20API%20-%20Regression/");
+            Assert.IsNotNull(projectStatus);
+        }
     }
 }

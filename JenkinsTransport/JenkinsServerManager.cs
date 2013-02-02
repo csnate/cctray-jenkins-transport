@@ -7,6 +7,7 @@ using System.Text;
 using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using ThoughtWorks.CruiseControl.CCTrayLib.Monitoring;
 using ThoughtWorks.CruiseControl.Remote;
+using ThoughtWorks.CruiseControl.Remote.Parameters;
 
 namespace JenkinsTransport
 {
@@ -33,7 +34,12 @@ namespace JenkinsTransport
         #region ICruiseServerManager implmentations
         public CruiseServerSnapshot GetCruiseServerSnapshot()
         {
-            throw new NotImplementedException();
+            var api = new Api(Configuration.Url, AuthorizationInformation);
+            var jobs = api.GetAllJobs();
+            var projectStatues = jobs.Select(jenkinsJob => api.GetProjectStatus(jenkinsJob.Url)).ToArray();
+
+            var snapshot = new CruiseServerSnapshot(projectStatues, new QueueSetSnapshot());
+            return snapshot;
         }
 
         public CCTrayProject[] GetProjectList()
@@ -42,7 +48,7 @@ namespace JenkinsTransport
             var jobs = api.GetAllJobs();
             return jobs.Select(a => new CCTrayProject(Configuration, a.Name)
                                         {
-                                            ShowProject = true
+                                            ShowProject = a.Color != "disabled"
                                         }).ToArray();
         }
 

@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api.cs" />
+    <Compile Include="EnumUtils.cs" />
+    <Compile Include="JenkinsBuildInformation.cs" />
     <Compile Include="JenkinsJob.cs" />
     <Compile Include="JenkinsProjectManager.cs" />
     <Compile Include="JenkinsServerManager.cs" />

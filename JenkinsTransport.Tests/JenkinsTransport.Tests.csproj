@@ -50,6 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiTests.cs" />
+    <Compile Include="EnumUtilsTests.cs" />
+    <Compile Include="JenkinsBuildInformationTests.cs" />
     <Compile Include="JenkinsProjectManagerTests.cs" />
     <Compile Include="JenkinsServerManagerTests.cs" />
     <Compile Include="JenkinsTransportExtensionTests.cs" />
