@@ -12,7 +12,7 @@ namespace JenkinsTransport
     {
         #region Constants
         private const string AllJobs = "/api/xml?xpath=/hudson/job&wrapper=jobs";
-        private const string ProjectStatus = "/api/xml";
+        private const string XmlApi = "/api/xml";
         #endregion
 
         protected string BaseUrl { get; set; }
@@ -49,7 +49,7 @@ namespace JenkinsTransport
         /// <param name="projectUrl">the project url to retrieve the info</param>
         public ProjectStatus GetProjectStatus(string projectUrl)
         {
-            var xDoc = XmlUtils.GetXDocumentFromUrl(projectUrl + ProjectStatus, AuthInfo);
+            var xDoc = XmlUtils.GetXDocumentFromUrl(projectUrl + XmlApi, AuthInfo);
             return GetProjectStatus(xDoc);
         }
 
@@ -59,20 +59,24 @@ namespace JenkinsTransport
         /// <param name="xDoc">the XDocument to parse</param>
         public ProjectStatus GetProjectStatus(XDocument xDoc)
         {
-            var color = (string)xDoc.Element("color");
+            var firstElement = xDoc.Element("freeStyleProject");
+            var color = (string)firstElement.Element("color");
+            var lastBuildInfo = GetBuildInformation((string) firstElement.Element("lastBuild").Element("url") + XmlApi);
+            var lastSuccessfulBuildInfo = GetBuildInformation((string)firstElement.Element("lastSuccessfulBuild").Element("url") + XmlApi);
+            var name = (string) firstElement.Element("name");
             return new ProjectStatus(
-                (string)xDoc.Element("name"),
+                name,
                 String.Empty, // Category
                 EnumUtils.GetProjectActivity(color),
                 EnumUtils.GetIntegrationStatus(color),
-                EnumUtils.GetProjectIntegratorState((bool)xDoc.Element("buildable")),
-                projectUrl, // webUrl
-                (DateTime)xDoc.Element(String.Empty), // LastBuildDate
-                (string)xDoc.Element(String.Empty), // LastBuildLabel
-                (string)xDoc.Element(String.Empty), // LastSuccessfulBuildLabel
-                (DateTime)xDoc.Element(String.Empty), // NextBuildTime
-                (string)xDoc.Element(String.Empty), // BuildStage
-                String.Empty, // Queue - not used
+                EnumUtils.GetProjectIntegratorState((bool)firstElement.Element("buildable")),
+                (string)firstElement.Element("url"), // webUrl
+                lastBuildInfo.Timestamp, // LastBuildDate
+                lastBuildInfo.Number, // LastBuildLabel
+                lastSuccessfulBuildInfo.Number, // LastSuccessfulBuildLabel
+                new DateTime(), // NextBuildTime -- TODO - this is incorrect, but I don't know how to get the next build time
+                String.Empty, // BuildStage
+                name, // Queue - not used
                 0, // QueuePriority - not used
                 new List<ParameterBase>() // Parameters - not used yet
                 );
@@ -84,7 +88,7 @@ namespace JenkinsTransport
         /// <param name="buildInformationUrl">the build information url</param>
         public JenkinsBuildInformation GetBuildInformation(string buildInformationUrl)
         {
-            var xDoc = XmlUtils.GetXDocumentFromUrl(buildInformationUrl + ProjectStatus, AuthInfo);
+            var xDoc = XmlUtils.GetXDocumentFromUrl(buildInformationUrl + XmlApi, AuthInfo);
             return new JenkinsBuildInformation(xDoc);
         }
     }
