@@ -7,6 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JenkinsTransport.Tests", "J
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{F67F16CA-37E0-41E0-8170-35D674F51E49}"
 	ProjectSection(SolutionItems) = preProject
+		Examples\jenkins-api-all-jobs-only.xml = Examples\jenkins-api-all-jobs-only.xml
 		Examples\jenkins-api-all.xml = Examples\jenkins-api-all.xml
 		Examples\jenkins-api-build-info.xml = Examples\jenkins-api-build-info.xml
 		Examples\jenkins-api-project.xml = Examples\jenkins-api-project.xml
