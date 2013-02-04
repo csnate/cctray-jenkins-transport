@@ -45,7 +45,7 @@ namespace JenkinsTransport
                                                                            { "yellow", ItemBuildStatus.CompletedFailed },
                                                                            { "red", ItemBuildStatus.CompletedFailed},
                                                                            { "grey", ItemBuildStatus.Unknown },
-                                                                           { "disabled", ItemBuildStatus.Cancelled },
+                                                                           { "disabled", ItemBuildStatus.CompletedSuccess }, // This is so the build indicator isn't red
                                                                            { "blue_anime", ItemBuildStatus.Running },
                                                                            { "yellow_anime", ItemBuildStatus.Running },
                                                                            { "red_anime", ItemBuildStatus.Running},

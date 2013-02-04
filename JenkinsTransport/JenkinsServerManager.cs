@@ -46,7 +46,8 @@ namespace JenkinsTransport
         /// <param name="settings">the Settings</param>
         public void Initialize(BuildServer server, string session, Settings settings)
         {
-            if (IsInitialized) return;
+            // Removing this check for now.  It shouldn't matter that you ;
+            //if (IsInitialized) return;
 
             Configuration = server;
             SessionToken = session;

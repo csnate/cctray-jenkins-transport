@@ -69,7 +69,7 @@ namespace JenkinsTransport.Tests
             Assert.That(EnumUtils.GetItemBuildStatus("yellow"), Is.EqualTo(ItemBuildStatus.CompletedFailed));
             Assert.That(EnumUtils.GetItemBuildStatus("red"), Is.EqualTo(ItemBuildStatus.CompletedFailed));
             Assert.That(EnumUtils.GetItemBuildStatus("grey"), Is.EqualTo(ItemBuildStatus.Unknown));
-            Assert.That(EnumUtils.GetItemBuildStatus("disabled"), Is.EqualTo(ItemBuildStatus.Cancelled));
+            Assert.That(EnumUtils.GetItemBuildStatus("disabled"), Is.EqualTo(ItemBuildStatus.CompletedSuccess));
             Assert.That(EnumUtils.GetItemBuildStatus("blue_anime"), Is.EqualTo(ItemBuildStatus.Running));
             Assert.That(EnumUtils.GetItemBuildStatus("yellow_anime"), Is.EqualTo(ItemBuildStatus.Running));
             Assert.That(EnumUtils.GetItemBuildStatus("red_anime"), Is.EqualTo(ItemBuildStatus.Running));
