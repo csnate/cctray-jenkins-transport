@@ -61,5 +61,20 @@ namespace JenkinsTransport.Tests
             Assert.That(EnumUtils.GetProjectIntegratorState(true), Is.EqualTo(ProjectIntegratorState.Running));
             Assert.That(EnumUtils.GetProjectIntegratorState(false), Is.EqualTo(ProjectIntegratorState.Stopped));
         }
+
+        [Test]
+        public void TestGetItemBuildStatus()
+        {
+            Assert.That(EnumUtils.GetItemBuildStatus("blue"), Is.EqualTo(ItemBuildStatus.CompletedSuccess));
+            Assert.That(EnumUtils.GetItemBuildStatus("yellow"), Is.EqualTo(ItemBuildStatus.CompletedFailed));
+            Assert.That(EnumUtils.GetItemBuildStatus("red"), Is.EqualTo(ItemBuildStatus.CompletedFailed));
+            Assert.That(EnumUtils.GetItemBuildStatus("grey"), Is.EqualTo(ItemBuildStatus.Unknown));
+            Assert.That(EnumUtils.GetItemBuildStatus("disabled"), Is.EqualTo(ItemBuildStatus.Cancelled));
+            Assert.That(EnumUtils.GetItemBuildStatus("blue_anime"), Is.EqualTo(ItemBuildStatus.Running));
+            Assert.That(EnumUtils.GetItemBuildStatus("yellow_anime"), Is.EqualTo(ItemBuildStatus.Running));
+            Assert.That(EnumUtils.GetItemBuildStatus("red_anime"), Is.EqualTo(ItemBuildStatus.Running));
+            Assert.That(EnumUtils.GetItemBuildStatus("grey_anime"), Is.EqualTo(ItemBuildStatus.Running));
+            Assert.That(EnumUtils.GetItemBuildStatus("disabled_anime"), Is.EqualTo(ItemBuildStatus.Running));
+        }
     }
 }

@@ -13,7 +13,7 @@ namespace JenkinsTransport.Tests
     public class JenkinsBuildInformationTests
     {
         [Test]
-        public void TestConstructor()
+        public void TestConstructorWithFinishedBuild()
         {
             var xDoc = XDocument.Parse(File.ReadAllText("../../../Examples/jenkins-api-build-info.xml"));
             var info = new JenkinsBuildInformation(xDoc);
@@ -26,8 +26,20 @@ namespace JenkinsTransport.Tests
             Assert.That(info.EstimatedDuration, Is.EqualTo(878719));
             Assert.That(info.FullDisplayName, Is.EqualTo("Direct - INT #733"));
             Assert.That(info.Timestamp, Is.EqualTo(d));
+            Assert.That(info.Building, Is.False);
 
             Console.WriteLine(d.ToString());
         }
+
+        [Test]
+        public void TestConstructorWithInProgressBuild()
+        {
+            var xDoc = XDocument.Parse(File.ReadAllText("../../../Examples/jenkins-api-build-info-in-progress.xml"));
+            var info = new JenkinsBuildInformation(xDoc);
+
+            Assert.IsNotNull(info);
+            Assert.That(info.Building, Is.True);
+        }
+
     }
 }

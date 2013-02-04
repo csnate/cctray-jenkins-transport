@@ -69,5 +69,24 @@ namespace JenkinsTransport.Tests
             Assert.That(projectStatus.Activity, Is.EqualTo(ProjectActivity.Sleeping));
             StringAssert.AreEqualIgnoringCase(projectStatus.Name, "MyMetrix API - Regression");
         }
-    }
+
+        [Test]
+        public void TestGetProjectSnapshot()
+        {
+            var now = DateTime.Now;
+            var xDoc = XDocument.Parse(File.ReadAllText("../../../Examples/jenkins-api-project.xml"));
+            var projectSnapshot = api.GetProjectStatusSnapshot(xDoc);
+
+            Assert.IsNotNull(projectSnapshot);
+            Assert.That(projectSnapshot.Status, Is.EqualTo(ItemBuildStatus.CompletedSuccess));
+            StringAssert.AreEqualIgnoringCase(projectSnapshot.Name, "Direct - INT");
+            Assert.That(projectSnapshot.TimeOfSnapshot, Is.GreaterThanOrEqualTo(now));
+            StringAssert.AreEqualIgnoringCase(projectSnapshot.Description, String.Empty);
+            StringAssert.AreEqualIgnoringCase(projectSnapshot.Error, String.Empty);
+            Assert.That(projectSnapshot.TimeCompleted, Is.EqualTo(DateTime.Parse("1/23/2013 1:50:49 PM")));
+            Assert.IsNull(projectSnapshot.TimeStarted);
+            Assert.IsNull(projectSnapshot.TimeOfEstimatedCompletion);
+
+        }
+    } 
 }

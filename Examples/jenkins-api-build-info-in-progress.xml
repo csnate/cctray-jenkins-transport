@@ -1,0 +1,20 @@
+<freeStyleBuild>
+    <action>
+        <cause>
+            <shortDescription>Started by an SCM change</shortDescription>
+        </cause>
+    </action>
+    <action></action>
+    <building>true</building>
+    <duration>0</duration>
+    <estimatedDuration>630679</estimatedDuration>
+    <executor></executor>
+    <fullDisplayName>MyMetrix Beppo #841</fullDisplayName>
+    <id>2013-02-04_13-14-21</id>
+    <keepLog>false</keepLog>
+    <number>841</number>
+    <timestamp>1360001661908</timestamp>
+    <url>http://build.office.comscore.com/job/MyMetrix%20Beppo/841/</url>
+    <builtOn></builtOn>
+    <changeSet></changeSet>
+</freeStyleBuild>

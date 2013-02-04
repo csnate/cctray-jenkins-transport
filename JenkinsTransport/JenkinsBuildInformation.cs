@@ -10,6 +10,7 @@ namespace JenkinsTransport
     {
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1).ToLocalTime();
 
+        public bool Building { get; private set; }
         public DateTime Timestamp { get; private set; }
         public string Number { get; private set; }
         public int Duration { get; private set; }
@@ -26,6 +27,7 @@ namespace JenkinsTransport
             EstimatedDuration = (int) firstElement.Element("estimatedDuration");
             FullDisplayName = (string) firstElement.Element("fullDisplayName");
             Id = (string) firstElement.Element("id");
+            Building = (bool) firstElement.Element("building");
         }
     }
 }

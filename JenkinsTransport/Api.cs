@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Xml.Linq;
 using ThoughtWorks.CruiseControl.Remote;
 using ThoughtWorks.CruiseControl.Remote.Parameters;
@@ -93,6 +94,52 @@ namespace JenkinsTransport
         {
             var xDoc = XmlUtils.GetXDocumentFromUrl(buildInformationUrl + XmlApi, AuthInfo);
             return new JenkinsBuildInformation(xDoc);
+        }
+
+        /// <summary>
+        /// Get the project snapshot for a project
+        /// </summary>
+        /// <param name="projectName">the project name to check</param>
+        public ProjectStatusSnapshot GetProjectStatusSnapshot(string projectName)
+        {
+            var url = BaseUrl + "/job/" + HttpUtility.UrlEncode(projectName) + XmlApi;
+            var xDoc = XmlUtils.GetXDocumentFromUrl(url, AuthInfo);
+            return GetProjectStatusSnapshot(xDoc);
+        }
+
+        /// <summary>
+        /// Get the project snapshot for a project
+        /// </summary>
+        /// <param name="xDoc">the XDcoument to parse</param>
+        public ProjectStatusSnapshot GetProjectStatusSnapshot(XDocument xDoc)
+        {
+            var firstElement = xDoc.Element("freeStyleProject");
+            var color = (string)firstElement.Element("color");
+            var lastBuildInfo = GetBuildInformation((string) firstElement.Element("lastBuild").Element("url"));
+            var status = lastBuildInfo.Building ? ItemBuildStatus.Running : EnumUtils.GetItemBuildStatus(color);
+
+            var snapshot = new ProjectStatusSnapshot
+                               {
+                                   Status = status,
+                                   Name = (string) firstElement.Element("name"),
+                                   TimeOfSnapshot = DateTime.Now,
+                                   Description = (string) firstElement.Element("description"),
+                                   Error = String.Empty // Not sure what to do with this yet
+                               };
+
+            // Set one or the other
+            if (status == ItemBuildStatus.Running)
+            {
+                snapshot.TimeStarted = lastBuildInfo.Timestamp;
+                snapshot.TimeOfEstimatedCompletion =
+                    lastBuildInfo.Timestamp.AddMilliseconds(lastBuildInfo.EstimatedDuration);
+            }
+            else
+            {
+                snapshot.TimeCompleted = lastBuildInfo.Timestamp;
+            }
+
+            return snapshot;
         }
     }
 }

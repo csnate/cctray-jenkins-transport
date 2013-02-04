@@ -38,6 +38,21 @@ namespace JenkinsTransport
                                                                            { "disabled_anime", ProjectActivity.Building}
                                                                       };
 
+        // Map of the possible Jenkins status with CCTray ProjectActivity status
+        private static readonly Dictionary<string, ItemBuildStatus> ItemBuildStatusMap = new Dictionary<string, ItemBuildStatus>()
+                                                                      {
+                                                                           { "blue", ItemBuildStatus.CompletedSuccess },
+                                                                           { "yellow", ItemBuildStatus.CompletedFailed },
+                                                                           { "red", ItemBuildStatus.CompletedFailed},
+                                                                           { "grey", ItemBuildStatus.Unknown },
+                                                                           { "disabled", ItemBuildStatus.Cancelled },
+                                                                           { "blue_anime", ItemBuildStatus.Running },
+                                                                           { "yellow_anime", ItemBuildStatus.Running },
+                                                                           { "red_anime", ItemBuildStatus.Running},
+                                                                           { "grey_anime", ItemBuildStatus.Running },
+                                                                           { "disabled_anime", ItemBuildStatus.Running }
+                                                                      };
+
         /// <summary>
         /// Gets the correct IntegrationStatus for the specified Jenkins build color
         /// </summary>
@@ -72,6 +87,16 @@ namespace JenkinsTransport
         public static ProjectIntegratorState GetProjectIntegratorState(bool buildable)
         {
             return buildable ? ProjectIntegratorState.Running : ProjectIntegratorState.Stopped;
+        }
+
+        /// <summary>
+        /// Gets the item build status for a color. Used in the ProjectStatusSnapshot
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public static ItemBuildStatus GetItemBuildStatus(string color)
+        {
+            return ItemBuildStatusMap.ContainsKey(color) ? ItemBuildStatusMap[color] : ItemBuildStatus.Unknown;
         }
     }
 }
