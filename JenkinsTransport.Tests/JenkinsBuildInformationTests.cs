@@ -15,8 +15,6 @@ namespace JenkinsTransport.Tests
         [Test]
         public void TestConstructor()
         {
-            //var pathToXml = Path.Combine(Assembly.GetAssembly(typeof(JenkinsBuildInformation)).Location,
-            //                             "../../../Examples/jenkins-api-project.xml");
             var xDoc = XDocument.Parse(File.ReadAllText("../../../Examples/jenkins-api-build-info.xml"));
             var info = new JenkinsBuildInformation(xDoc);
             var d = new DateTime(1970, 1, 1).ToLocalTime().AddMilliseconds(1358970649000);

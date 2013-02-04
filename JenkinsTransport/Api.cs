@@ -69,17 +69,20 @@ namespace JenkinsTransport
                 String.Empty, // Category
                 EnumUtils.GetProjectActivity(color),
                 EnumUtils.GetIntegrationStatus(color),
-                EnumUtils.GetProjectIntegratorState((bool)firstElement.Element("buildable")),
-                (string)firstElement.Element("url"), // webUrl
+                EnumUtils.GetProjectIntegratorState((bool) firstElement.Element("buildable")),
+                (string) firstElement.Element("url"), // webUrl
                 lastBuildInfo.Timestamp, // LastBuildDate
                 lastBuildInfo.Number, // LastBuildLabel
                 lastSuccessfulBuildInfo.Number, // LastSuccessfulBuildLabel
-                new DateTime(), // NextBuildTime -- TODO - this is incorrect, but I don't know how to get the next build time
+                DateTime.Now, // NextBuildTime -- TODO - this is incorrect, but I don't know how to get the next build time
                 String.Empty, // BuildStage
                 name, // Queue - not used
                 0, // QueuePriority - not used
                 new List<ParameterBase>() // Parameters - not used yet
-                );
+                )
+                       {
+                           Description = (string) firstElement.Element("description")
+                       };
         }
 
         /// <summary>
