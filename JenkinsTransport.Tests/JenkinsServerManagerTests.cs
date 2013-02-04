@@ -23,7 +23,7 @@ namespace JenkinsTransport.Tests
                                        Password = "c0msc0r3",
                                        Server = "http://build.office.comscore.com"
                                    });
-            Manager.Projects.Add("Direct - INT");
+            Manager.ProjectsAndCurrentStatus.Add("Direct - INT", null);
         }
 
         [Test]

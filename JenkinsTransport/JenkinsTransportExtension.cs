@@ -78,7 +78,7 @@ namespace JenkinsTransport
 
             // If we are getting the project list, then we should reset the ServerManager's project list
             // It will be reset when we return to the list
-            manager.Projects.Clear();
+            manager.ProjectsAndCurrentStatus.Clear();
 
             return manager.GetProjectList();
         }
@@ -91,9 +91,9 @@ namespace JenkinsTransport
             manager.Initialize(Configuration, projectName, Settings);
 
             // Add this project to the server manager
-            if (!JenkinsServerManager.Projects.Contains(projectName))
+            if (!JenkinsServerManager.ProjectsAndCurrentStatus.ContainsKey(projectName))
             {
-                JenkinsServerManager.Projects.Add(projectName);
+                JenkinsServerManager.ProjectsAndCurrentStatus.Add(projectName, null);
             }
 
             return manager;

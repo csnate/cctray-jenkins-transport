@@ -12,8 +12,9 @@ namespace JenkinsTransport
     public class Api
     {
         #region Constants
-        private const string AllJobs = "/api/xml?xpath=/hudson/job&wrapper=jobs";
         private const string XmlApi = "/api/xml";
+        private const string AllJobs = XmlApi + "?xpath=/hudson/job&wrapper=jobs";
+        private const string ExcludeBuild = XmlApi + "?exclude=freeStyleProject/build";
         #endregion
 
         protected string BaseUrl { get; set; }
@@ -42,41 +43,49 @@ namespace JenkinsTransport
         {
             var list = xDoc.Descendants("job").Select(a => new JenkinsJob(a)).ToList();
             return list;
-        } 
+        }
 
         /// <summary>
         /// Get the project status for a project
         /// </summary>
         /// <param name="projectUrl">the project url to retrieve the info</param>
-        public ProjectStatus GetProjectStatus(string projectUrl)
+        /// <param name="currentStatus">the current stored status</param>
+        public ProjectStatus GetProjectStatus(string projectUrl, ProjectStatus currentStatus)
         {
-            var xDoc = XmlUtils.GetXDocumentFromUrl(projectUrl + XmlApi, AuthInfo);
-            return GetProjectStatus(xDoc);
+            var xDoc = XmlUtils.GetXDocumentFromUrl(projectUrl + ExcludeBuild, AuthInfo);
+            return GetProjectStatus(xDoc, currentStatus);
         }
 
         /// <summary>
         /// Get the project status for a project
         /// </summary>
         /// <param name="xDoc">the XDocument to parse</param>
-        public ProjectStatus GetProjectStatus(XDocument xDoc)
+        /// <param name="currentStatus">the current stored status</param>
+        public ProjectStatus GetProjectStatus(XDocument xDoc, ProjectStatus currentStatus)
         {
             var firstElement = xDoc.Element("freeStyleProject");
             var color = (string)firstElement.Element("color");
-            var lastBuildElement = firstElement.Element("lastBuild");
+            var lastBuildElement = firstElement.Element("lastBuild");  // Will contain the latest (in progress) build number
             var lastSuccessfulBuildElement = firstElement.Element("lastSuccessfulBuild");
+            var lastCompletedBuild = firstElement.Element("lastCompletedBuild");
 
-            var lastBuildInfo = lastBuildElement != null
-                                    ? GetBuildInformation((string) lastBuildElement.Element("url"))
+            // Check if the last build number is any different from the current status.  If not, then update
+            if (currentStatus != null && lastBuildElement != null && currentStatus.LastBuildLabel == (string)lastBuildElement.Element("number"))
+            {
+                return currentStatus;
+            }
+
+            // Otherwise, we'll need to get the new status
+            var lastCompletedBuildInfo = lastCompletedBuild != null
+                                    ? GetBuildInformation((string) lastCompletedBuild.Element("url"))
                                     : new JenkinsBuildInformation();
 
             // Check to see if the last successfull is the same as the last build.  If so, no need to get the details again
-            var lastSuccessfulBuildInfo = lastBuildElement != null
-                                          && lastSuccessfulBuildElement != null
-                                          &&
-                                          (string) lastBuildElement.Element("number") ==
-                                          (string) lastSuccessfulBuildElement.Element("number")
-                                              ? lastBuildInfo
-                                              : GetBuildInformation((string) lastSuccessfulBuildElement.Element("url"));
+            var lastSuccessfulBuildInfo = lastSuccessfulBuildElement != null
+                                              ? lastCompletedBuildInfo.Number == (string) lastSuccessfulBuildElement.Element("number")
+                                                    ? lastCompletedBuildInfo
+                                                    : GetBuildInformation((string) lastSuccessfulBuildElement.Element("url"))
+                                              : new JenkinsBuildInformation();
 
             var name = (string) firstElement.Element("name");
             return new ProjectStatus(
@@ -86,8 +95,8 @@ namespace JenkinsTransport
                 EnumUtils.GetIntegrationStatus(color),
                 EnumUtils.GetProjectIntegratorState((bool) firstElement.Element("buildable")),
                 (string) firstElement.Element("url"), // webUrl
-                lastBuildInfo.Timestamp, // LastBuildDate
-                lastBuildInfo.Number, // LastBuildLabel
+                lastCompletedBuildInfo.Timestamp, // LastBuildDate
+                lastCompletedBuildInfo.Number, // LastBuildLabel
                 lastSuccessfulBuildInfo.Number, // LastSuccessfulBuildLabel
                 DateTime.Now, // NextBuildTime -- TODO - this is incorrect, but I don't know how to get the next build time
                 String.Empty, // BuildStage
@@ -96,7 +105,9 @@ namespace JenkinsTransport
                 new List<ParameterBase>() // Parameters - not used yet
                 )
                        {
-                           Description = (string) firstElement.Element("description")
+                           Description = (string) firstElement.Element("description"),
+                           ShowForceBuildButton = false, // Disable this for now
+                           ShowStartStopButton = false // Disable this for now
                        };
         }
 
@@ -116,7 +127,7 @@ namespace JenkinsTransport
         /// <param name="projectName">the project name to check</param>
         public ProjectStatusSnapshot GetProjectStatusSnapshot(string projectName)
         {
-            var url = BaseUrl + "/job/" + HttpUtility.HtmlEncode(projectName) + XmlApi;
+            var url = BaseUrl + "/job/" + HttpUtility.HtmlEncode(projectName) + ExcludeBuild;
             var xDoc = XmlUtils.GetXDocumentFromUrl(url, AuthInfo);
             return GetProjectStatusSnapshot(xDoc);
         }

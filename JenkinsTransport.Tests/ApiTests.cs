@@ -34,7 +34,7 @@ namespace JenkinsTransport.Tests
         {
             var now = DateTime.Now;
             var xDoc = XDocument.Parse(File.ReadAllText("../../../Examples/jenkins-api-project.xml"));
-            var projectStatus = api.GetProjectStatus(xDoc);
+            var projectStatus = api.GetProjectStatus(xDoc, null);
             Assert.IsNotNull(projectStatus);
             Assert.That(projectStatus.Activity, Is.EqualTo(ProjectActivity.Sleeping));
             Assert.That(projectStatus.Status, Is.EqualTo(ProjectIntegratorState.Running));
@@ -62,7 +62,7 @@ namespace JenkinsTransport.Tests
         public void TestGetProjectStatusDisabled()
         {
             var xDoc = XDocument.Parse(File.ReadAllText("../../../Examples/jenkins-api-project-disabled.xml"));
-            var projectStatus = api.GetProjectStatus(xDoc);
+            var projectStatus = api.GetProjectStatus(xDoc, null);
             Assert.IsNotNull(projectStatus);
             Assert.That(projectStatus.Status, Is.EqualTo(ProjectIntegratorState.Stopped));
             Assert.That(projectStatus.BuildStatus, Is.EqualTo(IntegrationStatus.Unknown));

@@ -54,7 +54,7 @@ namespace JenkinsTransport
             Settings = settings;
             Login();
             Api = new Api(Configuration.Url, AuthorizationInformation);
-            Projects = new List<string>();
+            ProjectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
             IsInitialized = true;
         }
 
@@ -63,10 +63,14 @@ namespace JenkinsTransport
         {
             var jobs = Api.GetAllJobs();
             var projectStatues = jobs
-                .Where(a => Projects.Contains(a.Name))
-                .Select(jenkinsJob => Api.GetProjectStatus(jenkinsJob.Url)).ToArray();
+                .Where(a => ProjectsAndCurrentStatus.ContainsKey(a.Name))
+                .Select(a => Api.GetProjectStatus(a.Url, ProjectsAndCurrentStatus[a.Name]))
+                .ToList();
 
-            var snapshot = new CruiseServerSnapshot(projectStatues, new QueueSetSnapshot());
+            // Reset the ProjectsAndCurrentStatus dictionary
+            ProjectsAndCurrentStatus = projectStatues.ToDictionary(a => a.Name);
+
+            var snapshot = new CruiseServerSnapshot(projectStatues.ToArray(), new QueueSetSnapshot());
             return snapshot;
         }
 
@@ -120,7 +124,7 @@ namespace JenkinsTransport
         /// <summary>
         /// The list of projects configured/set for this server
         /// </summary>
-        public List<string> Projects { get; private set; }
+        public Dictionary<string, ProjectStatus> ProjectsAndCurrentStatus { get; private set; }
 
         public bool IsInitialized { get; private set; }
     }
