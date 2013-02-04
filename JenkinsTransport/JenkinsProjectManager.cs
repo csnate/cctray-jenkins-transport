@@ -74,8 +74,7 @@ namespace JenkinsTransport
 
         public ProjectStatusSnapshot RetrieveSnapshot()
         {
-            throw new NotImplementedException();
-
+            return Api.GetProjectStatusSnapshot(ProjectName);
         }
 
         public PackageDetails[] RetrievePackageList()

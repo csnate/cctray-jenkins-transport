@@ -46,18 +46,24 @@ namespace JenkinsTransport
         /// <param name="settings">the Settings</param>
         public void Initialize(BuildServer server, string session, Settings settings)
         {
+            if (IsInitialized) return;
+
             Configuration = server;
             SessionToken = session;
             Settings = settings;
             Login();
             Api = new Api(Configuration.Url, AuthorizationInformation);
+            Projects = new List<string>();
+            IsInitialized = true;
         }
 
         #region ICruiseServerManager implmentations
         public CruiseServerSnapshot GetCruiseServerSnapshot()
         {
             var jobs = Api.GetAllJobs();
-            var projectStatues = jobs.Select(jenkinsJob => Api.GetProjectStatus(jenkinsJob.Url)).ToArray();
+            var projectStatues = jobs
+                .Where(a => Projects.Contains(a.Name))
+                .Select(jenkinsJob => Api.GetProjectStatus(jenkinsJob.Url)).ToArray();
 
             var snapshot = new CruiseServerSnapshot(projectStatues, new QueueSetSnapshot());
             return snapshot;
@@ -109,5 +115,12 @@ namespace JenkinsTransport
         /// This is set on a call to Login
         /// </summary>
         public string AuthorizationInformation { get; private set; }
+
+        /// <summary>
+        /// The list of projects configured/set for this server
+        /// </summary>
+        public List<string> Projects { get; private set; }
+
+        public bool IsInitialized { get; private set; }
     }
 }

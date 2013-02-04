@@ -12,6 +12,12 @@ namespace JenkinsTransport
 {
     public class JenkinsTransportExtension : ITransportExtension
     {
+        private static JenkinsServerManager _jenkinsServerManager;
+        protected static JenkinsServerManager JenkinsServerManager
+        {
+            get { return _jenkinsServerManager ?? (_jenkinsServerManager = new JenkinsServerManager()); }
+        }
+
         public static Configuration GetApplicationConfiguration(string configFile = null)
         {
             if (String.IsNullOrEmpty(configFile))
@@ -69,21 +75,34 @@ namespace JenkinsTransport
         {
             var manager = (JenkinsServerManager)RetrieveServerManager();
             manager.SetConfiguration(server);
+
+            // If we are getting the project list, then we should reset the ServerManager's project list
+            // It will be reset when we return to the list
+            manager.Projects.Clear();
+
             return manager.GetProjectList();
         }
 
+        // This is called once for every project that has been added to the user's CCtray instance
+        //  Add each one to an internal property to be used when we get the server manager
         public ICruiseProjectManager RetrieveProjectManager(string projectName)
         {
             var manager = new JenkinsProjectManager();
             manager.Initialize(Configuration, projectName, Settings);
+
+            // Add this project to the server manager
+            if (!JenkinsServerManager.Projects.Contains(projectName))
+            {
+                JenkinsServerManager.Projects.Add(projectName);
+            }
+
             return manager;
         }
 
         public ICruiseServerManager RetrieveServerManager()
         {
-            var manager = new JenkinsServerManager();
-            manager.Initialize(Configuration, String.Empty, Settings);
-            return manager;
+            JenkinsServerManager.Initialize(Configuration, String.Empty, Settings);
+            return JenkinsServerManager;
         }
 
         public bool Configure(IWin32Window owner)

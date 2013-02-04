@@ -62,8 +62,22 @@ namespace JenkinsTransport
         {
             var firstElement = xDoc.Element("freeStyleProject");
             var color = (string)firstElement.Element("color");
-            var lastBuildInfo = GetBuildInformation((string) firstElement.Element("lastBuild").Element("url"));
-            var lastSuccessfulBuildInfo = GetBuildInformation((string)firstElement.Element("lastSuccessfulBuild").Element("url"));
+            var lastBuildElement = firstElement.Element("lastBuild");
+            var lastSuccessfulBuildElement = firstElement.Element("lastSuccessfulBuild");
+
+            var lastBuildInfo = lastBuildElement != null
+                                    ? GetBuildInformation((string) lastBuildElement.Element("url"))
+                                    : new JenkinsBuildInformation();
+
+            // Check to see if the last successfull is the same as the last build.  If so, no need to get the details again
+            var lastSuccessfulBuildInfo = lastBuildElement != null
+                                          && lastSuccessfulBuildElement != null
+                                          &&
+                                          (string) lastBuildElement.Element("number") ==
+                                          (string) lastSuccessfulBuildElement.Element("number")
+                                              ? lastBuildInfo
+                                              : GetBuildInformation((string) lastSuccessfulBuildElement.Element("url"));
+
             var name = (string) firstElement.Element("name");
             return new ProjectStatus(
                 name,
@@ -102,7 +116,7 @@ namespace JenkinsTransport
         /// <param name="projectName">the project name to check</param>
         public ProjectStatusSnapshot GetProjectStatusSnapshot(string projectName)
         {
-            var url = BaseUrl + "/job/" + HttpUtility.UrlEncode(projectName) + XmlApi;
+            var url = BaseUrl + "/job/" + HttpUtility.HtmlEncode(projectName) + XmlApi;
             var xDoc = XmlUtils.GetXDocumentFromUrl(url, AuthInfo);
             return GetProjectStatusSnapshot(xDoc);
         }

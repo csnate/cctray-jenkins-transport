@@ -23,6 +23,7 @@ namespace JenkinsTransport.Tests
                                        Password = "c0msc0r3",
                                        Server = "http://build.office.comscore.com"
                                    });
+            Manager.Projects.Add("Direct - INT");
         }
 
         [Test]
@@ -44,7 +45,7 @@ namespace JenkinsTransport.Tests
         {
             var snapshot = Manager.GetCruiseServerSnapshot();
             CollectionAssert.IsNotEmpty(snapshot.ProjectStatuses);
-            Assert.That(snapshot.ProjectStatuses.Length, Is.EqualTo(4));
+            Assert.That(snapshot.ProjectStatuses.Length, Is.EqualTo(1));
             CollectionAssert.IsEmpty(snapshot.QueueSetSnapshot.Queues);
         }
 

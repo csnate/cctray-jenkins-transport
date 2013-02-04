@@ -18,6 +18,17 @@ namespace JenkinsTransport
         public string FullDisplayName { get; private set; }
         public string Id { get; private set; }
 
+        public JenkinsBuildInformation()
+        {
+            Timestamp = DateTime.Now;
+            Number = String.Empty;
+            Duration = 0;
+            EstimatedDuration = 0;
+            Id = String.Empty;
+            Building = false;
+            FullDisplayName = String.Empty;
+        }
+
         public JenkinsBuildInformation(XContainer document)
         {
             var firstElement = document.Element("freeStyleBuild");
