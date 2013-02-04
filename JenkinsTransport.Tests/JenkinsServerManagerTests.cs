@@ -42,10 +42,12 @@ namespace JenkinsTransport.Tests
         }
 
         [Test]
-        [ExpectedException]
         public void TestGetCruiseServerSnapshot()
         {
             var snapshot = Manager.GetCruiseServerSnapshot();
+            CollectionAssert.IsNotEmpty(snapshot.ProjectStatuses);
+            Assert.That(snapshot.ProjectStatuses.Length, Is.EqualTo(4));
+            CollectionAssert.IsEmpty(snapshot.QueueSetSnapshot.Queues);
         }
 
         [Test]

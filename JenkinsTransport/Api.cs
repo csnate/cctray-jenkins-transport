@@ -61,8 +61,8 @@ namespace JenkinsTransport
         {
             var firstElement = xDoc.Element("freeStyleProject");
             var color = (string)firstElement.Element("color");
-            var lastBuildInfo = GetBuildInformation((string) firstElement.Element("lastBuild").Element("url") + XmlApi);
-            var lastSuccessfulBuildInfo = GetBuildInformation((string)firstElement.Element("lastSuccessfulBuild").Element("url") + XmlApi);
+            var lastBuildInfo = GetBuildInformation((string) firstElement.Element("lastBuild").Element("url"));
+            var lastSuccessfulBuildInfo = GetBuildInformation((string)firstElement.Element("lastSuccessfulBuild").Element("url"));
             var name = (string) firstElement.Element("name");
             return new ProjectStatus(
                 name,
@@ -88,7 +88,7 @@ namespace JenkinsTransport
         /// <summary>
         /// Get the build information for a build information url
         /// </summary>
-        /// <param name="buildInformationUrl">the build information url</param>
+        /// <param name="buildInformationUrl">the build information url, without /api/xml</param>
         public JenkinsBuildInformation GetBuildInformation(string buildInformationUrl)
         {
             var xDoc = XmlUtils.GetXDocumentFromUrl(buildInformationUrl + XmlApi, AuthInfo);

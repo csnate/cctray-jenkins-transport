@@ -26,7 +26,7 @@ namespace JenkinsTransport.Tests
             var xDoc = XDocument.Parse(File.ReadAllText("../../../Examples/jenkins-api-all.xml"));
             var list = api.GetAllJobs(xDoc);
             CollectionAssert.IsNotEmpty(list);
-            Assert.That(list.Count, Is.EqualTo(40));
+            Assert.That(list.Count, Is.EqualTo(76));
         }
 
         [Test]
@@ -58,10 +58,16 @@ namespace JenkinsTransport.Tests
         }
 
         [Test]
+        [Explicit] // Need to update the U/P in order to see this disabled project.  cssuser does not have permission
         public void TestGetProjectStatusDisabled()
         {
-            var projectStatus = api.GetProjectStatus("http://build.office.comscore.com/job/MyMetrix%20API%20-%20Regression/");
+            var xDoc = XDocument.Parse(File.ReadAllText("../../../Examples/jenkins-api-project-disabled.xml"));
+            var projectStatus = api.GetProjectStatus(xDoc);
             Assert.IsNotNull(projectStatus);
+            Assert.That(projectStatus.Status, Is.EqualTo(ProjectIntegratorState.Stopped));
+            Assert.That(projectStatus.BuildStatus, Is.EqualTo(IntegrationStatus.Unknown));
+            Assert.That(projectStatus.Activity, Is.EqualTo(ProjectActivity.Sleeping));
+            StringAssert.AreEqualIgnoringCase(projectStatus.Name, "MyMetrix API - Regression");
         }
     }
 }

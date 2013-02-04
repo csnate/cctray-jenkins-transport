@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{F6
 		Examples\jenkins-api-all-jobs-only.xml = Examples\jenkins-api-all-jobs-only.xml
 		Examples\jenkins-api-all.xml = Examples\jenkins-api-all.xml
 		Examples\jenkins-api-build-info.xml = Examples\jenkins-api-build-info.xml
+		Examples\jenkins-api-project-disabled.xml = Examples\jenkins-api-project-disabled.xml
 		Examples\jenkins-api-project.xml = Examples\jenkins-api-project.xml
 	EndProjectSection
 EndProject
