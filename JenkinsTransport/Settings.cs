@@ -22,6 +22,11 @@ namespace JenkinsTransport
 
         [XmlElement(ElementName = "Password")]
         public string Password { get; set; }
+
+        public string AuthorizationInformation
+        {
+            get { return Convert.ToBase64String(Encoding.Default.GetBytes(String.Format("{0}:{1}", Username, Password))); }
+        }
         #endregion
 
         public static Settings GetSettings(string settingsString)
@@ -51,5 +56,6 @@ namespace JenkinsTransport
 
             return sb.ToString();
         }
+
     }
 }

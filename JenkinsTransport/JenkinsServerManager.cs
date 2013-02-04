@@ -14,29 +14,50 @@ namespace JenkinsTransport
     public class JenkinsServerManager : ICruiseServerManager
     {
         /// <summary>
-        /// Sets the Configuration for this server manager
+        /// The Api
         /// </summary>
-        /// <param name="server"></param>
+        protected Api Api { get; private set; }
+
+        /// <summary>
+        /// Sets the configuration
+        /// </summary>
+        /// <param name="server">the BuildServer</param>
         public void SetConfiguration(BuildServer server)
         {
             Configuration = server;
         }
 
         /// <summary>
-        /// Sets the session token
+        /// Initializes this instance with the appropriate information
         /// </summary>
-        /// <param name="session"></param>
-        public void SetSessionToken(string session)
+        /// <param name="server">the BuildServer</param>
+        /// <param name="session">the SessionToken</param>
+        /// <param name="settings">the Settings in string form</param>
+        public void Initialize(BuildServer server, string session, string settings)
         {
+            Initialize(server, session, Settings.GetSettings(settings));
+        }
+
+        /// <summary>
+        /// Initializes this instance with the appropriate information
+        /// </summary>
+        /// <param name="server">the BuildServer</param>
+        /// <param name="session">the SessionToken</param>
+        /// <param name="settings">the Settings</param>
+        public void Initialize(BuildServer server, string session, Settings settings)
+        {
+            Configuration = server;
             SessionToken = session;
+            Settings = settings;
+            Login();
+            Api = new Api(Configuration.Url, AuthorizationInformation);
         }
 
         #region ICruiseServerManager implmentations
         public CruiseServerSnapshot GetCruiseServerSnapshot()
         {
-            var api = new Api(Configuration.Url, AuthorizationInformation);
-            var jobs = api.GetAllJobs();
-            var projectStatues = jobs.Select(jenkinsJob => api.GetProjectStatus(jenkinsJob.Url)).ToArray();
+            var jobs = Api.GetAllJobs();
+            var projectStatues = jobs.Select(jenkinsJob => Api.GetProjectStatus(jenkinsJob.Url)).ToArray();
 
             var snapshot = new CruiseServerSnapshot(projectStatues, new QueueSetSnapshot());
             return snapshot;
@@ -44,8 +65,7 @@ namespace JenkinsTransport
 
         public CCTrayProject[] GetProjectList()
         {
-            var api = new Api(Configuration.Url, AuthorizationInformation);
-            var jobs = api.GetAllJobs();
+            var jobs = Api.GetAllJobs();
             return jobs.Select(a => new CCTrayProject(Configuration, a.Name)
                                         {
                                             ShowProject = a.Color != "disabled"
@@ -54,7 +74,7 @@ namespace JenkinsTransport
 
         public bool Login()
         {
-            AuthorizationInformation = Convert.ToBase64String(Encoding.Default.GetBytes(String.Format("{0}:{1}", Settings.Username, Settings.Password)));
+            AuthorizationInformation = Settings.AuthorizationInformation;
             return true;
         }
 
@@ -82,7 +102,7 @@ namespace JenkinsTransport
         /// <summary>
         /// The Settings. Passed from the JenkinsTransportExtension.
         /// </summary>
-        public Settings Settings { get; set; }
+        public Settings Settings { get; private set; }
 
         /// <summary>
         /// The Basic AuthInfo header string constructed from the Settings U/P information.

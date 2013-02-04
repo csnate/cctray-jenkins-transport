@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using ThoughtWorks.CruiseControl.CCTrayLib.Monitoring;
 using ThoughtWorks.CruiseControl.Remote;
 using ThoughtWorks.CruiseControl.Remote.Parameters;
@@ -10,12 +11,34 @@ namespace JenkinsTransport
     public class JenkinsProjectManager : ICruiseProjectManager
     {
         /// <summary>
-        /// Sets the ProjectName property
+        /// The Api
         /// </summary>
-        /// <param name="name"></param>
-        internal void SetProjectName(string name)
+        protected Api Api { get; private set; }
+
+        /// <summary>
+        /// Sets the Configuration for this server manager
+        /// </summary>
+        /// <param name="server">the BuildServer configuration</param>
+        /// <param name="projectName">the project name</param>
+        /// <param name="settings">the Settings in string form</param>
+        public void Initialize(BuildServer server, string projectName, string settings)
         {
-            ProjectName = name;
+            Initialize(server, projectName, Settings.GetSettings(settings));
+        }
+
+        /// <summary>
+        /// Sets the Configuration for this server manager
+        /// </summary>
+        /// <param name="server">the BuildServer configuration</param>
+        /// <param name="projectName">the project name</param>
+        /// <param name="settings">the Settings</param>
+        public void Initialize(BuildServer server, string projectName, Settings settings)
+        {
+            Configuration = server;
+            ProjectName = projectName;
+            Settings = settings;
+            AuthorizationInformation = Settings.AuthorizationInformation;
+            Api = new Api(Configuration.Url, AuthorizationInformation);
         }
 
         #region ICruiseProjectManager implmentations
@@ -52,6 +75,7 @@ namespace JenkinsTransport
         public ProjectStatusSnapshot RetrieveSnapshot()
         {
             throw new NotImplementedException();
+
         }
 
         public PackageDetails[] RetrievePackageList()
@@ -71,5 +95,21 @@ namespace JenkinsTransport
 
         public string ProjectName { get; private set; }
         #endregion
+
+        /// <summary>
+        /// The Settings. Passed from the JenkinsTransportExtension.
+        /// </summary>
+        public Settings Settings { get; private set; }
+
+        /// <summary>
+        /// The BuildServer passed from the JenkinsTransportExtension.
+        /// </summary>
+        public BuildServer Configuration { get; private set; }
+
+        /// <summary>
+        /// The Basic AuthInfo header string constructed from the Settings U/P information.
+        /// This is set on a call to Login
+        /// </summary>
+        public string AuthorizationInformation { get; private set; }
     }
 }

@@ -17,14 +17,12 @@ namespace JenkinsTransport.Tests
         public void SetUp()
         {
             Manager = new JenkinsServerManager();
-            Manager.SetConfiguration(new BuildServer("http://build.office.comscore.com"));
-            Manager.Settings = new Settings()
+            Manager.Initialize(new BuildServer("http://build.office.comscore.com"), String.Empty, new Settings()
                                    {
                                        Username = "cssuser",
                                        Password = "c0msc0r3",
                                        Server = "http://build.office.comscore.com"
-                                   };
-            Manager.Login();
+                                   });
         }
 
         [Test]

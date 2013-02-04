@@ -75,19 +75,14 @@ namespace JenkinsTransport
         public ICruiseProjectManager RetrieveProjectManager(string projectName)
         {
             var manager = new JenkinsProjectManager();
-            manager.SetProjectName(projectName);
+            manager.Initialize(Configuration, projectName, Settings);
             return manager;
         }
 
         public ICruiseServerManager RetrieveServerManager()
         {
-            var manager = new JenkinsServerManager()
-                              {
-                                  Settings = JenkinsTransport.Settings.GetSettings(Settings)
-                              };
-            manager.SetConfiguration(Configuration);
-            manager.SetSessionToken(String.Empty);
-            manager.Login();  // This call is needed here intially. Should be overriden when we configure it again
+            var manager = new JenkinsServerManager();
+            manager.Initialize(Configuration, String.Empty, Settings);
             return manager;
         }
 
