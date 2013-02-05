@@ -48,18 +48,21 @@ namespace JenkinsTransport.Tests
             Assert.That(projectStatus.Status, Is.EqualTo(ProjectIntegratorState.Running));
             Assert.That(projectStatus.BuildStatus, Is.EqualTo(IntegrationStatus.Success));
 
-            StringAssert.AreEqualIgnoringCase(projectStatus.Category, String.Empty);
+            Assert.IsNull(projectStatus.Category);
+            Assert.IsNull(projectStatus.BuildStage);
+
+            //StringAssert.AreEqualIgnoringCase(projectStatus.Category, String.Empty);
+            //StringAssert.AreEqualIgnoringCase(projectStatus.BuildStage, String.Empty);
             StringAssert.AreEqualIgnoringCase(projectStatus.Name, "Direct - INT");
             StringAssert.AreEqualIgnoringCase(projectStatus.Queue, "Direct - INT");
             StringAssert.AreEqualIgnoringCase(projectStatus.CurrentMessage, String.Empty);
             StringAssert.AreEqualIgnoringCase(projectStatus.Description, String.Empty);
-            StringAssert.AreEqualIgnoringCase(projectStatus.BuildStage, String.Empty);
             StringAssert.AreEqualIgnoringCase(projectStatus.LastBuildLabel, "733");
             StringAssert.AreEqualIgnoringCase(projectStatus.LastSuccessfulBuildLabel, "733");
             StringAssert.AreEqualIgnoringCase(projectStatus.WebURL, "http://build.office.comscore.com/job/Direct%20-%20INT/");
 
             Assert.That(projectStatus.LastBuildDate, Is.EqualTo(DateTime.Parse("1/23/2013 1:50:49 PM")));
-            Assert.That(projectStatus.NextBuildTime, Is.GreaterThanOrEqualTo(now));
+            Assert.That(projectStatus.NextBuildTime, Is.EqualTo(DateTime.MaxValue)); 
             Assert.That(projectStatus.QueuePriority, Is.EqualTo(0));
 
             CollectionAssert.IsEmpty(projectStatus.Parameters);

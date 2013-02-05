@@ -116,27 +116,43 @@ namespace JenkinsTransport
                                               : new JenkinsBuildInformation();
 
             var name = (string) firstElement.Element("name");
-            return new ProjectStatus(
-                name,
-                String.Empty, // Category
-                EnumUtils.GetProjectActivity(color),
-                EnumUtils.GetIntegrationStatus(color),
-                EnumUtils.GetProjectIntegratorState((bool) firstElement.Element("buildable")),
-                (string) firstElement.Element("url"), // webUrl
-                lastCompletedBuildInfo.Timestamp, // LastBuildDate
-                lastCompletedBuildInfo.Number, // LastBuildLabel
-                lastSuccessfulBuildInfo.Number, // LastSuccessfulBuildLabel
-                DateTime.Now, // NextBuildTime -- TODO - this is incorrect, but I don't know how to get the next build time
-                String.Empty, // BuildStage
-                name, // Queue - not used
-                0, // QueuePriority - not used
-                new List<ParameterBase>() // Parameters - not used yet
-                )
-                       {
-                           Description = (string) firstElement.Element("description"),
-                           ShowForceBuildButton = true, // If the user can't build, this will error out
-                           ShowStartStopButton = true // If the user can't enable/disable, this will error out
-                       };
+            var projectStatus = new ProjectStatus(name, EnumUtils.GetIntegrationStatus(color),
+                                                  lastCompletedBuildInfo.Timestamp)
+                                    {
+                                        Activity = EnumUtils.GetProjectActivity(color),
+                                        Status = EnumUtils.GetProjectIntegratorState((bool)firstElement.Element("buildable")),
+                                        WebURL = (string) firstElement.Element("url"),
+                                        LastBuildLabel = lastCompletedBuildInfo.Number,
+                                        LastSuccessfulBuildLabel = lastSuccessfulBuildInfo.Number,
+                                        Queue = name,
+                                        QueuePriority = 0,
+                                        Description = (string)firstElement.Element("description"),
+                                        ShowForceBuildButton = true,
+                                        NextBuildTime = DateTime.MaxValue, // This will tell CCTray that the project isn't automatically triggered
+                                        ShowStartStopButton = true
+                                    };
+            return projectStatus;
+            //return new ProjectStatus(
+            //    name,
+            //    String.Empty, // Category
+            //    EnumUtils.GetProjectActivity(color),
+            //    EnumUtils.GetIntegrationStatus(color),
+            //    EnumUtils.GetProjectIntegratorState((bool) firstElement.Element("buildable")),
+            //    (string) firstElement.Element("url"), // webUrl
+            //    lastCompletedBuildInfo.Timestamp, // LastBuildDate
+            //    lastCompletedBuildInfo.Number, // LastBuildLabel
+            //    lastSuccessfulBuildInfo.Number, // LastSuccessfulBuildLabel
+            //    new DateTime(), // NextBuildTime -- TODO - this is incorrect, but I don't know how to get the next build time
+            //    String.Empty, // BuildStage
+            //    name, // Queue - not used
+            //    0, // QueuePriority - not used
+            //    new List<ParameterBase>() // Parameters - not used yet
+            //    )
+            //           {
+            //               Description = (string) firstElement.Element("description"),
+            //               ShowForceBuildButton = true, // If the user can't build, this will error out
+            //               ShowStartStopButton = true // If the user can't enable/disable, this will error out
+            //           };
         }
 
         /// <summary>
