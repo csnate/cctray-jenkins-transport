@@ -21,16 +21,6 @@ namespace JenkinsTransport.Tests
         }
 
         [Test]
-        public void TestGetXmlDocumentFromUrl()
-        {
-            var xmlDoc = XmlUtils.GetXmlDocumentFromUrl(BuildServer + "/api/xml", AuthInfo);
-            Assert.IsNotNull(xmlDoc);
-
-            var jobs = xmlDoc.SelectNodes("/hudson/job");
-            CollectionAssert.IsNotEmpty(jobs);
-        }
-
-        [Test]
         public void TestGetXDocumentFromUrl()
         {
             var xmlDoc = XmlUtils.GetXDocumentFromUrl(BuildServer + "/api/xml", AuthInfo);
@@ -38,7 +28,7 @@ namespace JenkinsTransport.Tests
             Assert.That(xmlDoc.Elements().Count(), Is.GreaterThan(0));
 
             var elements = xmlDoc.Element("hudson").Elements("job");
-            Assert.That(elements.Count(), Is.EqualTo(4));
+            Assert.That(elements.Count(), Is.EqualTo(5));
         }
     }
 }

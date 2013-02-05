@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Xml.Linq;
 using NUnit.Framework;
 using ThoughtWorks.CruiseControl.Remote;
@@ -13,11 +14,18 @@ namespace JenkinsTransport.Tests
     public class ApiTests
     {
         private Api api;
+        private const string TestProjectName = "Testing For All Purpose";
 
         [SetUp]
         public void SetUp()
         {
-            api = new Api("http://build.office.comscore.com", Convert.ToBase64String(Encoding.Default.GetBytes(String.Format("{0}:{1}", "cssuser", "c0msc0r3"))));
+            var settings = new Settings()
+                               {
+                                   Server = "http://build.office.comscore.com",
+                                   Username = "cssuser",
+                                   Password = "c0msc0r3"
+                               };
+            api = new Api("http://build.office.comscore.com", settings.AuthorizationInformation);
         }
 
         [Test]
@@ -86,7 +94,51 @@ namespace JenkinsTransport.Tests
             Assert.That(projectSnapshot.TimeCompleted, Is.EqualTo(DateTime.Parse("1/23/2013 1:50:49 PM")));
             Assert.IsNull(projectSnapshot.TimeStarted);
             Assert.IsNull(projectSnapshot.TimeOfEstimatedCompletion);
+        }
 
+        [Test]
+        [Explicit]
+        public void TestForceAndAbortBuild()
+        {
+            api.ForceBuild(TestProjectName);
+
+            Thread.Sleep(6000); // Sleep for 3 seconds to give the server time
+
+            // Get the latest status of this project
+            var projectStatus = api.GetProjectStatus("http://build.office.comscore.com/job/" + TestProjectName, null);
+            Assert.That(projectStatus.Status, Is.EqualTo(ProjectIntegratorState.Running));
+            Assert.That(projectStatus.BuildStatus, Is.EqualTo(IntegrationStatus.Success));
+            Assert.IsTrue(projectStatus.Activity.IsBuilding());
+
+            api.AbortBuild(TestProjectName);
+
+            Thread.Sleep(3000); // Sleep for 3 seconds to give the server time
+            projectStatus = api.GetProjectStatus("http://build.office.comscore.com/job/" + TestProjectName, null);
+            Assert.That(projectStatus.Status, Is.EqualTo(ProjectIntegratorState.Running));
+            Assert.That(projectStatus.BuildStatus, Is.EqualTo(IntegrationStatus.Cancelled).Or.EqualTo(IntegrationStatus.Success)); // This may happen too fast
+            Assert.IsFalse(projectStatus.Activity.IsBuilding());
+        }
+
+        [Test]
+        [Explicit]
+        public void TestStopProject()
+        {
+            api.StopProject(TestProjectName);
+
+            Thread.Sleep(3000); // Sleep for 3 seconds to give the server time
+            var projectStatus = api.GetProjectStatus("http://build.office.comscore.com/job/" + TestProjectName, null);
+            Assert.That(projectStatus.Status, Is.EqualTo(ProjectIntegratorState.Stopped));
+        }
+
+        [Test]
+        [Explicit]
+        public void TestStartProject()
+        {
+            api.StartProject(TestProjectName);
+            Thread.Sleep(3000); // Sleep for 3 seconds to give the server time
+
+            var projectStatus = api.GetProjectStatus("http://build.office.comscore.com/job/" + TestProjectName, null);
+            Assert.That(projectStatus.Status, Is.EqualTo(ProjectIntegratorState.Running));
         }
     } 
 }

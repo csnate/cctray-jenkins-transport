@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Web;
 using System.Xml.Linq;
@@ -14,15 +15,42 @@ namespace JenkinsTransport
         #region Constants
         private const string XmlApi = "/api/xml";
         private const string AllJobs = XmlApi + "?xpath=/hudson/job&wrapper=jobs";
-        private const string ExcludeBuild = XmlApi + "?exclude=freeStyleProject/build";
+        private const string ExcludeBuild = XmlApi + "?exclude=freeStyleProject/build&exclude=freeStyleProject/healthReport&exclude=freeStyleProject/action";
+        private const string ForceBuildParams = "/build";
+        private const string StopProjectParams = "/disable";
+        private const string StartProjectParams = "/enable";
         #endregion
 
         protected string BaseUrl { get; set; }
+        protected string ProjectBaseUrl { get; private set; }
         protected string AuthInfo { get; set; }
+
+        protected void MakeRequest(string url, string method = "GET")
+        {
+            var request = WebRequest.Create(url);
+            if (!String.IsNullOrEmpty(AuthInfo))
+            {
+                request.Headers["Authorization"] = "Basic " + AuthInfo;
+            }
+            request.Method = method;
+            try
+            {
+                request.GetResponse(); // I don't care what is returned
+            }
+            catch (WebException e)
+            {
+                // Don't worry about 404 errors as this is incorrectly returned. Not sure why yet..
+                if (e.Status != WebExceptionStatus.ProtocolError || !e.Message.ToLower().Contains("(404) not found."))
+                {
+                    throw;
+                }
+            }
+        }
 
         public Api(string baseUrl, string authInfo)
         {
             BaseUrl = baseUrl;
+            ProjectBaseUrl = baseUrl + "/job/";
             AuthInfo = authInfo;
         }
 
@@ -106,8 +134,8 @@ namespace JenkinsTransport
                 )
                        {
                            Description = (string) firstElement.Element("description"),
-                           ShowForceBuildButton = false, // Disable this for now
-                           ShowStartStopButton = false // Disable this for now
+                           ShowForceBuildButton = true, // If the user can't build, this will error out
+                           ShowStartStopButton = true // If the user can't enable/disable, this will error out
                        };
         }
 
@@ -127,7 +155,7 @@ namespace JenkinsTransport
         /// <param name="projectName">the project name to check</param>
         public ProjectStatusSnapshot GetProjectStatusSnapshot(string projectName)
         {
-            var url = BaseUrl + "/job/" + HttpUtility.HtmlEncode(projectName) + ExcludeBuild;
+            var url = ProjectBaseUrl + HttpUtility.HtmlEncode(projectName) + ExcludeBuild;
             var xDoc = XmlUtils.GetXDocumentFromUrl(url, AuthInfo);
             return GetProjectStatusSnapshot(xDoc);
         }
@@ -165,6 +193,66 @@ namespace JenkinsTransport
             }
 
             return snapshot;
+        }
+
+        // --- Project specific apis
+
+        /// <summary>
+        /// Forces a build of a project
+        /// </summary>
+        /// <param name="projectName">the project name to build</param>
+        public void ForceBuild(string projectName)
+        {
+            MakeRequest(ProjectBaseUrl + projectName + ForceBuildParams, "POST");
+        }
+
+        /// <summary>
+        /// Forces a build of a project with parameters
+        /// </summary>
+        /// <param name="projectName">the project name</param>
+        /// <param name="parameters">the parameters to the build</param>
+        public void ForceBuild(string projectName, Dictionary<string, string> parameters)
+        {
+            if (parameters == null || !parameters.Any())
+            {
+                ForceBuild(projectName);
+                return;
+            }
+
+            // TODO - write the build with params
+            ForceBuild(projectName);
+        }
+
+        /// <summary>
+        /// Abort the latest build
+        /// </summary>
+        /// <param name="projectName">the project name to abort</param>
+        public void AbortBuild(string projectName)
+        {
+            // Need to get the last build number/url
+            var projectUrl = ProjectBaseUrl + projectName;
+            var xDoc = XmlUtils.GetXDocumentFromUrl(projectUrl + ExcludeBuild, AuthInfo);
+            var lastBuildUrl = (string) xDoc.Element("freeStyleProject").Element("lastBuild").Element("url");
+
+            MakeRequest(lastBuildUrl + "stop", "POST");
+        }
+
+        /// <summary>
+        /// Stops (disables) a project
+        /// </summary>
+        /// <param name="projectName">the project name to disable</param>
+        public void StopProject(string projectName)
+        {
+            MakeRequest(ProjectBaseUrl + projectName + StopProjectParams, "POST");
+        }
+
+        /// <summary>
+        /// Starts (enables) a project
+        /// </summary>
+        /// <param name="projectName"></param>
+        public void StartProject(string projectName)
+        {
+            MakeRequest(ProjectBaseUrl + projectName + StartProjectParams, "POST");
         }
     }
 }

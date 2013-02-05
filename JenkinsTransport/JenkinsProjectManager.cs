@@ -44,7 +44,7 @@ namespace JenkinsTransport
         #region ICruiseProjectManager implmentations
         public void ForceBuild(string sessionToken, Dictionary<string, string> parameters, string userName)
         {
-            throw new NotImplementedException();
+            Api.ForceBuild(ProjectName, parameters);
         }
 
         public void FixBuild(string sessionToken, string fixingUserName)
@@ -54,17 +54,17 @@ namespace JenkinsTransport
 
         public void AbortBuild(string sessionToken, string userName)
         {
-            throw new NotImplementedException();
+            Api.AbortBuild(ProjectName);
         }
 
         public void StopProject(string sessionToken)
         {
-            throw new NotImplementedException();
+            Api.StopProject(ProjectName);
         }
 
         public void StartProject(string sessionToken)
         {
-            throw new NotImplementedException();
+            Api.StartProject(ProjectName);
         }
 
         public void CancelPendingRequest(string sessionToken)
@@ -89,7 +89,7 @@ namespace JenkinsTransport
 
         public List<ParameterBase> ListBuildParameters()
         {
-            throw new NotImplementedException();
+            return new List<ParameterBase>();
         }
 
         public string ProjectName { get; private set; }

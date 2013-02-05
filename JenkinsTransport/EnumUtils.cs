@@ -15,11 +15,13 @@ namespace JenkinsTransport
                                                                { "yellow", IntegrationStatus.Exception },
                                                                { "red", IntegrationStatus.Failure},
                                                                { "grey", IntegrationStatus.Unknown },
+                                                               { "aborted", IntegrationStatus.Failure },
                                                                { "disabled", IntegrationStatus.Unknown},
                                                                { "blue_anime", IntegrationStatus.Success },
                                                                { "yellow_anime", IntegrationStatus.Exception },
                                                                { "red_anime", IntegrationStatus.Failure},
                                                                { "grey_anime", IntegrationStatus.Unknown },
+                                                               { "aborted_anime", IntegrationStatus.Failure },
                                                                { "disabled_anime", IntegrationStatus.Unknown}
                                                            };
 
@@ -30,11 +32,13 @@ namespace JenkinsTransport
                                                                            { "yellow", ProjectActivity.Sleeping },
                                                                            { "red", ProjectActivity.Sleeping},
                                                                            { "grey", ProjectActivity.Sleeping },
+                                                                           { "aborted", ProjectActivity.Sleeping },
                                                                            { "disabled", ProjectActivity.Sleeping },
                                                                            { "blue_anime", ProjectActivity.Building },
                                                                            { "yellow_anime", ProjectActivity.Building },
                                                                            { "red_anime", ProjectActivity.Building},
                                                                            { "grey_anime", ProjectActivity.Building },
+                                                                           { "aborted_anime", ProjectActivity.Building},
                                                                            { "disabled_anime", ProjectActivity.Building}
                                                                       };
 
@@ -45,11 +49,13 @@ namespace JenkinsTransport
                                                                            { "yellow", ItemBuildStatus.CompletedFailed },
                                                                            { "red", ItemBuildStatus.CompletedFailed},
                                                                            { "grey", ItemBuildStatus.Unknown },
+                                                                           { "aborted", ItemBuildStatus.Cancelled },
                                                                            { "disabled", ItemBuildStatus.CompletedSuccess }, // This is so the build indicator isn't red
                                                                            { "blue_anime", ItemBuildStatus.Running },
                                                                            { "yellow_anime", ItemBuildStatus.Running },
                                                                            { "red_anime", ItemBuildStatus.Running},
                                                                            { "grey_anime", ItemBuildStatus.Running },
+                                                                           { "aborted_anime", ItemBuildStatus.Running },
                                                                            { "disabled_anime", ItemBuildStatus.Running }
                                                                       };
 
