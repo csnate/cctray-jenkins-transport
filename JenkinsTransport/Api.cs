@@ -16,7 +16,7 @@ namespace JenkinsTransport
         private const string XmlApi = "/api/xml";
         private const string AllJobs = XmlApi + "?xpath=/hudson/job&wrapper=jobs";
         private const string ExcludeBuild = XmlApi + "?exclude=freeStyleProject/build&exclude=freeStyleProject/healthReport&exclude=freeStyleProject/action";
-        private const string ForceBuildParams = "/build";
+        private const string ForceBuildParams = "/build?delay=0sec";
         private const string StopProjectParams = "/disable";
         private const string StartProjectParams = "/enable";
         #endregion
@@ -25,26 +25,25 @@ namespace JenkinsTransport
         protected string ProjectBaseUrl { get; private set; }
         protected string AuthInfo { get; set; }
 
-        protected void MakeRequest(string url, string method = "GET")
+        protected void MakeRequest(string url, string method = "POST")
         {
-            var request = WebRequest.Create(url);
+            var request = (HttpWebRequest) WebRequest.Create(url);
             if (!String.IsNullOrEmpty(AuthInfo))
             {
                 request.Headers["Authorization"] = "Basic " + AuthInfo;
             }
+
+            // Fake the referer
+            request.Referer = BaseUrl;
             request.Method = method;
-            try
+            if (method == "POST")
             {
-                request.GetResponse(); // I don't care what is returned
+                request.ContentType = "application/x-www-form-urlencoded";
             }
-            catch (WebException e)
-            {
-                // Don't worry about 404 errors as this is incorrectly returned. Not sure why yet..
-                if (e.Status != WebExceptionStatus.ProtocolError || !e.Message.ToLower().Contains("(404) not found."))
-                {
-                    throw;
-                }
-            }
+
+            // I don't care what is returned, but the response should be disposed
+            using (var response = request.GetResponse()) { }  
+            
         }
 
         public Api(string baseUrl, string authInfo)
@@ -219,7 +218,7 @@ namespace JenkinsTransport
         /// <param name="projectName">the project name to build</param>
         public void ForceBuild(string projectName)
         {
-            MakeRequest(ProjectBaseUrl + projectName + ForceBuildParams, "POST");
+            MakeRequest(ProjectBaseUrl + projectName + ForceBuildParams);
         }
 
         /// <summary>
@@ -250,7 +249,7 @@ namespace JenkinsTransport
             var xDoc = XmlUtils.GetXDocumentFromUrl(projectUrl + ExcludeBuild, AuthInfo);
             var lastBuildUrl = (string) xDoc.Element("freeStyleProject").Element("lastBuild").Element("url");
 
-            MakeRequest(lastBuildUrl + "stop", "POST");
+            MakeRequest(lastBuildUrl + "stop");
         }
 
         /// <summary>
@@ -259,7 +258,7 @@ namespace JenkinsTransport
         /// <param name="projectName">the project name to disable</param>
         public void StopProject(string projectName)
         {
-            MakeRequest(ProjectBaseUrl + projectName + StopProjectParams, "POST");
+            MakeRequest(ProjectBaseUrl + projectName + StopProjectParams);
         }
 
         /// <summary>
@@ -268,7 +267,7 @@ namespace JenkinsTransport
         /// <param name="projectName"></param>
         public void StartProject(string projectName)
         {
-            MakeRequest(ProjectBaseUrl + projectName + StartProjectParams, "POST");
+            MakeRequest(ProjectBaseUrl + projectName + StartProjectParams);
         }
     }
 }

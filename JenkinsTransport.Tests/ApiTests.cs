@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Xml.Linq;
@@ -142,6 +145,83 @@ namespace JenkinsTransport.Tests
 
             var projectStatus = api.GetProjectStatus("http://build.office.comscore.com/job/" + TestProjectName, null);
             Assert.That(projectStatus.Status, Is.EqualTo(ProjectIntegratorState.Running));
+        }
+
+
+        // ---- THE FOLLOWING ARE TESTS FOR DIFFERENT REQUEST METHODS
+
+        [Test]
+        [Explicit]
+        public void TestWebRequest()
+        {
+            var url = "http://ntovo:5845cc1bb61bbdb3f973c338d24bad2d@build.office.comscore.com/api/xml";
+            var request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "GET";
+            request.Referer = "http://build.office.comscore.com";
+
+            var credCache = new CredentialCache();
+            credCache.Add(request.RequestUri, "Basic", CredentialCache.DefaultNetworkCredentials);
+            var cred = credCache.GetCredential(request.RequestUri, "Basic");
+            request.Credentials = cred;
+
+            using (var response = request.GetResponse())
+            {
+                using (var responseStream = response.GetResponseStream())
+                {
+                    if (responseStream != null)
+                    {
+                        using (var rd = new StreamReader(responseStream))
+                        {
+                            //Console.WriteLine(rd.ReadToEnd());
+                            var x = XDocument.Parse(rd.ReadToEnd());
+                            Assert.That(x.Descendants("job").Count(), Is.GreaterThan(4));
+                        }
+                    }
+                    else
+                    {
+                        Assert.Fail("No responseStream");
+                    }
+                }
+            }
+
+        }
+
+        [Test]
+        [Explicit]
+        public void TestWebClient()
+        {
+            var webClient = new WebClient();
+            //webClient.UseDefaultCredentials = true;
+            var settings = new Settings()
+                               {
+                                   Username = "ntovo",
+                                   Password = "5845cc1bb61bbdb3f973c338d24bad2d"
+                               };
+            webClient.Headers.Add("Authorization", "Basic " + settings.AuthorizationInformation);
+            webClient.BaseAddress = "http://build.office.comscore.com";
+            var str = webClient.DownloadString("http://build.office.comscore.com/api/xml");
+            var x = XDocument.Parse(str);
+            var jobs = x.Descendants("job").Count();
+            Assert.That(jobs, Is.GreaterThan(4));
+            Console.WriteLine("Jobs: " + jobs);
+        }
+
+        [Test]
+        [Explicit]
+        public void TestTcpClient()
+        {
+            var url = "http://build.office.comscore.com";
+            var request = (HttpWebRequest)WebRequest.Create(url);
+            var response = request.GetResponse();
+            var port = int.Parse(response.Headers["X-Jenkins-CLI-Port"]);
+            Assert.IsNotNull(port);
+
+            using (var tcpClient = new TcpClient())
+            {
+                tcpClient.Connect("build.office.comscore.com", port);
+                Assert.IsTrue(tcpClient.Connected);
+            }
+            
         }
     } 
 }
