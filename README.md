@@ -23,20 +23,20 @@ Jenkins has an XML Api that can access any project/url in the system via ../api/
 
 Prerequisites
 =============
-1) This has been tested with CCTray >= 1.8.0.  Download the latest from http://sourceforge.net/projects/ccnet/files/CruiseControl.NET%20Releases/
-2) This has been tested on Windows 7.  I don't know if/how this will work on a Mac/Linux environment.
+# This has been tested with CCTray >= 1.8.0.  Download the latest from http://sourceforge.net/projects/ccnet/files/CruiseControl.NET%20Releases/
+# This has been tested on Windows 7.  I don't know if/how this will work on a Mac/Linux environment.
 
 Installation
 ============
-1) Build the project locally.
-2) Assuming a standard CCTray installation, create a new directory at C:\Program Files (x86)\CCTray\extensions
-3) Copy the JenkinsTransport.dll and JenkinsTransport.dll.config to this new directory.
-4) Update the config with your values.
-5) Start CCTray and add a new server from File -> Settings -> Add -> Add Server
-6) Select the "Using a transport extension" option.
-7) Select the JenkinsTransport from the dropdown list.
-8) IMPORTANT - click the Configure Extension button.  This doesn't look like it does anything, but it will initialize the transport.
-9) Click Ok and you should now have acccess to your Jenkins projects.
+# Build the project locally.
+# Assuming a standard CCTray installation, create a new directory at C:\Program Files (x86)\CCTray\extensions
+# Copy the JenkinsTransport.dll and JenkinsTransport.dll.config to this new directory.
+# Update the config with your values.
+# Start CCTray and add a new server from File -> Settings -> Add -> Add Server
+# Select the "Using a transport extension" option.
+# Select the JenkinsTransport from the dropdown list.
+# IMPORTANT - click the Configure Extension button.  This doesn't look like it does anything, but it will initialize the transport.
+# Click Ok and you should now have acccess to your Jenkins projects.
 
 TODOs
 -----
