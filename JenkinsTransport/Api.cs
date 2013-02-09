@@ -121,7 +121,8 @@ namespace JenkinsTransport
         /// <param name="currentStatus">the current stored status</param>
         public ProjectStatus GetProjectStatus(XDocument xDoc, ProjectStatus currentStatus)
         {
-            var firstElement = xDoc.Element("freeStyleProject");
+            // The first element in the document is named based on the type of project (freeStyleProject, mavenModuleSet, etc). Can't access based on name.
+            var firstElement = xDoc.Descendants().First<XElement>(); 
             var color = (string)firstElement.Element("color");
             var lastBuildElement = firstElement.Element("lastBuild");  // Will contain the latest (in progress) build number
             var lastSuccessfulBuildElement = firstElement.Element("lastSuccessfulBuild");
@@ -191,7 +192,7 @@ namespace JenkinsTransport
         /// <param name="xDoc">the XDcoument to parse</param>
         public ProjectStatusSnapshot GetProjectStatusSnapshot(XDocument xDoc)
         {
-            var firstElement = xDoc.Element("freeStyleProject");
+            var firstElement = xDoc.Descendants().First<XElement>();  // The first element in the document is named based on the type of project (freeStyleProject, mavenModuleSet, etc)
             var color = (string)firstElement.Element("color");
             var lastBuildInfo = GetBuildInformation((string) firstElement.Element("lastBuild").Element("url"));
             var status = lastBuildInfo.Building ? ItemBuildStatus.Running : EnumUtils.GetItemBuildStatus(color);
@@ -257,7 +258,7 @@ namespace JenkinsTransport
             // Need to get the last build number/url
             var projectUrl = ProjectBaseUrl + projectName;
             var xDoc = GetXDocumentFromUrl(projectUrl + ExcludeBuild, AuthInfo);
-            var lastBuildUrl = (string) xDoc.Element("freeStyleProject").Element("lastBuild").Element("url");
+            var lastBuildUrl = (string) xDoc.Descendants().First<XElement>().Element("lastBuild").Element("url");
 
             MakeRequest(lastBuildUrl + "stop");
         }
