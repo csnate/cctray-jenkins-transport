@@ -9,16 +9,10 @@ using System.Xml.Serialization;
 
 namespace JenkinsTransport
 {
-    [XmlRoot(ElementName = "job")]
     public class JenkinsJob
     {
-        [XmlElement(ElementName = "name")]
         public string Name { get; set; }
-
-        [XmlElement(ElementName = "url")]
         public string Url { get; set; }
-
-        [XmlElement(ElementName = "color")]
         public string Color { get; set; }
 
         public JenkinsJob() {}
