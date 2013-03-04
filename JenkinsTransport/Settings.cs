@@ -25,7 +25,12 @@ namespace JenkinsTransport
 
         public string AuthorizationInformation
         {
-            get { return Convert.ToBase64String(Encoding.Default.GetBytes(String.Format("{0}:{1}", Username, Password))); }
+            get
+            {
+                return !String.IsNullOrEmpty(Username) && !String.IsNullOrEmpty(Password)
+                  ? Convert.ToBase64String(Encoding.Default.GetBytes(String.Format("{0}:{1}", Username, Password)))
+                  : String.Empty;
+            }
         }
         #endregion
 

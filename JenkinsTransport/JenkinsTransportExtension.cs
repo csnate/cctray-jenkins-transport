@@ -12,13 +12,15 @@ namespace JenkinsTransport
 {
     public class JenkinsTransportExtension : ITransportExtension
     {
+        private static bool _isServerManagerInitialized = false;
         private static JenkinsServerManager _jenkinsServerManager;
+
         protected static JenkinsServerManager JenkinsServerManager
         {
             get { return _jenkinsServerManager ?? (_jenkinsServerManager = new JenkinsServerManager()); }
         }
 
-        public static Configuration GetApplicationConfiguration(string configFile = null)
+        protected static Configuration GetApplicationConfiguration(string configFile = null)
         {
             if (String.IsNullOrEmpty(configFile))
             {
@@ -40,7 +42,7 @@ namespace JenkinsTransport
                                                                        }, ConfigurationUserLevel.None);
         }
 
-        public static BuildServer GetBuildServerFromConfiguration(Configuration configuration = null)
+        protected static BuildServer GetBuildServerFromConfiguration(Configuration configuration = null)
         {
             if (configuration == null)
             {
@@ -50,7 +52,7 @@ namespace JenkinsTransport
             return buildServer;
         }
 
-        public static Settings GetSettingsFromConfiguration(Configuration configuration = null)
+        protected static Settings GetSettingsFromConfiguration(Configuration configuration = null)
         {
             if (configuration == null)
             {
@@ -90,10 +92,13 @@ namespace JenkinsTransport
             var manager = new JenkinsProjectManager();
             manager.Initialize(Configuration, projectName, Settings);
 
+            // Check to make sure the static instance of JenkinsServerManager is initialized
+            var serverManager = (JenkinsServerManager)RetrieveServerManager();
+
             // Add this project to the server manager
-            if (!JenkinsServerManager.ProjectsAndCurrentStatus.ContainsKey(projectName))
+            if (!serverManager.ProjectsAndCurrentStatus.ContainsKey(projectName))
             {
-                JenkinsServerManager.ProjectsAndCurrentStatus.Add(projectName, null);
+                serverManager.ProjectsAndCurrentStatus.Add(projectName, null);
             }
 
             return manager;
@@ -101,7 +106,11 @@ namespace JenkinsTransport
 
         public ICruiseServerManager RetrieveServerManager()
         {
-            JenkinsServerManager.Initialize(Configuration, String.Empty, Settings);
+            if (!_isServerManagerInitialized)
+            {
+                JenkinsServerManager.Initialize(Configuration, String.Empty, Settings);
+                _isServerManagerInitialized = true;
+            }
             return JenkinsServerManager;
         }
 

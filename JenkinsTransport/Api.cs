@@ -26,7 +26,7 @@ namespace JenkinsTransport
         protected string ProjectBaseUrl { get; private set; }
         protected string AuthInfo { get; set; }
 
-        protected static XDocument GetXDocumentFromUrl(string url, string authInfo)
+        protected static XDocument GetXDocument(string url, string authInfo)
         {
             var request = WebRequest.Create(url);
             if (!String.IsNullOrEmpty(authInfo))
@@ -35,10 +35,10 @@ namespace JenkinsTransport
             }
             request.Method = "GET";
 
-            return GetXDocumentFromUrl(request);
+            return GetXDocument(request);
         }
 
-        protected static XDocument GetXDocumentFromUrl(WebRequest request)
+        protected static XDocument GetXDocument(WebRequest request)
         {
             using (var response = request.GetResponse())
             {
@@ -89,7 +89,7 @@ namespace JenkinsTransport
         /// </summary>
         public List<JenkinsJob> GetAllJobs()
         {
-            var xDoc = GetXDocumentFromUrl(BaseUrl + AllJobs, AuthInfo);
+            var xDoc = GetXDocument(BaseUrl + AllJobs, AuthInfo);
             return GetAllJobs(xDoc);
         }
 
@@ -110,7 +110,7 @@ namespace JenkinsTransport
         /// <param name="currentStatus">the current stored status</param>
         public ProjectStatus GetProjectStatus(string projectUrl, ProjectStatus currentStatus)
         {
-            var xDoc = GetXDocumentFromUrl(projectUrl + ExcludeBuild, AuthInfo);
+            var xDoc = GetXDocument(projectUrl + ExcludeBuild, AuthInfo);
             return GetProjectStatus(xDoc, currentStatus);
         }
 
@@ -171,7 +171,7 @@ namespace JenkinsTransport
         /// <param name="buildInformationUrl">the build information url, without /api/xml</param>
         public JenkinsBuildInformation GetBuildInformation(string buildInformationUrl)
         {
-            var xDoc = GetXDocumentFromUrl(buildInformationUrl + XmlApi, AuthInfo);
+            var xDoc = GetXDocument(buildInformationUrl + XmlApi, AuthInfo);
             return new JenkinsBuildInformation(xDoc);
         }
 
@@ -182,7 +182,7 @@ namespace JenkinsTransport
         public ProjectStatusSnapshot GetProjectStatusSnapshot(string projectName)
         {
             var url = ProjectBaseUrl + HttpUtility.HtmlEncode(projectName) + ExcludeBuild;
-            var xDoc = GetXDocumentFromUrl(url, AuthInfo);
+            var xDoc = GetXDocument(url, AuthInfo);
             return GetProjectStatusSnapshot(xDoc);
         }
 
@@ -257,7 +257,7 @@ namespace JenkinsTransport
         {
             // Need to get the last build number/url
             var projectUrl = ProjectBaseUrl + projectName;
-            var xDoc = GetXDocumentFromUrl(projectUrl + ExcludeBuild, AuthInfo);
+            var xDoc = GetXDocument(projectUrl + ExcludeBuild, AuthInfo);
             var lastBuildUrl = (string) xDoc.Descendants().First<XElement>().Element("lastBuild").Element("url");
 
             MakeRequest(lastBuildUrl + "stop");
