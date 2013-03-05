@@ -63,8 +63,6 @@ namespace JenkinsTransport.UnitTests
             Assert.IsTrue(snapshot.ProjectStatuses.Count() == 1);
         }
 
-        
-
         [TestMethod]
         public void TestLoginAndLogout()
         {
