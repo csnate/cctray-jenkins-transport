@@ -38,6 +38,7 @@
     <Reference Include="System" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="ThoughtWorks.CruiseControl.CCTrayLib">
       <HintPath>..\References\ThoughtWorks.CruiseControl.CCTrayLib.dll</HintPath>
     </Reference>
@@ -62,6 +63,7 @@
     <Compile Include="JenkinsTransportExtensionTests.cs" />
     <Compile Include="JenkinsServerManagerTests.cs" />
     <Compile Include="JenkinsProjectManagerTests.cs" />
+    <Compile Include="ApiTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JenkinsTransport\JenkinsTransport.csproj">
