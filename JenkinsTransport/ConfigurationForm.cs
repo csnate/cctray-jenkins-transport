@@ -12,21 +12,24 @@ namespace JenkinsTransport
 {
     public partial class ConfigurationForm : Form
     {
-        private Regex ServerRegex = new Regex("^http(s)?://\\w+", RegexOptions.IgnoreCase);
-
-        private bool IsValidServer()
+        private static Regex _serverRegex = new Regex("^http(s)?://\\w+", RegexOptions.IgnoreCase);
+        private static bool IsValidServer(string server)
         {
-            var server = GetServer();
-            return ServerRegex.IsMatch(server);
+            return _serverRegex.IsMatch(server);
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        private void ServerTextBox_Validating(object sender, CancelEventArgs e)
         {
-            if (!IsValidServer())
+            if (!IsValidServer(GetServer()))
             {
                 e.Cancel = true;
-                errorProvider1.SetError(textBox1, "Please provide a valid server");
+                errorProvider1.SetError(ServerTextBox, "Please provide a valid server URL");
             }
+        }
+
+        private void ServerTextBox_Validated(object sender, EventArgs e)
+        {
+            errorProvider1.SetError(ServerTextBox, String.Empty);
         }
 
         public ConfigurationForm()
@@ -34,24 +37,31 @@ namespace JenkinsTransport
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Gets the server name from the form
+        /// </summary>
         public string GetServer()
         {
-            return textBox1.Text;
+            return ServerTextBox.Text;
         }
 
+        /// <summary>
+        /// Gets the username from the form
+        /// </summary>
+        /// <returns></returns>
         public string GetUsername()
         {
-            return textBox2.Text;
+            return UsernameTextBox.Text;
         }
 
+        /// <summary>
+        /// Gets the password from the form
+        /// </summary>
+        /// <returns></returns>
         public string GetPassword()
         {
-            return textBox3.Text;
+            return PasswordTextBox.Text;
         }
 
-        private void textBox1_Validated(object sender, EventArgs e)
-        {
-            errorProvider1.SetError(textBox1, String.Empty);
-        }
     }
 }

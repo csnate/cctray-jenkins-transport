@@ -30,12 +30,12 @@
         {
             this.components = new System.ComponentModel.Container();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.ServerLabel = new System.Windows.Forms.Label();
+            this.ServerTextBox = new System.Windows.Forms.TextBox();
+            this.UsernameLabel = new System.Windows.Forms.Label();
+            this.UsernameTextBox = new System.Windows.Forms.TextBox();
+            this.PasswordLabel = new System.Windows.Forms.Label();
+            this.PasswordTextBox = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
@@ -47,70 +47,70 @@
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.Controls.Add(this.label1);
-            this.flowLayoutPanel1.Controls.Add(this.textBox1);
-            this.flowLayoutPanel1.Controls.Add(this.label2);
-            this.flowLayoutPanel1.Controls.Add(this.textBox2);
-            this.flowLayoutPanel1.Controls.Add(this.label3);
-            this.flowLayoutPanel1.Controls.Add(this.textBox3);
+            this.flowLayoutPanel1.Controls.Add(this.ServerLabel);
+            this.flowLayoutPanel1.Controls.Add(this.ServerTextBox);
+            this.flowLayoutPanel1.Controls.Add(this.UsernameLabel);
+            this.flowLayoutPanel1.Controls.Add(this.UsernameTextBox);
+            this.flowLayoutPanel1.Controls.Add(this.PasswordLabel);
+            this.flowLayoutPanel1.Controls.Add(this.PasswordTextBox);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(12, 12);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(377, 90);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
-            // label1
+            // ServerLabel
             // 
-            this.label1.Location = new System.Drawing.Point(3, 3);
-            this.label1.Margin = new System.Windows.Forms.Padding(3);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(100, 20);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Server";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ServerLabel.Location = new System.Drawing.Point(3, 3);
+            this.ServerLabel.Margin = new System.Windows.Forms.Padding(3);
+            this.ServerLabel.Name = "ServerLabel";
+            this.ServerLabel.Size = new System.Drawing.Size(100, 20);
+            this.ServerLabel.TabIndex = 0;
+            this.ServerLabel.Text = "Server";
+            this.ServerLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // textBox1
+            // ServerTextBox
             // 
-            this.textBox1.Location = new System.Drawing.Point(109, 3);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(232, 20);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
-            this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
+            this.ServerTextBox.Location = new System.Drawing.Point(109, 3);
+            this.ServerTextBox.Name = "ServerTextBox";
+            this.ServerTextBox.Size = new System.Drawing.Size(232, 20);
+            this.ServerTextBox.TabIndex = 1;
+            this.ServerTextBox.Validating += new System.ComponentModel.CancelEventHandler(this.ServerTextBox_Validating);
+            this.ServerTextBox.Validated += new System.EventHandler(this.ServerTextBox_Validated);
             // 
-            // label2
+            // UsernameLabel
             // 
-            this.label2.Location = new System.Drawing.Point(3, 29);
-            this.label2.Margin = new System.Windows.Forms.Padding(3);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(100, 20);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Username";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.UsernameLabel.Location = new System.Drawing.Point(3, 29);
+            this.UsernameLabel.Margin = new System.Windows.Forms.Padding(3);
+            this.UsernameLabel.Name = "UsernameLabel";
+            this.UsernameLabel.Size = new System.Drawing.Size(100, 20);
+            this.UsernameLabel.TabIndex = 2;
+            this.UsernameLabel.Text = "Username";
+            this.UsernameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // textBox2
+            // UsernameTextBox
             // 
-            this.textBox2.Location = new System.Drawing.Point(109, 29);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(232, 20);
-            this.textBox2.TabIndex = 3;
+            this.UsernameTextBox.Location = new System.Drawing.Point(109, 29);
+            this.UsernameTextBox.Name = "UsernameTextBox";
+            this.UsernameTextBox.Size = new System.Drawing.Size(232, 20);
+            this.UsernameTextBox.TabIndex = 3;
             // 
-            // label3
+            // PasswordLabel
             // 
-            this.label3.Location = new System.Drawing.Point(3, 55);
-            this.label3.Margin = new System.Windows.Forms.Padding(3);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(100, 20);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Password";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.PasswordLabel.Location = new System.Drawing.Point(3, 55);
+            this.PasswordLabel.Margin = new System.Windows.Forms.Padding(3);
+            this.PasswordLabel.Name = "PasswordLabel";
+            this.PasswordLabel.Size = new System.Drawing.Size(100, 20);
+            this.PasswordLabel.TabIndex = 4;
+            this.PasswordLabel.Text = "Password";
+            this.PasswordLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // textBox3
+            // PasswordTextBox
             // 
-            this.textBox3.Location = new System.Drawing.Point(109, 55);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.PasswordChar = '*';
-            this.textBox3.Size = new System.Drawing.Size(232, 20);
-            this.textBox3.TabIndex = 5;
+            this.PasswordTextBox.Location = new System.Drawing.Point(109, 55);
+            this.PasswordTextBox.Name = "PasswordTextBox";
+            this.PasswordTextBox.PasswordChar = '*';
+            this.PasswordTextBox.Size = new System.Drawing.Size(232, 20);
+            this.PasswordTextBox.TabIndex = 5;
             // 
             // flowLayoutPanel2
             // 
@@ -172,12 +172,12 @@
         #endregion
 
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.Label ServerLabel;
+        private System.Windows.Forms.TextBox ServerTextBox;
+        private System.Windows.Forms.Label UsernameLabel;
+        private System.Windows.Forms.TextBox UsernameTextBox;
+        private System.Windows.Forms.Label PasswordLabel;
+        private System.Windows.Forms.TextBox PasswordTextBox;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
