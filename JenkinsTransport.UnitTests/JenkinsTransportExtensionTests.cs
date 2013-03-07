@@ -27,7 +27,6 @@ namespace JenkinsTransport.UnitTests
                 Server = "https://builds.apache.org/"
             };
             Transport.Settings = settings.ToString();
-            Transport.UseConfigurationFile = false;
             Transport.Configuration = new BuildServer(settings.Server);
         }
 
@@ -35,7 +34,6 @@ namespace JenkinsTransport.UnitTests
         public void TestJenkinsTransportExtensionInitialization()
         {
             Assert.IsNotNull(Transport.Settings);
-            Assert.IsFalse(Transport.UseConfigurationFile);
             Assert.AreEqual(Transport.Configuration.Url, "https://builds.apache.org/");
         }
 
@@ -63,24 +61,6 @@ namespace JenkinsTransport.UnitTests
             Assert.IsNotNull(jenkinsProjectManager.AuthorizationInformation);
 
             Assert.IsTrue(((JenkinsServerManager)Transport.RetrieveServerManager()).ProjectsAndCurrentStatus.Any());
-        }
-
-        [TestMethod]
-        public void TestConfigureWithNoConfigurationFile()
-        {
-            Transport.Configure(new Form());
-            Assert.AreEqual(Transport.Settings, String.Empty);
-            Assert.AreEqual(Transport.Configuration.Url, "http://add.a.configuration.file.com");
-        }
-
-        [TestMethod]
-        public void TestConfigureWithConfigurationFile()
-        {
-            // Copy the config file from JenkinsTransport to this project
-            Transport.UseConfigurationFile = true;
-            Transport.Configure(new Form());
-            Assert.IsNotNull(Transport.Settings);
-            Assert.AreEqual(Transport.Configuration.Url, "http://my.build.server.com");
         }
 
         [TestMethod]
