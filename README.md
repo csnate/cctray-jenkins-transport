@@ -14,8 +14,8 @@ Benefits
 
 Drawbacks
 ---------
-* Currently, you have to supplied your username and password in a config file.  This data is encoded in a Basic Authorization header on requests.
 * If you are monitoring a large number of projects, this has the potential to cause a lot of network traffic.
+* If you are using a username and password and you change your password, you cannot update your password (clicking Configure for the server doesn't work again).  You have to remove all projects and add the server again.
 
 How it works
 ------------
@@ -30,15 +30,13 @@ Installation
 ============
 1. Build the project locally.
 2. Assuming a standard CCTray installation, create a new directory at C:\Program Files (x86)\CCTray\extensions
-3. Copy the JenkinsTransport.dll and JenkinsTransport.dll.config to this new directory.
-4. Update the config with your values.
-5. Start CCTray and add a new server from File -> Settings -> Add -> Add Server
-6. Select the "Using a transport extension" option.
-7. Select the JenkinsTransport from the dropdown list.
-8. IMPORTANT - click the Configure Extension button.  This doesn't look like it does anything, but it will initialize the transport.
-9. Click Ok and you should now have acccess to your Jenkins projects.
+3. Copy the JenkinsTransport.dll assembly to this new directory.
+4. Start CCTray and add a new server from File -> Settings -> Add -> Add Server
+5. Select the "Using a transport extension" option.
+6. Select the JenkinsTransport from the dropdown list.
+7. Click the Configure Extension button.  Enter your server URL and (optionally) username and password.
+8. Click Ok and you should now have acccess to your Jenkins projects.
 
 TODOs
 -----
 * Jenkins users have an API token. It would be great to figure out how to use this instead of the encoded username and password in the config file
-* Instead of a config file, pop a windows form to capture this same data on configure.

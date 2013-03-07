@@ -116,20 +116,23 @@ namespace JenkinsTransport
 
         public bool Configure(IWin32Window owner)
         {
-            // Create the Settings object
-            if (UseConfigurationFile)
+            var form = new ConfigurationForm();
+            if (form.ShowDialog(owner) == DialogResult.OK)
             {
-                var config = GetApplicationConfiguration();
-                Configuration = GetBuildServerFromConfiguration(config);
-                Settings = GetSettingsFromConfiguration(config).ToString();
+                var server = form.GetServer();
+                Configuration = new BuildServer(server);
+                var settings = new Settings()
+                                   {
+                                       Project = String.Empty,
+                                       Server = server,
+                                       Username = form.GetUsername(),
+                                       Password = form.GetPassword()
+                                   };
+                Settings = settings.ToString();
+                return true;
             }
-            else
-            {
-                Configuration = new BuildServer("http://add.a.configuration.file.com");
-                Settings = String.Empty;
-            }
-            
-            return true;
+
+            return false;
         }
 
         public string DisplayName { get { return "Jenkins Transport Extension"; } }
