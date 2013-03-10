@@ -39,4 +39,4 @@ Installation
 
 TODOs
 -----
-* Jenkins users have an API token. It would be great to figure out how to use this instead of the encoded username and password in the config file
+* Jenkins users have an API token. It would be great to figure out how to use this instead of the encoded username and password
