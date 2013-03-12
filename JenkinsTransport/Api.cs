@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -24,6 +25,36 @@ namespace JenkinsTransport
         protected string BaseUrl { get; set; }
         protected string ProjectBaseUrl { get; private set; }
         protected string AuthInfo { get; set; }
+
+        protected static XDocument GetXDocument(string url, string authInfo)
+        {
+            var request = WebRequest.Create(url);
+            if (!String.IsNullOrEmpty(authInfo))
+            {
+                request.Headers["Authorization"] = "Basic " + authInfo;
+            }
+            request.Method = "GET";
+
+            return GetXDocument(request);
+        }
+
+        protected static XDocument GetXDocument(WebRequest request)
+        {
+            using (var response = request.GetResponse())
+            {
+                using (var responseStream = response.GetResponseStream())
+                {
+                    if (responseStream != null)
+                    {
+                        using (var rd = new StreamReader(responseStream))
+                        {
+                            return XDocument.Parse(rd.ReadToEnd());
+                        }
+                    }
+                }
+            }
+            return new XDocument();
+        }
 
         protected void MakeRequest(string url, string method = "POST")
         {
@@ -58,7 +89,7 @@ namespace JenkinsTransport
         /// </summary>
         public List<JenkinsJob> GetAllJobs()
         {
-            var xDoc = XmlUtils.GetXDocumentFromUrl(BaseUrl + AllJobs, AuthInfo);
+            var xDoc = GetXDocument(BaseUrl + AllJobs, AuthInfo);
             return GetAllJobs(xDoc);
         }
 
@@ -79,7 +110,7 @@ namespace JenkinsTransport
         /// <param name="currentStatus">the current stored status</param>
         public ProjectStatus GetProjectStatus(string projectUrl, ProjectStatus currentStatus)
         {
-            var xDoc = XmlUtils.GetXDocumentFromUrl(projectUrl + ExcludeBuild, AuthInfo);
+            var xDoc = GetXDocument(projectUrl + ExcludeBuild, AuthInfo);
             return GetProjectStatus(xDoc, currentStatus);
         }
 
@@ -90,7 +121,8 @@ namespace JenkinsTransport
         /// <param name="currentStatus">the current stored status</param>
         public ProjectStatus GetProjectStatus(XDocument xDoc, ProjectStatus currentStatus)
         {
-            var firstElement = xDoc.Element("freeStyleProject");
+            // The first element in the document is named based on the type of project (freeStyleProject, mavenModuleSet, etc). Can't access based on name.
+            var firstElement = xDoc.Descendants().First<XElement>(); 
             var color = (string)firstElement.Element("color");
             var lastBuildElement = firstElement.Element("lastBuild");  // Will contain the latest (in progress) build number
             var lastSuccessfulBuildElement = firstElement.Element("lastSuccessfulBuild");
@@ -131,27 +163,6 @@ namespace JenkinsTransport
                                         ShowStartStopButton = true
                                     };
             return projectStatus;
-            //return new ProjectStatus(
-            //    name,
-            //    String.Empty, // Category
-            //    EnumUtils.GetProjectActivity(color),
-            //    EnumUtils.GetIntegrationStatus(color),
-            //    EnumUtils.GetProjectIntegratorState((bool) firstElement.Element("buildable")),
-            //    (string) firstElement.Element("url"), // webUrl
-            //    lastCompletedBuildInfo.Timestamp, // LastBuildDate
-            //    lastCompletedBuildInfo.Number, // LastBuildLabel
-            //    lastSuccessfulBuildInfo.Number, // LastSuccessfulBuildLabel
-            //    new DateTime(), // NextBuildTime -- TODO - this is incorrect, but I don't know how to get the next build time
-            //    String.Empty, // BuildStage
-            //    name, // Queue - not used
-            //    0, // QueuePriority - not used
-            //    new List<ParameterBase>() // Parameters - not used yet
-            //    )
-            //           {
-            //               Description = (string) firstElement.Element("description"),
-            //               ShowForceBuildButton = true, // If the user can't build, this will error out
-            //               ShowStartStopButton = true // If the user can't enable/disable, this will error out
-            //           };
         }
 
         /// <summary>
@@ -160,7 +171,7 @@ namespace JenkinsTransport
         /// <param name="buildInformationUrl">the build information url, without /api/xml</param>
         public JenkinsBuildInformation GetBuildInformation(string buildInformationUrl)
         {
-            var xDoc = XmlUtils.GetXDocumentFromUrl(buildInformationUrl + XmlApi, AuthInfo);
+            var xDoc = GetXDocument(buildInformationUrl + XmlApi, AuthInfo);
             return new JenkinsBuildInformation(xDoc);
         }
 
@@ -171,7 +182,7 @@ namespace JenkinsTransport
         public ProjectStatusSnapshot GetProjectStatusSnapshot(string projectName)
         {
             var url = ProjectBaseUrl + HttpUtility.HtmlEncode(projectName) + ExcludeBuild;
-            var xDoc = XmlUtils.GetXDocumentFromUrl(url, AuthInfo);
+            var xDoc = GetXDocument(url, AuthInfo);
             return GetProjectStatusSnapshot(xDoc);
         }
 
@@ -181,7 +192,7 @@ namespace JenkinsTransport
         /// <param name="xDoc">the XDcoument to parse</param>
         public ProjectStatusSnapshot GetProjectStatusSnapshot(XDocument xDoc)
         {
-            var firstElement = xDoc.Element("freeStyleProject");
+            var firstElement = xDoc.Descendants().First<XElement>();  // The first element in the document is named based on the type of project (freeStyleProject, mavenModuleSet, etc)
             var color = (string)firstElement.Element("color");
             var lastBuildInfo = GetBuildInformation((string) firstElement.Element("lastBuild").Element("url"));
             var status = lastBuildInfo.Building ? ItemBuildStatus.Running : EnumUtils.GetItemBuildStatus(color);
@@ -246,8 +257,8 @@ namespace JenkinsTransport
         {
             // Need to get the last build number/url
             var projectUrl = ProjectBaseUrl + projectName;
-            var xDoc = XmlUtils.GetXDocumentFromUrl(projectUrl + ExcludeBuild, AuthInfo);
-            var lastBuildUrl = (string) xDoc.Element("freeStyleProject").Element("lastBuild").Element("url");
+            var xDoc = GetXDocument(projectUrl + ExcludeBuild, AuthInfo);
+            var lastBuildUrl = (string) xDoc.Descendants().First<XElement>().Element("lastBuild").Element("url");
 
             MakeRequest(lastBuildUrl + "stop");
         }

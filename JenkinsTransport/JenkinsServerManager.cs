@@ -46,16 +46,12 @@ namespace JenkinsTransport
         /// <param name="settings">the Settings</param>
         public void Initialize(BuildServer server, string session, Settings settings)
         {
-            // Removing this check for now.  It shouldn't matter that you ;
-            //if (IsInitialized) return;
-
             Configuration = server;
             SessionToken = session;
             Settings = settings;
             Login();
             Api = new Api(Configuration.Url, AuthorizationInformation);
             ProjectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
-            IsInitialized = true;
         }
 
         #region ICruiseServerManager implmentations
@@ -125,7 +121,5 @@ namespace JenkinsTransport
         /// The list of projects configured/set for this server
         /// </summary>
         public Dictionary<string, ProjectStatus> ProjectsAndCurrentStatus { get; private set; }
-
-        public bool IsInitialized { get; private set; }
     }
 }

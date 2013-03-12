@@ -47,11 +47,6 @@ namespace JenkinsTransport
             Api.ForceBuild(ProjectName, parameters);
         }
 
-        public void FixBuild(string sessionToken, string fixingUserName)
-        {
-            throw new NotImplementedException();
-        }
-
         public void AbortBuild(string sessionToken, string userName)
         {
             Api.AbortBuild(ProjectName);
@@ -67,14 +62,20 @@ namespace JenkinsTransport
             Api.StartProject(ProjectName);
         }
 
-        public void CancelPendingRequest(string sessionToken)
-        {
-            throw new NotImplementedException();
-        }
-
         public ProjectStatusSnapshot RetrieveSnapshot()
         {
             return Api.GetProjectStatusSnapshot(ProjectName);
+        }
+
+        public List<ParameterBase> ListBuildParameters()
+        {
+            return new List<ParameterBase>();  // Need to return an empty list if we are not implementing. CCTray calls this method with every call to ForceBuild
+        }
+
+        #region Not Implemented
+        public void CancelPendingRequest(string sessionToken)
+        {
+            throw new NotImplementedException();
         }
 
         public PackageDetails[] RetrievePackageList()
@@ -87,10 +88,11 @@ namespace JenkinsTransport
             throw new NotImplementedException();
         }
 
-        public List<ParameterBase> ListBuildParameters()
+        public void FixBuild(string sessionToken, string fixingUserName)
         {
-            return new List<ParameterBase>();
+            throw new NotImplementedException();
         }
+        #endregion
 
         public string ProjectName { get; private set; }
         #endregion

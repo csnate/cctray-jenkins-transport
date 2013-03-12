@@ -31,7 +31,7 @@ namespace JenkinsTransport
 
         public JenkinsBuildInformation(XContainer document)
         {
-            var firstElement = document.Element("freeStyleBuild");
+            var firstElement = document.Descendants().First<XElement>();
             Timestamp = Epoch.AddMilliseconds((long) firstElement.Element("timestamp"));
             Number = (string) firstElement.Element("number");
             Duration = (int) firstElement.Element("duration");

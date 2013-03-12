@@ -17,16 +17,27 @@ namespace JenkinsTransport
         [XmlElement(ElementName = "Project")]
         public string Project { get; set; }
 
-        [XmlElement(ElementName = "Username")]
-        public string Username { get; set; }
-
-        [XmlElement(ElementName = "Password")]
-        public string Password { get; set; }
-
+        [XmlElement(ElementName = "AuthorizationInformation")]
+        private string _authorizationInformation;
         public string AuthorizationInformation
         {
-            get { return Convert.ToBase64String(Encoding.Default.GetBytes(String.Format("{0}:{1}", Username, Password))); }
+            get
+            {
+                return _authorizationInformation ?? (_authorizationInformation = !String.IsNullOrEmpty(Username) && !String.IsNullOrEmpty(Password)
+                  ? Convert.ToBase64String(Encoding.Default.GetBytes(String.Format("{0}:{1}", Username, Password)))
+                  : String.Empty);
+            }
+            set
+            {
+                _authorizationInformation = value;
+            }
         }
+        
+        [XmlIgnore]
+        public string Username { get; set; }
+        [XmlIgnore]
+        public string Password { get; set; }
+
         #endregion
 
         public static Settings GetSettings(string settingsString)

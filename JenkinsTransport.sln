@@ -1,19 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Web
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JenkinsTransport", "JenkinsTransport\JenkinsTransport.csproj", "{6B149D37-AAEA-419C-A23F-F1796BD78615}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JenkinsTransport.Tests", "JenkinsTransport.Tests\JenkinsTransport.Tests.csproj", "{6C85550A-7C95-47FC-BD4A-26ED9FA7A9FC}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{F67F16CA-37E0-41E0-8170-35D674F51E49}"
-	ProjectSection(SolutionItems) = preProject
-		Examples\jenkins-api-all-jobs-only.xml = Examples\jenkins-api-all-jobs-only.xml
-		Examples\jenkins-api-all.xml = Examples\jenkins-api-all.xml
-		Examples\jenkins-api-build-info-in-progress.xml = Examples\jenkins-api-build-info-in-progress.xml
-		Examples\jenkins-api-build-info.xml = Examples\jenkins-api-build-info.xml
-		Examples\jenkins-api-project-disabled.xml = Examples\jenkins-api-project-disabled.xml
-		Examples\jenkins-api-project.xml = Examples\jenkins-api-project.xml
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JenkinsTransport.UnitTests", "JenkinsTransport.UnitTests\JenkinsTransport.UnitTests.csproj", "{75AA65FB-1567-4608-A95E-ACE1FA0F1956}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +15,10 @@ Global
 		{6B149D37-AAEA-419C-A23F-F1796BD78615}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B149D37-AAEA-419C-A23F-F1796BD78615}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B149D37-AAEA-419C-A23F-F1796BD78615}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6C85550A-7C95-47FC-BD4A-26ED9FA7A9FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6C85550A-7C95-47FC-BD4A-26ED9FA7A9FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6C85550A-7C95-47FC-BD4A-26ED9FA7A9FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6C85550A-7C95-47FC-BD4A-26ED9FA7A9FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75AA65FB-1567-4608-A95E-ACE1FA0F1956}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75AA65FB-1567-4608-A95E-ACE1FA0F1956}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75AA65FB-1567-4608-A95E-ACE1FA0F1956}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75AA65FB-1567-4608-A95E-ACE1FA0F1956}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
