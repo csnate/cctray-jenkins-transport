@@ -78,6 +78,7 @@ namespace JenkinsTransport
                                             Password = form.GetPassword()
                                         };
                     Settings = settings.ToString();
+                    _isServerManagerInitialized = false;  // We will need to initialize the server manager again if their information has changed
                     return true;
                 }
                 return false;

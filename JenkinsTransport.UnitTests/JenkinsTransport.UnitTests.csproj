@@ -64,6 +64,7 @@
     <Compile Include="JenkinsServerManagerTests.cs" />
     <Compile Include="JenkinsProjectManagerTests.cs" />
     <Compile Include="ApiTests.cs" />
+    <Compile Include="ConfigurationFormTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JenkinsTransport\JenkinsTransport.csproj">
