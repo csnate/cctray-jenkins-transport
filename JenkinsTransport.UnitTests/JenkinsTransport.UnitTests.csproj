@@ -68,6 +68,7 @@
     <Compile Include="SettingsTests.cs" />
     <Compile Include="JenkinsBuildInformationTests.cs" />
     <Compile Include="EnumUtilsTests.cs" />
+    <Compile Include="BuildParametersTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JenkinsTransport\JenkinsTransport.csproj">
