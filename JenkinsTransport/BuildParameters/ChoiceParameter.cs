@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using JenkinsTransport.Interfaces;
+using ThoughtWorks.CruiseControl.Remote;
+using ThoughtWorks.CruiseControl.Remote.Parameters;
 
 namespace JenkinsTransport.BuildParameters
 {
@@ -12,13 +13,26 @@ namespace JenkinsTransport.BuildParameters
     /// </summary>
     public class ChoiceParameter : BaseBuildParameter
     {
-        public List<string> Options { get; private set; } 
+        public NameValuePair[] Options { get; private set; } 
 
         public ChoiceParameter(XContainer document) : base(document)
         {
             ParameterType = BuildParameterType.ChoiceParameterDefinition;
 
-            Options = document.Elements("choice").Select(a => (string)a).ToList();
+            Options = document.Elements("choice").Select(a => new NameValuePair(a.Value, a.Value)).ToArray();
+        }
+
+        public override ParameterBase ToParameterBase()
+        {
+            return new SelectParameter()
+                   {
+                       Name = Name,
+                       Description = Description,
+                       DefaultValue = DefaultValue,
+                       IsRequired = true,
+                       DisplayName = Name,
+                       DataValues = Options
+                   };
         }
     }
 }

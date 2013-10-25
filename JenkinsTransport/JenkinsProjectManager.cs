@@ -69,7 +69,8 @@ namespace JenkinsTransport
 
         public List<ParameterBase> ListBuildParameters()
         {
-            return new List<ParameterBase>();  // Need to return an empty list if we are not implementing. CCTray calls this method with every call to ForceBuild
+            // CCTray calls this method with every call to ForceBuild
+            return Api.GetBuildParameters(ProjectName);
         }
 
         #region Not Implemented

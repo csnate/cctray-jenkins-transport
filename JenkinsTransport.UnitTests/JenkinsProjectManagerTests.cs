@@ -24,13 +24,13 @@ namespace JenkinsTransport.UnitTests
             };
             var buildServer = new BuildServer(settings.Server);
             Manager = new JenkinsProjectManager();
-            Manager.Initialize(buildServer, "Hadoop-1-Build", settings);
+            Manager.Initialize(buildServer, "Hadoop-1-win", settings);
         }
 
         [TestMethod]
         public void TestInstanciation()
         {
-            Assert.AreEqual(Manager.ProjectName, "Hadoop-1-Build");
+            Assert.AreEqual(Manager.ProjectName, "Hadoop-1-win");
             Assert.AreEqual(Manager.AuthorizationInformation, String.Empty);
             Assert.AreEqual(Manager.Configuration.Url, "https://builds.apache.org/");
             Assert.AreEqual(Manager.Settings.Server, "https://builds.apache.org/");
@@ -40,14 +40,14 @@ namespace JenkinsTransport.UnitTests
         public void TestRetrieveSnapshot()
         {
             var snapshot = Manager.RetrieveSnapshot();
-            Assert.AreEqual(snapshot.Name, "Hadoop-1-Build");
+            Assert.AreEqual(snapshot.Name, "Hadoop-1-win");
         }
 
         [TestMethod]
         public void TestListBuildParameters()
         {
             var buildParameters = Manager.ListBuildParameters();
-            Assert.IsFalse(buildParameters.Any());
+            Assert.IsTrue(buildParameters.Any());
         }
         
     }

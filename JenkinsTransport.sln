@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Web
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JenkinsTransport", "JenkinsTransport\JenkinsTransport.csproj", "{6B149D37-AAEA-419C-A23F-F1796BD78615}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JenkinsTransport.UnitTests", "JenkinsTransport.UnitTests\JenkinsTransport.UnitTests.csproj", "{75AA65FB-1567-4608-A95E-ACE1FA0F1956}"

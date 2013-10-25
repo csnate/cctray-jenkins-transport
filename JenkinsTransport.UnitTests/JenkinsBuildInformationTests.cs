@@ -2,8 +2,8 @@
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Xml.Linq;
-using JenkinsTransport.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ThoughtWorks.CruiseControl.Remote.Parameters;
 
 namespace JenkinsTransport.UnitTests
 {
@@ -89,84 +89,6 @@ namespace JenkinsTransport.UnitTests
     <changeSet></changeSet>
 </freeStyleBuild>";
 
-        private const string BuildInformationWithBuildParametersXml = @"<freeStyleBuild>
-    <action>
-        <parameterDefinition>
-            <defaultParameterValue>
-                <value>ONE</value>
-            </defaultParameterValue>
-            <description>Select a choice</description>
-            <name>CHOICE.1</name>
-            <type>ChoiceParameterDefinition</type>
-            <choice>ONE</choice>
-            <choice>TWO</choice>
-            <choice>THREE</choice>
-        </parameterDefinition>
-        <parameterDefinition>
-            <defaultParameterValue>
-                <value />
-            </defaultParameterValue>
-            <description></description>
-            <name>a</name>
-            <type>UnknownParameterDefinition</type>
-        </parameterDefinition>
-    </action>
-    <action>
-        <cause>
-            <shortDescription>Started by an SCM change</shortDescription>
-        </cause>
-    </action>
-    <action></action>
-    <action></action>
-    <action></action>
-    <action>
-        <failCount>0</failCount>
-        <skipCount>44</skipCount>
-        <totalCount>565</totalCount>
-        <urlName>testReport</urlName>
-    </action>
-    <action></action>
-    <building>false</building>
-    <duration>964519</duration>
-    <estimatedDuration>878719</estimatedDuration>
-    <fullDisplayName>Test Project #1</fullDisplayName>
-    <id>2013-01-23_14-50-49</id>
-    <keepLog>false</keepLog>
-    <number>1</number>
-    <result>SUCCESS</result>
-    <timestamp>1358970649000</timestamp>
-    <url>http://domain.com/job/Test%20Project/1/</url>
-    <builtOn></builtOn>
-    <changeSet>
-        <item>
-            <affectedPath>test.txt</affectedPath>
-            <author>
-                <absoluteUrl>http://domain.com/user/tester</absoluteUrl>
-                <fullName>Tester, Tester</fullName>
-            </author>
-            <commitId>1</commitId>
-            <timestamp>1358970529987</timestamp>
-            <date>2013-01-23T19:48:49.987982Z</date>
-            <msg>Test commit</msg>
-            <path>
-                <editType>add</editType>
-                <file>test.txt</file>
-            </path>
-            <revision>5533</revision>
-            <user>Tester, Tester</user>
-        </item>
-        <kind>svn</kind>
-        <revision>
-            <module>http://domain.com/TestProject/trunk</module>
-            <revision>5533</revision>
-        </revision>
-    </changeSet>
-    <culprit>
-        <absoluteUrl>http://domain.com/user/tester</absoluteUrl>
-        <fullName>Tester, Tester</fullName>
-    </culprit>
-</freeStyleBuild>";
-
         [TestMethod]
         public void TestConstructorWithFinishedBuild()
         {
@@ -182,8 +104,6 @@ namespace JenkinsTransport.UnitTests
             Assert.AreEqual(info.FullDisplayName, "Test Project #1");
             Assert.AreEqual(info.Timestamp, d);
             Assert.IsFalse(info.Building);
-
-            Assert.AreEqual(info.BuildParameters.Count, 0);
         }
 
         [TestMethod]
@@ -194,18 +114,6 @@ namespace JenkinsTransport.UnitTests
 
             Assert.IsNotNull(info);
             Assert.IsTrue(info.Building);
-        }
-
-        [TestMethod]
-        public void TestConstructorWithBuildParameters()
-        {
-            var xDoc = XDocument.Parse(BuildInformationWithBuildParametersXml);
-            var info = new JenkinsBuildInformation(xDoc);
-
-            Assert.IsTrue(info.BuildParameters.Any());
-            Assert.AreEqual(info.BuildParameters.Count, 1); // 
-
-            CollectionAssert.AllItemsAreInstancesOfType(info.BuildParameters, typeof(IBuildParameter));
         }
     }
 }

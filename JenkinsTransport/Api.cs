@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Web;
 using System.Xml.Linq;
+using JenkinsTransport.BuildParameters;
 using ThoughtWorks.CruiseControl.Remote;
 using ThoughtWorks.CruiseControl.Remote.Parameters;
 
@@ -18,6 +19,7 @@ namespace JenkinsTransport
         private const string AllJobs = XmlApi + "?xpath=/hudson/job&wrapper=jobs";
         private const string ExcludeBuild = XmlApi + "?exclude=freeStyleProject/build&exclude=freeStyleProject/healthReport&exclude=freeStyleProject/action";
         private const string ForceBuildParams = "/build?delay=0sec";
+        private const string ForceBuildWithParametersParams = "/buildWithParameters?";
         private const string StopProjectParams = "/disable";
         private const string StartProjectParams = "/enable";
         #endregion
@@ -176,6 +178,46 @@ namespace JenkinsTransport
         }
 
         /// <summary>
+        /// Returns the build parameters for a project
+        /// </summary>
+        /// <param name="projectName">the project name</param>
+        public List<ParameterBase> GetBuildParameters(string projectName)
+        {
+            var buildProjectUrl = ProjectBaseUrl + HttpUtility.HtmlEncode(projectName);
+            var xDoc = GetXDocument(buildProjectUrl + XmlApi, AuthInfo);
+
+            // Construct the build parameters
+            var buildParameters = new List<ParameterBase>();
+            var parametersNodes = xDoc.Descendants("action").Elements("parameterDefinition");
+            var supportedTypes = Enum.GetNames(typeof(BuildParameterType));
+            foreach (var parameterNode in parametersNodes)
+            {
+                var type = (string)parameterNode.Element("type");
+                if (!supportedTypes.Contains(type)) continue;
+
+                switch ((BuildParameterType)Enum.Parse(typeof(BuildParameterType), type))
+                {
+                    case BuildParameterType.BooleanParameterDefinition:
+                        var booleanBuildParamter = new BuildParameters.BooleanParameter(parameterNode);
+                        buildParameters.Add(booleanBuildParamter.ToParameterBase());
+                        break;
+
+                    case BuildParameterType.ChoiceParameterDefinition:
+                        var choiceBuildParameter = new ChoiceParameter(parameterNode);
+                        buildParameters.Add(choiceBuildParameter.ToParameterBase());
+                        break;
+
+                    case BuildParameterType.StringParameterDefinition:
+                        var stringBuildParameter = new StringParameter(parameterNode);
+                        buildParameters.Add(stringBuildParameter.ToParameterBase());
+                        break;
+                }
+            }
+
+            return buildParameters;
+        } 
+
+        /// <summary>
         /// Get the project snapshot for a project
         /// </summary>
         /// <param name="projectName">the project name to check</param>
@@ -245,8 +287,16 @@ namespace JenkinsTransport
                 return;
             }
 
-            // TODO - write the build with params
-            ForceBuild(projectName);
+            // Construct the query string
+            var queryString = new StringBuilder();
+            foreach (var parameter in parameters)
+            {
+                queryString.Append(parameter.Key + "=" + parameter.Value + "&");
+            }
+            queryString.Remove(queryString.Length - 1, 1);
+
+            // Even though the documentation says to POST to this url, it looks like it needs to be a GET in order to pass the params correctly
+            MakeRequest(ProjectBaseUrl + projectName + ForceBuildWithParametersParams + queryString.ToString(), "GET");
         }
 
         /// <summary>

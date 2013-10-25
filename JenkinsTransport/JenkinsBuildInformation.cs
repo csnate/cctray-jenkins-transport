@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using JenkinsTransport.BuildParameters;
-using JenkinsTransport.Interfaces;
 
 namespace JenkinsTransport
 {
@@ -19,7 +18,6 @@ namespace JenkinsTransport
         public int EstimatedDuration { get; private set; }
         public string FullDisplayName { get; private set; }
         public string Id { get; private set; }
-        public List<IBuildParameter> BuildParameters { get; set; }
 
         public JenkinsBuildInformation()
         {
@@ -30,7 +28,6 @@ namespace JenkinsTransport
             Id = String.Empty;
             Building = false;
             FullDisplayName = String.Empty;
-            BuildParameters = new List<IBuildParameter>();
         }
 
         public JenkinsBuildInformation(XContainer document)
@@ -43,32 +40,6 @@ namespace JenkinsTransport
             FullDisplayName = (string) firstElement.Element("fullDisplayName");
             Id = (string) firstElement.Element("id");
             Building = (bool) firstElement.Element("building");
-
-            // Construct the build parameters
-            BuildParameters = new List<IBuildParameter>();
-            var parameters = firstElement.Descendants("action").Elements("parameterDefinition");
-            var supportedTypes = Enum.GetNames(typeof(BuildParameterType));
-            foreach (var parameter in parameters)
-            {
-                var type = (string) parameter.Element("type");
-                if (!supportedTypes.Contains(type)) continue;
-
-                switch ((BuildParameterType)Enum.Parse(typeof (BuildParameterType), type))
-                {
-                    case BuildParameterType.BooleanParameterDefinition:
-                        BuildParameters.Add(new BooleanParameter(parameter));
-                        break;
-
-                    case BuildParameterType.ChoiceParameterDefinition:
-                        BuildParameters.Add(new ChoiceParameter(parameter));
-                        break;
-                    
-                    case BuildParameterType.StringParameterDefinition:
-                        BuildParameters.Add(new StringParameter(parameter));
-                        break;
-                }
-            }
-
         }
     }
 }

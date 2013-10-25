@@ -54,8 +54,8 @@
     <Compile Include="BuildParameters\BaseBuildParameter.cs" />
     <Compile Include="BuildParameters\BooleanParameter.cs" />
     <Compile Include="BuildParameters\ChoiceParameter.cs" />
-    <Compile Include="BuildParameters\BuildParameterType.cs" />
     <Compile Include="BuildParameters\StringParameter.cs" />
+    <Compile Include="BuildParameters\BuildParameterType.cs" />
     <Compile Include="ConfigurationForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -63,7 +63,6 @@
       <DependentUpon>ConfigurationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="EnumUtils.cs" />
-    <Compile Include="Interfaces\IBuildParameter.cs" />
     <Compile Include="JenkinsBuildInformation.cs" />
     <Compile Include="JenkinsJob.cs" />
     <Compile Include="JenkinsProjectManager.cs" />

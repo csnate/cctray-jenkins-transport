@@ -34,9 +34,17 @@ namespace JenkinsTransport.UnitTests
 
             CollectionAssert.AllItemsAreNotNull(choice.Options);
             CollectionAssert.AllItemsAreUnique(choice.Options);
-            CollectionAssert.Contains(choice.Options, "ONE");
-            CollectionAssert.Contains(choice.Options, "TWO");
-            CollectionAssert.Contains(choice.Options, "THREE");
+
+            // Check the name/value pairs
+            Assert.AreEqual(choice.Options.Length, 3);
+            Assert.AreEqual(choice.Options[0].Value, "ONE");
+            Assert.AreEqual(choice.Options[0].Name, "ONE");
+
+            Assert.AreEqual(choice.Options[1].Value, "TWO");
+            Assert.AreEqual(choice.Options[1].Name, "TWO");
+
+            Assert.AreEqual(choice.Options[2].Value, "THREE");
+            Assert.AreEqual(choice.Options[2].Name, "THREE");
         }
 
         [TestMethod]
@@ -58,6 +66,9 @@ namespace JenkinsTransport.UnitTests
             Assert.AreEqual(boolean.Description, "Select a checkbox option");
             Assert.AreEqual(boolean.ParameterType, BuildParameterType.BooleanParameterDefinition);
             Assert.AreEqual(boolean.DefaultValue, "true");
+
+            // Check the ParameterBase values
+            var ccNetBooleanParameter = boolean.ToParameterBase();
         }
 
         [TestMethod]
