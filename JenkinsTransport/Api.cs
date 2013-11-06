@@ -19,7 +19,7 @@ namespace JenkinsTransport
         private const string AllJobs = XmlApi + "?xpath=/hudson/job&wrapper=jobs";
         private const string ExcludeBuild = XmlApi + "?exclude=freeStyleProject/build&exclude=freeStyleProject/healthReport&exclude=freeStyleProject/action";
         private const string ForceBuildParams = "/build?delay=0sec";
-        private const string ForceBuildWithParametersParams = "/buildWithParameters?";
+        private const string ForceBuildWithParametersParams = "/buildWithParameters";
         private const string StopProjectParams = "/disable";
         private const string StartProjectParams = "/enable";
         #endregion
@@ -58,7 +58,7 @@ namespace JenkinsTransport
             return new XDocument();
         }
 
-        protected void MakeRequest(string url, string method = "POST")
+        protected void MakeRequest(string url, string method = "POST", byte[] postData = null)
         {
             var request = (HttpWebRequest) WebRequest.Create(url);
             if (!String.IsNullOrEmpty(AuthInfo))
@@ -72,6 +72,16 @@ namespace JenkinsTransport
             if (method == "POST")
             {
                 request.ContentType = "application/x-www-form-urlencoded";
+
+                // If we need to supply post data, then we have to write it to the response stream
+                if (postData != null)
+                {
+                    request.ContentLength = postData.Length;
+                    using (var dataStream = request.GetRequestStream())
+                    {
+                        dataStream.Write(postData, 0, postData.Length);
+                    }
+                }
             }
 
             // I don't care what is returned, but the response should be disposed
@@ -295,8 +305,31 @@ namespace JenkinsTransport
             }
             queryString.Remove(queryString.Length - 1, 1);
 
-            // Even though the documentation says to POST to this url, it looks like it needs to be a GET in order to pass the params correctly
-            MakeRequest(ProjectBaseUrl + projectName + ForceBuildWithParametersParams + queryString.ToString(), "GET");
+            // I've see some Jenkins instances require this to be a POST request if Authentication is supplied.
+            // Check if Auth info is empty and make the appropriate change to the method and post data
+            if (String.IsNullOrEmpty(AuthInfo))
+            {
+                MakeRequest(ProjectBaseUrl + projectName + ForceBuildWithParametersParams + "?" + queryString.ToString(), "GET");
+            }
+            else
+            {
+                var postByteData = Encoding.UTF8.GetBytes(queryString.ToString());
+
+                // With POST requests, the server will sometimes return a 403 Forbidden response
+                // However, the build still goes through correctly, so I'm catching and ignoring any WebExecptions with response code of 403
+                try
+                {
+                    MakeRequest(ProjectBaseUrl + projectName + ForceBuildWithParametersParams, "POST", postByteData);
+                }
+                catch (WebException e)
+                {
+                    if (e.Status != WebExceptionStatus.ProtocolError && !e.Message.Contains("403"))
+                    {
+                        throw;
+                    }
+                }
+                
+            }
         }
 
         /// <summary>
