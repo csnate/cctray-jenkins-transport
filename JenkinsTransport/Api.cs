@@ -323,7 +323,7 @@ namespace JenkinsTransport
                 }
                 catch (WebException e)
                 {
-                    if (e.Status != WebExceptionStatus.ProtocolError && !e.Message.Contains("403"))
+                    if (e.Status != WebExceptionStatus.ProtocolError || !e.Message.Contains("403"))
                     {
                         throw;
                     }
