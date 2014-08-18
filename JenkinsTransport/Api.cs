@@ -15,13 +15,13 @@ namespace JenkinsTransport
     public class Api
     {
         #region Constants
-        private const string XmlApi = "/api/xml";
-        private const string AllJobs = XmlApi + "?xpath=/hudson/job&wrapper=jobs";
-        private const string ExcludeBuild = XmlApi + "?exclude=freeStyleProject/build&exclude=freeStyleProject/healthReport&exclude=freeStyleProject/action";
-        private const string ForceBuildParams = "/build?delay=0sec";
-        private const string ForceBuildWithParametersParams = "/buildWithParameters";
-        private const string StopProjectParams = "/disable";
-        private const string StartProjectParams = "/enable";
+        protected const string XmlApi = "/api/xml";
+        protected const string AllJobs = XmlApi + "?depth=1&xpath=/hudson/job&wrapper=jobs";
+        protected const string ExcludeBuild = XmlApi + "?exclude=freeStyleProject/build&exclude=freeStyleProject/healthReport&exclude=freeStyleProject/action";
+        protected const string ForceBuildParams = "/build?delay=0sec";
+        protected const string ForceBuildWithParametersParams = "/buildWithParameters";
+        protected const string StopProjectParams = "/disable";
+        protected const string StartProjectParams = "/enable";
         #endregion
 
         protected string BaseUrl { get; set; }
@@ -31,6 +31,7 @@ namespace JenkinsTransport
         protected static XDocument GetXDocument(string url, string authInfo)
         {
             var request = WebRequest.Create(url);
+
             if (!String.IsNullOrEmpty(authInfo))
             {
                 request.Headers["Authorization"] = "Basic " + authInfo;

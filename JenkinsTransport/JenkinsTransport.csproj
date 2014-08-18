@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api.cs" />
+    <Compile Include="ApiNonStatic.cs" />
     <Compile Include="BuildParameters\BaseBuildParameter.cs" />
     <Compile Include="BuildParameters\BooleanParameter.cs" />
     <Compile Include="BuildParameters\ChoiceParameter.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="JenkinsTransportExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="WebRequestFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
