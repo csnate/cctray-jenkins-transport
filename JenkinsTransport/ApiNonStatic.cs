@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using System.Text;
+using ThoughtWorks.CruiseControl.Remote;
 
 namespace JenkinsTransport
 {
@@ -46,9 +47,15 @@ namespace JenkinsTransport
             return new XDocument();
         }
 
-        public XDocument GetDoc()
+        public XDocument GetAllJobsDoc()
         {
             return GetXDocument(BaseUrl + AllJobs, AuthInfo);            
+        }
+
+        public XDocument GetProjectStatusDoc(string projectUrl)
+        {
+            var xDoc = GetXDocument(projectUrl + ExcludeBuild, AuthInfo);
+            return xDoc;
         }
 
         /// <summary>
@@ -58,6 +65,17 @@ namespace JenkinsTransport
         {
             var xDoc = GetXDocument(BaseUrl + AllJobs, AuthInfo);
             return GetAllJobs(xDoc);
+        }
+
+        /// <summary>
+        /// Get the project status for a project
+        /// </summary>
+        /// <param name="projectUrl">the project url to retrieve the info</param>
+        /// <param name="currentStatus">the current stored status</param>
+        public new ProjectStatus GetProjectStatus(string projectUrl, ProjectStatus currentStatus)
+        {
+            var xDoc = GetXDocument(projectUrl + ExcludeBuild, AuthInfo);
+            return GetProjectStatus(xDoc, currentStatus);
         }
     }
 }

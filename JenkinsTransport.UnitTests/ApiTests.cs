@@ -35,7 +35,6 @@ namespace JenkinsTransport.UnitTests
         [TestMethod]
         public void TestGetProjectStatus()
         {
-
             var status = ApiInstance.GetProjectStatus(ProjectUrl, null);
             Assert.IsNotNull(status);
             Assert.AreEqual(status.Name, ProjectName);
