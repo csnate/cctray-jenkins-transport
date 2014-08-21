@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using System.Text;
+using JenkinsTransport.Interface;
 using ThoughtWorks.CruiseControl.Remote;
 
 namespace JenkinsTransport

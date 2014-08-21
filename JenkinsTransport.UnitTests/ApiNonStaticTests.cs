@@ -5,6 +5,7 @@ using System.Xml.Linq;
 using System.Net;
 using System.Collections.Generic;
 using FluentAssertions;
+using JenkinsTransport.Interface;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ThoughtWorks.CruiseControl.Remote;

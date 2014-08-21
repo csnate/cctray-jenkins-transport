@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using JenkinsTransport.Interface;
 
 namespace JenkinsTransport
 {
@@ -19,6 +20,9 @@ namespace JenkinsTransport
         }
     }
 
+    /// <summary>
+    /// Wrapper around an underlying WebRequest instance exposed via IWebRequest
+    /// </summary>
     public class WebRequestWrapper : IWebRequest
     {
         private WebRequest _webRequest;
@@ -55,18 +59,5 @@ namespace JenkinsTransport
 
             _webRequest = WebRequest.Create(requestUri);
         }
-    }
-
-    public interface IWebRequest
-    {
-        WebHeaderCollection Headers { get; set; }
-        string Method { get; set; }
-        WebResponse GetResponse();
-    }
-
-    public interface IWebRequestFactory
-    {
-        IWebRequest Create(string requestUriString);
-        IWebRequest Create(Uri requestUri);
     }
 }
