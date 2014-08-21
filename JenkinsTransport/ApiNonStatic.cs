@@ -55,8 +55,7 @@ namespace JenkinsTransport
 
         public XDocument GetProjectStatusDoc(string projectUrl)
         {
-            var xDoc = GetXDocument(projectUrl + ExcludeBuild, AuthInfo);
-            return xDoc;
+            return GetXDocument(projectUrl + ExcludeBuild, AuthInfo);
         }
 
         /// <summary>
@@ -66,6 +65,16 @@ namespace JenkinsTransport
         {
             var xDoc = GetXDocument(BaseUrl + AllJobs, AuthInfo);
             return GetAllJobs(xDoc);
+        }
+
+        /// <summary>
+        /// Retrieve all jobs
+        /// </summary>
+        /// <param name="xDoc">the XDocument to parse</param>
+        public new List<JenkinsJob> GetAllJobs(XDocument xDoc)
+        {
+            var list = xDoc.Descendants("job").Select(a => new JenkinsJob(a)).ToList();
+            return list;
         }
 
         /// <summary>
