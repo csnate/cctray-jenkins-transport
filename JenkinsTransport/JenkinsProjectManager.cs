@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using JenkinsTransport.Interface;
 using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using ThoughtWorks.CruiseControl.CCTrayLib.Monitoring;
 using ThoughtWorks.CruiseControl.Remote;
@@ -10,6 +11,13 @@ namespace JenkinsTransport
 {
     public class JenkinsProjectManager : ICruiseProjectManager
     {
+        private readonly IWebRequestFactory _webRequestFactory;
+
+        public JenkinsProjectManager(IWebRequestFactory webRequestFactory)
+        {
+            _webRequestFactory = webRequestFactory;
+        }
+
         /// <summary>
         /// The Api
         /// </summary>
@@ -38,7 +46,8 @@ namespace JenkinsTransport
             ProjectName = projectName;
             Settings = settings;
             AuthorizationInformation = Settings.AuthorizationInformation;
-            Api = new Api(Settings.Server, AuthorizationInformation);
+            //Api = new Api(Settings.Server, AuthorizationInformation);
+            Api = new ApiNonStatic(Settings.Server, AuthorizationInformation, _webRequestFactory);
         }
 
         #region ICruiseProjectManager implmentations

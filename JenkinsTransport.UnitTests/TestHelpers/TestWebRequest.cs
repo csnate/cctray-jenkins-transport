@@ -37,7 +37,7 @@ namespace JenkinsTransport.UnitTests.TestHelpers
         /// <summary>See <see cref="WebRequest.GetResponse"/>.</summary>
         public override WebResponse GetResponse()
         {
-            return new TestWebReponse(responseStream);
+            return new TestWebResponse(responseStream);
         }
     }
 }

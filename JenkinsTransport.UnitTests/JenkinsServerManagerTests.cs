@@ -15,7 +15,7 @@ namespace JenkinsTransport.UnitTests
         [TestInitialize]
         public void Setup()
         {
-            Manager = new JenkinsServerManager();
+            Manager = new JenkinsServerManager(new WebRequestFactory());
             var settings = new Settings()
             {
                 Project = String.Empty,

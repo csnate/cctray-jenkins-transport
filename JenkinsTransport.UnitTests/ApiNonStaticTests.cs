@@ -17,25 +17,30 @@ namespace JenkinsTransport.UnitTests
     {
         public Mock<IWebRequestFactory> MockWebRequestFactory;
         public IWebRequestFactory WebRequestFactory { get { return MockWebRequestFactory.Object; }}
+        private Queue<TestWebResponse> _responses = new Queue<TestWebResponse>(); 
 
         public ApiNonStaticTestDependencies()
         {
             MockWebRequestFactory = new Mock<IWebRequestFactory>();
-        }
 
-        public void UseThisFileAsResponse(string sampleData)
-        {
-            Stream responseStream = new FileStream(sampleData, FileMode.Open);
-
-            var webResponse = new TestWebReponse(responseStream);
             Mock<IWebRequest> mockWebRequest = new Mock<IWebRequest>();
             mockWebRequest
                 .Setup(x => x.GetResponse())
-                .Returns(webResponse);
+                .Returns(() => _responses.Dequeue());
 
             MockWebRequestFactory
                .Setup(x => x.Create(It.IsAny<string>()))
                .Returns(mockWebRequest.Object);
+
+        }
+
+        public void EnqueueThisFileAsNextResponse(string sampleData)
+        {
+            Stream responseStream = new FileStream(sampleData, FileMode.Open);
+
+            var webResponse = new TestWebResponse(responseStream);
+
+            _responses.Enqueue(webResponse);            
         }
     }
 
@@ -45,59 +50,20 @@ namespace JenkinsTransport.UnitTests
         protected string ProjectUrl = "https://builds.apache.org/job/Hadoop-1-win/api/xml";
         protected string ProjectName = "Hadoop-1-win";
 
-        private ApiNonStatic CreateTestTarget()
-        {
-            var target = new ApiNonStatic("https://builds.apache.org/", String.Empty);
-            return target;
-        }
 
         private ApiNonStatic CreateTestTarget(ApiNonStaticTestDependencies dependencies)
         {
-            var target = new ApiNonStatic("https://builds.apache.org/", String.Empty);
-
-            target.WebRequestFactory = dependencies.WebRequestFactory;
+            var target = new ApiNonStatic("https://builds.apache.org/", String.Empty, dependencies.WebRequestFactory);
 
             return target;
         }
 
-
-        [TestInitialize]
-        public void Setup()
-        {      
-            //ApiInstance = new ApiNonStatic("https://builds.apache.org/", String.Empty);
-        }
-
-        [TestMethod]
-        [Ignore]
-        public void RealGetAllJobs()
+        //[TestMethod]
+        public void CollectTestData()
         {
-            ApiNonStatic target = CreateTestTarget();
-
-            target.WebRequestFactory = new WebRequestFactory();
-
-            var jobs = target.GetAllJobs();
-            Assert.IsNotNull(jobs);
-            Assert.IsTrue(jobs.Any());
-            CollectionAssert.AllItemsAreUnique(jobs);
-        }
-
-        /// <summary>
-        /// Used to collect sample data for tests
-        /// </summary>
-        [TestMethod]
-        [Ignore]
-        public void RealGetProjectStatus()
-        {
-            var target = CreateTestTarget();
-            target.WebRequestFactory = new WebRequestFactory();
-            var jobs = target.GetAllJobs();
-             
-            var doc = target.GetProjectStatusDoc(ProjectUrl);
-            doc.Save("ProjectStatusSampleData1.xml");
-
-            Assert.IsNotNull(jobs);
-            Assert.IsTrue(jobs.Any());
-            CollectionAssert.AllItemsAreUnique(jobs);
+            var target = new ApiNonStatic("https://builds.apache.org/", String.Empty, new WebRequestFactory());
+            target.GetBuildParameters(ProjectUrl);
+            
         }
 
         [TestMethod]
@@ -106,7 +72,7 @@ namespace JenkinsTransport.UnitTests
             ApiNonStaticTestDependencies mocks = new ApiNonStaticTestDependencies();
             var target = CreateTestTarget(mocks);
 
-            mocks.UseThisFileAsResponse(@".\TestData\TestJobsSampleData1.xml");       
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\TestJobsSampleData1.xml");       
 
             // Act
             var jobs = target.GetAllJobs();
@@ -122,7 +88,8 @@ namespace JenkinsTransport.UnitTests
             ApiNonStaticTestDependencies mocks = new ApiNonStaticTestDependencies();
             var target = CreateTestTarget(mocks);
 
-            mocks.UseThisFileAsResponse(@".\TestData\ProjectStatusSampleData1.xml");      
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\ProjectStatusSampleData1.xml");
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\BuildInformationSampleData1.xml");
 
             // Act
             var status = target.GetProjectStatus(ProjectUrl, null);
@@ -137,7 +104,8 @@ namespace JenkinsTransport.UnitTests
             ApiNonStaticTestDependencies mocks = new ApiNonStaticTestDependencies();
             var target = CreateTestTarget(mocks);
 
-            mocks.UseThisFileAsResponse(@".\TestData\ProjectStatusSampleData1.xml");            
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\ProjectStatusSampleData1.xml");
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\BuildInformationSampleData1.xml");
 
             // Act
             ProjectStatus status = target.GetProjectStatus(ProjectUrl, null);
@@ -146,5 +114,53 @@ namespace JenkinsTransport.UnitTests
             status.WebURL.Should().Be("https://builds.apache.org/job/Hadoop-1-win/");
         }
 
+        [TestMethod]
+        public void GetBuildInformation_should_have_correct_webUrl()
+        {
+            ApiNonStaticTestDependencies mocks = new ApiNonStaticTestDependencies();
+            var target = CreateTestTarget(mocks);
+
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\BuildInformationSampleData1.xml");
+            // TODO add a response for the build information
+
+            // Act
+            JenkinsBuildInformation status = target.GetBuildInformation(ProjectUrl);
+
+            // Assert
+            status.FullDisplayName.Should().Be("Hadoop-1-win #119");
+        }
+
+        [TestMethod]
+        public void GetBuildParameters_should_return_correct_number_of_parameters()
+        {
+            ApiNonStaticTestDependencies mocks = new ApiNonStaticTestDependencies();
+            var target = CreateTestTarget(mocks);
+
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\BuildParametersSampleData1.xml");
+            // TODO add a response for the build information
+
+            // Act
+            var status = target.GetBuildParameters(ProjectUrl);
+
+            // Assert
+            status.Count.Should().Be(1);
+            status[0].Name.Should().Be("VERSION");
+        }
+
+        [TestMethod]
+        public void GetBuildParameters_should_return_correct_name_of_parameters()
+        {
+            ApiNonStaticTestDependencies mocks = new ApiNonStaticTestDependencies();
+            var target = CreateTestTarget(mocks);
+
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\BuildParametersSampleData1.xml");
+            // TODO add a response for the build information
+
+            // Act
+            var status = target.GetBuildParameters(ProjectUrl);
+
+            // Assert
+            status[0].Name.Should().Be("VERSION");
+        }
     }
 }

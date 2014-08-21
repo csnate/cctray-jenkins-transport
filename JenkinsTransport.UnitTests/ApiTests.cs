@@ -20,7 +20,7 @@ namespace JenkinsTransport.UnitTests
         [TestInitialize]
         public void Setup()
         {
-            ApiInstance = new Api("https://builds.apache.org/", String.Empty);
+            ApiInstance = new Api("https://builds.apache.org/", String.Empty, new WebRequestFactory());
         }
 
         [TestMethod]
