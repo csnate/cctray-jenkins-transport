@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<freeStyleBuild>
+  <action>
+    <parameter>
+      <name>VERSION</name>
+      <value>1.0.4</value>
+    </parameter>
+  </action>
+  <action>
+    <cause>
+      <shortDescription>Started by an SCM change</shortDescription>
+    </cause>
+  </action>
+  <action></action>
+  <action></action>
+  <action></action>
+  <action></action>
+  <action></action>
+  <action></action>
+  <building>false</building>
+  <description></description>
+  <duration>968573</duration>
+  <estimatedDuration>384695</estimatedDuration>
+  <fullDisplayName>Hadoop-1-win #119</fullDisplayName>
+  <id>2014-03-25_14-09-29</id>
+  <keepLog>false</keepLog>
+  <number>119</number>
+  <result>FAILURE</result>
+  <timestamp>1395756569000</timestamp>
+  <url>https://builds.apache.org/job/Hadoop-1-win/119/</url>
+  <builtOn>hadoop2</builtOn>
+  <changeSet>
+    <item>
+      <affectedPath>CHANGES.branch-1-win.txt</affectedPath>
+      <affectedPath>src/examples/org/apache/hadoop/examples/terasort/TeraSort.java</affectedPath>
+      <author>
+        <absoluteUrl>https://builds.apache.org/user/cnauroth</absoluteUrl>
+        <fullName>cnauroth</fullName>
+      </author>
+      <commitId>1580988</commitId>
+      <timestamp>1395686674234</timestamp>
+      <date>2014-03-24T18:44:34.234614Z</date>
+      <msg>MAPREDUCE-5808. Port output replication factor configurable for terasort to Hadoop 1.x. Contributed by Chuan Liu.</msg>
+      <path>
+        <editType>edit</editType>
+        <file>/hadoop/common/branches/branch-1-win/CHANGES.branch-1-win.txt</file>
+      </path>
+      <path>
+        <editType>edit</editType>
+        <file>/hadoop/common/branches/branch-1-win/src/examples/org/apache/hadoop/examples/terasort/TeraSort.java</file>
+      </path>
+      <revision>1580988</revision>
+      <user>cnauroth</user>
+    </item>
+    <kind>svn</kind>
+    <revision>
+      <module>http://svn.apache.org/repos/asf/hadoop/common/branches/branch-1-win</module>
+      <revision>1580988</revision>
+    </revision>
+  </changeSet>
+  <culprit>
+    <absoluteUrl>https://builds.apache.org/user/cnauroth</absoluteUrl>
+    <fullName>cnauroth</fullName>
+  </culprit>
+</freeStyleBuild>

@@ -7,6 +7,7 @@ using System.Text;
 using System.Web;
 using System.Xml.Linq;
 using JenkinsTransport.BuildParameters;
+using JenkinsTransport.Interface;
 using ThoughtWorks.CruiseControl.Remote;
 using ThoughtWorks.CruiseControl.Remote.Parameters;
 
@@ -14,6 +15,8 @@ namespace JenkinsTransport
 {
     public class Api
     {
+        protected readonly IWebRequestFactory WebRequestFactory;
+
         #region Constants
         protected const string XmlApi = "/api/xml";
         protected const string AllJobs = XmlApi + "?depth=1&xpath=/hudson/job&wrapper=jobs";
@@ -28,9 +31,9 @@ namespace JenkinsTransport
         protected string ProjectBaseUrl { get; private set; }
         protected string AuthInfo { get; set; }
 
-        protected static XDocument GetXDocument(string url, string authInfo)
+        protected new XDocument GetXDocument(string url, string authInfo)
         {
-            var request = WebRequest.Create(url);
+            var request = WebRequestFactory.Create(url);
 
             if (!String.IsNullOrEmpty(authInfo))
             {
@@ -41,7 +44,7 @@ namespace JenkinsTransport
             return GetXDocument(request);
         }
 
-        protected static XDocument GetXDocument(WebRequest request)
+        protected XDocument GetXDocument(IWebRequest request)
         {
             using (var response = request.GetResponse())
             {
@@ -90,8 +93,12 @@ namespace JenkinsTransport
             
         }
 
-        public Api(string baseUrl, string authInfo)
+        public Api(string baseUrl, string authInfo, IWebRequestFactory webRequestFactory)
         {
+            if (webRequestFactory == null) 
+                throw new ArgumentNullException("webRequestFactory");
+
+            WebRequestFactory = webRequestFactory;
             BaseUrl = baseUrl;
             ProjectBaseUrl = baseUrl + "/job/";
             AuthInfo = authInfo;
@@ -185,7 +192,15 @@ namespace JenkinsTransport
         public JenkinsBuildInformation GetBuildInformation(string buildInformationUrl)
         {
             var xDoc = GetXDocument(buildInformationUrl + XmlApi, AuthInfo);
+
+            //xDoc.Save("BuildInformationSampleData1.xml");
+
             return new JenkinsBuildInformation(xDoc);
+        }
+
+        public XDocument GetBuildInformationDoc(string buildInformationUrl)
+        {
+            return GetXDocument(buildInformationUrl + XmlApi, AuthInfo);
         }
 
         /// <summary>
@@ -196,6 +211,8 @@ namespace JenkinsTransport
         {
             var buildProjectUrl = ProjectBaseUrl + HttpUtility.HtmlEncode(projectName);
             var xDoc = GetXDocument(buildProjectUrl + XmlApi, AuthInfo);
+
+            xDoc.Save("BuildParametersSampleData1.xml");
 
             // Construct the build parameters
             var buildParameters = new List<ParameterBase>();

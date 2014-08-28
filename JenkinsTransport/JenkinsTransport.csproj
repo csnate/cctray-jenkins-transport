@@ -64,6 +64,8 @@
       <DependentUpon>ConfigurationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="EnumUtils.cs" />
+    <Compile Include="Interface\IWebRequest.cs" />
+    <Compile Include="Interface\IWebRequestFactory.cs" />
     <Compile Include="JenkinsBuildInformation.cs" />
     <Compile Include="JenkinsJob.cs" />
     <Compile Include="JenkinsProjectManager.cs" />

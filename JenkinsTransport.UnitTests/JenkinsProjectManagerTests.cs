@@ -23,7 +23,7 @@ namespace JenkinsTransport.UnitTests
                 Server = "https://builds.apache.org/"
             };
             var buildServer = new BuildServer(settings.Server);
-            Manager = new JenkinsProjectManager();
+            Manager = new JenkinsProjectManager(new WebRequestFactory());
             Manager.Initialize(buildServer, "Hadoop-1-win", settings);
         }
 

@@ -79,6 +79,8 @@
     <Compile Include="JenkinsBuildInformationTests.cs" />
     <Compile Include="EnumUtilsTests.cs" />
     <Compile Include="BuildParametersTests.cs" />
+    <Compile Include="TestHelpers\TestWebResponse.cs" />
+    <Compile Include="TestHelpers\TestWebRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JenkinsTransport\JenkinsTransport.csproj">
@@ -90,6 +92,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TestData\BuildInformationSampleData1.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\BuildParametersSampleData1.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestData\ProjectStatusSampleData1.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -97,9 +105,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TestHelpers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
