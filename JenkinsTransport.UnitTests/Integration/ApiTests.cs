@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Xml.Linq;
-using System.Net;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
-using ThoughtWorks.CruiseControl.Remote;
 using ThoughtWorks.CruiseControl.Remote.Parameters;
 
-namespace JenkinsTransport.UnitTests
+namespace JenkinsTransport.UnitTests.Integration
 {
     [TestClass]
     public class ApiTests

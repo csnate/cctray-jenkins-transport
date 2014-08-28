@@ -31,7 +31,7 @@ namespace JenkinsTransport
         protected string ProjectBaseUrl { get; private set; }
         protected string AuthInfo { get; set; }
 
-        protected new XDocument GetXDocument(string url, string authInfo)
+        protected XDocument GetXDocument(string url, string authInfo)
         {
             var request = WebRequestFactory.Create(url);
 

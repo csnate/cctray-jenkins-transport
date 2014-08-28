@@ -73,7 +73,7 @@
     <Compile Include="JenkinsTransportExtensionTests.cs" />
     <Compile Include="JenkinsServerManagerTests.cs" />
     <Compile Include="JenkinsProjectManagerTests.cs" />
-    <Compile Include="ApiTests.cs" />
+    <Compile Include="Integration\ApiTests.cs" />
     <Compile Include="ConfigurationFormTests.cs" />
     <Compile Include="SettingsTests.cs" />
     <Compile Include="JenkinsBuildInformationTests.cs" />
