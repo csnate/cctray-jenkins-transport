@@ -9,7 +9,7 @@ namespace JenkinsTransport.UnitTests.TestHelpers
     class TestWebRequest : WebRequest
     {
         MemoryStream requestStream = new MemoryStream();
-        MemoryStream responseStream;
+        readonly MemoryStream _responseStream;
 
         public override string Method { get; set; }
         public override string ContentType { get; set; }
@@ -19,11 +19,11 @@ namespace JenkinsTransport.UnitTests.TestHelpers
         /// with the response to return.</summary>
         public TestWebRequest(string response)
         {
-            responseStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(response));
+            _responseStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(response));
         }
 
         /// <summary>Returns the request contents as a string.</summary>
-        public string ContentAsString()
+        public string GetRequestAsString()
         {
             return System.Text.Encoding.UTF8.GetString(requestStream.ToArray());
         }
@@ -37,7 +37,7 @@ namespace JenkinsTransport.UnitTests.TestHelpers
         /// <summary>See <see cref="WebRequest.GetResponse"/>.</summary>
         public override WebResponse GetResponse()
         {
-            return new TestWebResponse(responseStream);
+            return new TestWebResponse(_responseStream);
         }
     }
 }

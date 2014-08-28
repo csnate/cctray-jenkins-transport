@@ -45,7 +45,7 @@ namespace JenkinsTransport.UnitTests
     }
 
     [TestClass]
-    public class ApiUnitTests
+    public class ApiTests
     {
         protected string ProjectUrl = "https://builds.apache.org/job/Hadoop-1-win/api/xml";
         protected string ProjectName = "Hadoop-1-win";

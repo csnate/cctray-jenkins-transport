@@ -10,7 +10,7 @@ namespace JenkinsTransport.UnitTests.TestHelpers
     internal class TestWebResponse : WebResponse, IDisposable
     {
         //readonly Stream responseStream;
-        MemoryStream _responseStream;
+        readonly MemoryStream _responseStream;
 
         /// <summary>Initializes a new instance of <see cref="TestWebResponse"/>
         /// with the response stream to return.</summary>
@@ -23,8 +23,6 @@ namespace JenkinsTransport.UnitTests.TestHelpers
                     _responseStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(rd.ReadToEnd()));
                 }
             }
-            
-            //this.responseStream =  new MemoryStream();
         }
 
         /// <summary>See <see cref="WebResponse.GetResponseStream"/>.</summary>

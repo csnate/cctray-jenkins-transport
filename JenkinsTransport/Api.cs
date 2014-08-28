@@ -193,8 +193,6 @@ namespace JenkinsTransport
         {
             var xDoc = GetXDocument(buildInformationUrl + XmlApi, AuthInfo);
 
-            //xDoc.Save("BuildInformationSampleData1.xml");
-
             return new JenkinsBuildInformation(xDoc);
         }
 
@@ -211,8 +209,6 @@ namespace JenkinsTransport
         {
             var buildProjectUrl = ProjectBaseUrl + HttpUtility.HtmlEncode(projectName);
             var xDoc = GetXDocument(buildProjectUrl + XmlApi, AuthInfo);
-
-            xDoc.Save("BuildParametersSampleData1.xml");
 
             // Construct the build parameters
             var buildParameters = new List<ParameterBase>();
