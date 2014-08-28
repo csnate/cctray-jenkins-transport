@@ -6,7 +6,7 @@ using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 namespace JenkinsTransport.UnitTests.Integration
 {
     [TestClass]
-    public class JenkinsTransportExtensionTests1
+    public class JenkinsTransportExtensionTests
     {
         private JenkinsTransportExtension Transport;
 
@@ -31,18 +31,6 @@ namespace JenkinsTransport.UnitTests.Integration
             var projectList = Transport.GetProjectList(Transport.Configuration).ToList();
             Assert.IsTrue(projectList.Any());
             CollectionAssert.AllItemsAreUnique(projectList);
-        }
-
-        [TestMethod]
-        public void TestRetrieveServerManager()
-        {
-            var serverManager = Transport.RetrieveServerManager();
-            Assert.IsInstanceOfType(serverManager, typeof(JenkinsServerManager));
-
-            var jenkinsServerManager = (JenkinsServerManager)serverManager;
-            Assert.AreEqual(Transport.Configuration, jenkinsServerManager.Configuration);
-            Assert.AreEqual(jenkinsServerManager.SessionToken, String.Empty);
-            Assert.IsFalse(jenkinsServerManager.ProjectsAndCurrentStatus.Any());
         }
     }
 }
