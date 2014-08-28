@@ -51,7 +51,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api.cs" />
-    <Compile Include="ApiNonStatic.cs" />
     <Compile Include="BuildParameters\BaseBuildParameter.cs" />
     <Compile Include="BuildParameters\BooleanParameter.cs" />
     <Compile Include="BuildParameters\ChoiceParameter.cs" />

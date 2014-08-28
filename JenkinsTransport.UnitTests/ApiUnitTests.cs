@@ -13,13 +13,13 @@ using ThoughtWorks.CruiseControl.Remote;
 
 namespace JenkinsTransport.UnitTests
 {
-    internal class ApiNonStaticTestDependencies
+    internal class ApiTestDependencies
     {
         public Mock<IWebRequestFactory> MockWebRequestFactory;
         public IWebRequestFactory WebRequestFactory { get { return MockWebRequestFactory.Object; }}
         private Queue<TestWebResponse> _responses = new Queue<TestWebResponse>(); 
 
-        public ApiNonStaticTestDependencies()
+        public ApiTestDependencies()
         {
             MockWebRequestFactory = new Mock<IWebRequestFactory>();
 
@@ -45,15 +45,15 @@ namespace JenkinsTransport.UnitTests
     }
 
     [TestClass]
-    public class ApiNonStaticTests
+    public class ApiUnitTests
     {
         protected string ProjectUrl = "https://builds.apache.org/job/Hadoop-1-win/api/xml";
         protected string ProjectName = "Hadoop-1-win";
 
 
-        private ApiNonStatic CreateTestTarget(ApiNonStaticTestDependencies dependencies)
+        private Api CreateTestTarget(ApiTestDependencies dependencies)
         {
-            var target = new ApiNonStatic("https://builds.apache.org/", String.Empty, dependencies.WebRequestFactory);
+            var target = new Api("https://builds.apache.org/", String.Empty, dependencies.WebRequestFactory);
 
             return target;
         }
@@ -61,7 +61,7 @@ namespace JenkinsTransport.UnitTests
         //[TestMethod]
         public void CollectTestData()
         {
-            var target = new ApiNonStatic("https://builds.apache.org/", String.Empty, new WebRequestFactory());
+            var target = new Api("https://builds.apache.org/", String.Empty, new WebRequestFactory());
             target.GetBuildParameters(ProjectUrl);
             
         }
@@ -69,7 +69,7 @@ namespace JenkinsTransport.UnitTests
         [TestMethod]
         public void GetAllJobs_should_return_correct_number()
         {
-            ApiNonStaticTestDependencies mocks = new ApiNonStaticTestDependencies();
+            ApiTestDependencies mocks = new ApiTestDependencies();
             var target = CreateTestTarget(mocks);
 
             mocks.EnqueueThisFileAsNextResponse(@".\TestData\TestJobsSampleData1.xml");       
@@ -85,7 +85,7 @@ namespace JenkinsTransport.UnitTests
         [TestMethod]
         public void GetProjectStatus_should_have_correct_project_name()
         {
-            ApiNonStaticTestDependencies mocks = new ApiNonStaticTestDependencies();
+            ApiTestDependencies mocks = new ApiTestDependencies();
             var target = CreateTestTarget(mocks);
 
             mocks.EnqueueThisFileAsNextResponse(@".\TestData\ProjectStatusSampleData1.xml");
@@ -101,7 +101,7 @@ namespace JenkinsTransport.UnitTests
         [TestMethod]
         public void GetProjectStatus_should_have_correct_webUrl()
         {
-            ApiNonStaticTestDependencies mocks = new ApiNonStaticTestDependencies();
+            ApiTestDependencies mocks = new ApiTestDependencies();
             var target = CreateTestTarget(mocks);
 
             mocks.EnqueueThisFileAsNextResponse(@".\TestData\ProjectStatusSampleData1.xml");
@@ -117,7 +117,7 @@ namespace JenkinsTransport.UnitTests
         [TestMethod]
         public void GetBuildInformation_should_have_correct_webUrl()
         {
-            ApiNonStaticTestDependencies mocks = new ApiNonStaticTestDependencies();
+            ApiTestDependencies mocks = new ApiTestDependencies();
             var target = CreateTestTarget(mocks);
 
             mocks.EnqueueThisFileAsNextResponse(@".\TestData\BuildInformationSampleData1.xml");
@@ -133,7 +133,7 @@ namespace JenkinsTransport.UnitTests
         [TestMethod]
         public void GetBuildParameters_should_return_correct_number_of_parameters()
         {
-            ApiNonStaticTestDependencies mocks = new ApiNonStaticTestDependencies();
+            ApiTestDependencies mocks = new ApiTestDependencies();
             var target = CreateTestTarget(mocks);
 
             mocks.EnqueueThisFileAsNextResponse(@".\TestData\BuildParametersSampleData1.xml");
@@ -150,7 +150,7 @@ namespace JenkinsTransport.UnitTests
         [TestMethod]
         public void GetBuildParameters_should_return_correct_name_of_parameters()
         {
-            ApiNonStaticTestDependencies mocks = new ApiNonStaticTestDependencies();
+            ApiTestDependencies mocks = new ApiTestDependencies();
             var target = CreateTestTarget(mocks);
 
             mocks.EnqueueThisFileAsNextResponse(@".\TestData\BuildParametersSampleData1.xml");

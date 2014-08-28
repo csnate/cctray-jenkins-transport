@@ -68,7 +68,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ApiNonStaticTests.cs" />
+    <Compile Include="ApiUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="JenkinsTransportExtensionTests.cs" />
     <Compile Include="JenkinsServerManagerTests.cs" />
