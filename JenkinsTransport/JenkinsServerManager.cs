@@ -50,7 +50,7 @@ namespace JenkinsTransport
             SessionToken = session;
             Settings = settings;
             Login();
-            Api = new Api(Configuration.Url, AuthorizationInformation);
+            Api = new ApiNonStatic(Configuration.Url, AuthorizationInformation);
             ProjectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
         }
 

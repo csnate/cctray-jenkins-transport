@@ -38,7 +38,7 @@ namespace JenkinsTransport
             ProjectName = projectName;
             Settings = settings;
             AuthorizationInformation = Settings.AuthorizationInformation;
-            Api = new Api(Settings.Server, AuthorizationInformation);
+            Api = new ApiNonStatic(Settings.Server, AuthorizationInformation);
         }
 
         #region ICruiseProjectManager implmentations
