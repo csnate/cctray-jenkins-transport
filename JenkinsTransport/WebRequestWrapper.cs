@@ -9,7 +9,7 @@ namespace JenkinsTransport
     /// </summary>
     public class WebRequestWrapper : IWebRequest
     {
-        private WebRequest _webRequest;
+        private readonly WebRequest _webRequest;
 
         public WebHeaderCollection Headers
         {
