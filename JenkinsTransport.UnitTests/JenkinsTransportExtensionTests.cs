@@ -50,7 +50,7 @@ namespace JenkinsTransport.UnitTests
             Assert.AreEqual(jenkinsProjectManager.ProjectName, "Test Project");
             Assert.IsNotNull(jenkinsProjectManager.AuthorizationInformation);
 
-            //Assert.IsTrue(((JenkinsServerManager)Transport.RetrieveServerManager()).ProjectsAndCurrentStatus.Any());
+            Assert.IsTrue(((JenkinsServerManager)Transport.RetrieveServerManager()).ProjectsAndCurrentStatus.Any());
         }
 
 
@@ -58,13 +58,15 @@ namespace JenkinsTransport.UnitTests
         public void TestRetrieveServerManager()
         {
             var serverManager = Transport.RetrieveServerManager();
+            
             Assert.IsInstanceOfType(serverManager, typeof(JenkinsServerManager));
 
             var jenkinsServerManager = (JenkinsServerManager)serverManager;
+           
             Assert.AreEqual(Transport.Configuration, jenkinsServerManager.Configuration);
             Assert.AreEqual(jenkinsServerManager.SessionToken, String.Empty);
 
-            // This assert is disabled as there is a static/parallel conflict with the TestRetrieveProjectManager test
+            // This assert is disabled as there is a static conflict with the TestRetrieveProjectManager test
             //Assert.IsFalse(jenkinsServerManager.ProjectsAndCurrentStatus.Any());
         }
     }
