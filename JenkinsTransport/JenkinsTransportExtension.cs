@@ -36,9 +36,12 @@ namespace JenkinsTransport
             }
         }
 
-        protected static JenkinsServerManager JenkinsServerManager
+        protected JenkinsServerManager JenkinsServerManager
         {
-            get { return _jenkinsServerManager ?? (_jenkinsServerManager = new JenkinsServerManager(new WebRequestFactory())); }
+            get
+            {
+                return _jenkinsServerManager ?? (_jenkinsServerManager = new JenkinsServerManager(new WebRequestFactory()));
+            }
         }
 
         #region ITransportExtension implementations
