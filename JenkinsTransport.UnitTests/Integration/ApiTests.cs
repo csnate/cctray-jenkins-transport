@@ -62,38 +62,6 @@ namespace JenkinsTransport.UnitTests.Integration
 
             Assert.IsTrue(buildParameters.Any());
             CollectionAssert.AllItemsAreInstancesOfType(buildParameters, typeof(ParameterBase));
-        }
-    
-        // The following test cases need a custom implementation as we cannot perform any of these actions against the Apache Jenkins instance
-        // Write your own test cases to perform these actions and confirm that they work correctly
-
-        [TestMethod]
-        [TestCategory("Custom")]
-        public void TestForceBuild()
-        {
-
-        }
-
-        [TestMethod]
-        [TestCategory("Custom")]
-        public void TestAbortBuild()
-        {
-
-        }
-
-        [TestMethod]
-        [TestCategory("Custom")]
-        public void TestStopProject()
-        {
-
-        }
-
-        [TestMethod]
-        [TestCategory("Custom")]
-        public void TestStartProject()
-        {
-
-        }
-
+        }      
     }
 }
