@@ -58,7 +58,7 @@ namespace JenkinsTransport
         //  Add each one to an internal property to be used when we get the server manager
         public ICruiseProjectManager RetrieveProjectManager(string projectName)
         {
-            var manager = new JenkinsProjectManager(_webRequestFactory);
+            var manager = new JenkinsProjectManager(WebRequestFactory);
             manager.Initialize(Configuration, projectName, Settings);
 
             // Check to make sure the static instance of JenkinsServerManager is initialized
