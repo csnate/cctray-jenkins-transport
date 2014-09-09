@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using JenkinsTransport.Interface;
 using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using ThoughtWorks.CruiseControl.CCTrayLib.Monitoring;
 using ThoughtWorks.CruiseControl.Remote;
@@ -13,6 +14,13 @@ namespace JenkinsTransport
 {
     public class JenkinsServerManager : ICruiseServerManager
     {
+        private readonly IWebRequestFactory _webRequestFactory;
+
+        public JenkinsServerManager(IWebRequestFactory webRequestFactory)
+        {
+            _webRequestFactory = webRequestFactory;
+        }
+
         /// <summary>
         /// The Api
         /// </summary>
@@ -50,7 +58,7 @@ namespace JenkinsTransport
             SessionToken = session;
             Settings = settings;
             Login();
-            Api = new Api(Configuration.Url, AuthorizationInformation);
+            Api = new Api(Configuration.Url, AuthorizationInformation, _webRequestFactory);
             ProjectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
         }
 

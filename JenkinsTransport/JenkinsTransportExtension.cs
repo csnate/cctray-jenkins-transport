@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using JenkinsTransport.Interface;
 using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using ThoughtWorks.CruiseControl.CCTrayLib.Monitoring;
 
@@ -15,9 +16,32 @@ namespace JenkinsTransport
         private static bool _isServerManagerInitialized = false;
         private static JenkinsServerManager _jenkinsServerManager;
 
-        protected static JenkinsServerManager JenkinsServerManager
+        private IWebRequestFactory _webRequestFactory;
+        protected IWebRequestFactory WebRequestFactory
         {
-            get { return _jenkinsServerManager ?? (_jenkinsServerManager = new JenkinsServerManager()); }
+            get
+            {
+                // Use local default if none injected
+                if (_webRequestFactory == null)
+                {
+                    _webRequestFactory = new WebRequestFactory();
+                }
+                return _webRequestFactory;
+            }
+            set
+            {
+                if (value == null)
+                    throw new NullReferenceException();
+                _webRequestFactory = value;
+            }
+        }
+
+        protected JenkinsServerManager JenkinsServerManager
+        {
+            get
+            {
+                return _jenkinsServerManager ?? (_jenkinsServerManager = new JenkinsServerManager(new WebRequestFactory()));
+            }
         }
 
         #region ITransportExtension implementations
@@ -37,7 +61,7 @@ namespace JenkinsTransport
         //  Add each one to an internal property to be used when we get the server manager
         public ICruiseProjectManager RetrieveProjectManager(string projectName)
         {
-            var manager = new JenkinsProjectManager();
+            var manager = new JenkinsProjectManager(WebRequestFactory);
             manager.Initialize(Configuration, projectName, Settings);
 
             // Check to make sure the static instance of JenkinsServerManager is initialized

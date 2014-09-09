@@ -23,7 +23,7 @@ namespace JenkinsTransport.UnitTests
                 Server = "https://builds.apache.org/"
             };
             var buildServer = new BuildServer(settings.Server);
-            Manager = new JenkinsProjectManager();
+            Manager = new JenkinsProjectManager(new WebRequestFactory());
             Manager.Initialize(buildServer, "Hadoop-1-win", settings);
         }
 
@@ -36,19 +36,5 @@ namespace JenkinsTransport.UnitTests
             Assert.AreEqual(Manager.Settings.Server, "https://builds.apache.org/");
         }
 
-        [TestMethod]
-        public void TestRetrieveSnapshot()
-        {
-            var snapshot = Manager.RetrieveSnapshot();
-            Assert.AreEqual(snapshot.Name, "Hadoop-1-win");
-        }
-
-        [TestMethod]
-        public void TestListBuildParameters()
-        {
-            var buildParameters = Manager.ListBuildParameters();
-            Assert.IsTrue(buildParameters.Any());
-        }
-        
     }
 }

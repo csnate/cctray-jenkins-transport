@@ -1,105 +1,166 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using System.Net;
 using System.Collections.Generic;
+using FluentAssertions;
+using JenkinsTransport.Interface;
+using JenkinsTransport.UnitTests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
+using Moq;
 using ThoughtWorks.CruiseControl.Remote;
-using ThoughtWorks.CruiseControl.Remote.Parameters;
+
 
 namespace JenkinsTransport.UnitTests
 {
+    internal class ApiTestDependencies
+    {
+        public Mock<IWebRequestFactory> MockWebRequestFactory;
+        public IWebRequestFactory WebRequestFactory { get { return MockWebRequestFactory.Object; }}
+        private Queue<TestWebResponse> _responses = new Queue<TestWebResponse>(); 
+
+        public ApiTestDependencies()
+        {
+            MockWebRequestFactory = new Mock<IWebRequestFactory>();
+
+            Mock<IWebRequest> mockWebRequest = new Mock<IWebRequest>();
+            mockWebRequest
+                .Setup(x => x.GetResponse())
+                .Returns(() => _responses.Dequeue());
+
+            MockWebRequestFactory
+               .Setup(x => x.Create(It.IsAny<string>()))
+               .Returns(mockWebRequest.Object);
+
+        }
+
+        public void EnqueueThisFileAsNextResponse(string sampleData)
+        {
+            Stream responseStream = new FileStream(sampleData, FileMode.Open);
+
+            var webResponse = new TestWebResponse(responseStream);
+
+            _responses.Enqueue(webResponse);            
+        }
+    }
+
     [TestClass]
     public class ApiTests
     {
-        protected Api ApiInstance;
         protected string ProjectUrl = "https://builds.apache.org/job/Hadoop-1-win/api/xml";
         protected string ProjectName = "Hadoop-1-win";
 
-        [TestInitialize]
-        public void Setup()
+
+        private Api CreateTestTarget(ApiTestDependencies dependencies)
         {
-            ApiInstance = new Api("https://builds.apache.org/", String.Empty);
+            var target = new Api("https://builds.apache.org/", String.Empty, dependencies.WebRequestFactory);
+
+            return target;
+        }
+
+        //[TestMethod]
+        public void CollectTestData()
+        {
+            var target = new Api("https://builds.apache.org/", String.Empty, new WebRequestFactory());
+            target.GetBuildParameters(ProjectUrl);
+            
         }
 
         [TestMethod]
-        public void TestGetAllJobs()
+        public void GetAllJobs_should_return_correct_number()
         {
-            var jobs = ApiInstance.GetAllJobs();
-            Assert.IsNotNull(jobs);
-            Assert.IsTrue(jobs.Any());
+            ApiTestDependencies mocks = new ApiTestDependencies();
+            var target = CreateTestTarget(mocks);
+
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\TestJobsSampleData1.xml");       
+
+            // Act
+            var jobs = target.GetAllJobs();
+
+            // Assert
+            jobs.Count.Should().Be(1076);
             CollectionAssert.AllItemsAreUnique(jobs);
         }
 
         [TestMethod]
-        public void TestGetProjectStatus()
+        public void GetProjectStatus_should_have_correct_project_name()
         {
+            ApiTestDependencies mocks = new ApiTestDependencies();
+            var target = CreateTestTarget(mocks);
 
-            var status = ApiInstance.GetProjectStatus(ProjectUrl, null);
-            Assert.IsNotNull(status);
-            Assert.AreEqual(status.Name, ProjectName);
-            StringAssert.Contains(status.WebURL, "https://builds.apache.org/job/Hadoop-1-win");
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\ProjectStatusSampleData1.xml");
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\BuildInformationSampleData1.xml");
+
+            // Act
+            var status = target.GetProjectStatus(ProjectUrl, null);
+
+            // Assert
+            status.Name.Should().Be(ProjectName);
         }
 
         [TestMethod]
-        public void TestGetBuildInformation()
+        public void GetProjectStatus_should_have_correct_webUrl()
         {
-            var status = ApiInstance.GetProjectStatus(ProjectUrl, null);
-            var buildInformation = ApiInstance.GetBuildInformation(status.WebURL + status.LastBuildLabel + "/");
-            Assert.IsNotNull(buildInformation);
-            Assert.AreEqual(buildInformation.Number, status.LastBuildLabel);
-            StringAssert.Contains(buildInformation.FullDisplayName, ProjectName);
+            ApiTestDependencies mocks = new ApiTestDependencies();
+            var target = CreateTestTarget(mocks);
+
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\ProjectStatusSampleData1.xml");
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\BuildInformationSampleData1.xml");
+
+            // Act
+            ProjectStatus status = target.GetProjectStatus(ProjectUrl, null);
+
+            // Assert
+            status.WebURL.Should().Be("https://builds.apache.org/job/Hadoop-1-win/");
         }
 
         [TestMethod]
-        public void TestGetProjectStatusSnapshot()
+        public void GetBuildInformation_should_have_correct_webUrl()
         {
-            var snapshot = ApiInstance.GetProjectStatusSnapshot(ProjectName);
-            Assert.IsNotNull(snapshot);
-            Assert.AreEqual(snapshot.Name, ProjectName);
-            Assert.AreEqual(snapshot.Error, String.Empty);
+            ApiTestDependencies mocks = new ApiTestDependencies();
+            var target = CreateTestTarget(mocks);
+
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\BuildInformationSampleData1.xml");
+            // TODO add a response for the build information
+
+            // Act
+            JenkinsBuildInformation status = target.GetBuildInformation(ProjectUrl);
+
+            // Assert
+            status.FullDisplayName.Should().Be("Hadoop-1-win #119");
         }
 
         [TestMethod]
-        public void TestGetBuildParameters()
+        public void GetBuildParameters_should_return_correct_number_of_parameters()
         {
-            var buildParameters = ApiInstance.GetBuildParameters(ProjectName);
+            ApiTestDependencies mocks = new ApiTestDependencies();
+            var target = CreateTestTarget(mocks);
 
-            Assert.IsTrue(buildParameters.Any());
-            CollectionAssert.AllItemsAreInstancesOfType(buildParameters, typeof(ParameterBase));
-        }
-    
-        // The following test cases need a custom implementation as we cannot perform any of these actions against the Apache Jenkins instance
-        // Write your own test cases to perform these actions and confirm that they work correctly
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\BuildParametersSampleData1.xml");
+            // TODO add a response for the build information
 
-        [TestMethod]
-        [TestCategory("Custom")]
-        public void TestForceBuild()
-        {
+            // Act
+            var status = target.GetBuildParameters(ProjectUrl);
 
+            // Assert
+            status.Count.Should().Be(1);
+            status[0].Name.Should().Be("VERSION");
         }
 
         [TestMethod]
-        [TestCategory("Custom")]
-        public void TestAbortBuild()
+        public void GetBuildParameters_should_return_correct_name_of_parameters()
         {
+            ApiTestDependencies mocks = new ApiTestDependencies();
+            var target = CreateTestTarget(mocks);
 
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\BuildParametersSampleData1.xml");
+            // TODO add a response for the build information
+
+            // Act
+            var status = target.GetBuildParameters(ProjectUrl);
+
+            // Assert
+            status[0].Name.Should().Be("VERSION");
         }
-
-        [TestMethod]
-        [TestCategory("Custom")]
-        public void TestStopProject()
-        {
-
-        }
-
-        [TestMethod]
-        [TestCategory("Custom")]
-        public void TestStartProject()
-        {
-
-        }
- 
     }
 }

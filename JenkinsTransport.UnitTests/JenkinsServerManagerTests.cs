@@ -15,7 +15,7 @@ namespace JenkinsTransport.UnitTests
         [TestInitialize]
         public void Setup()
         {
-            Manager = new JenkinsServerManager();
+            Manager = new JenkinsServerManager(new WebRequestFactory());
             var settings = new Settings()
             {
                 Project = String.Empty,
@@ -43,26 +43,7 @@ namespace JenkinsTransport.UnitTests
             Manager.SetConfiguration(buildServer);
             Assert.AreEqual(Manager.Configuration.Url, "http://test.com");
         }
-
-        [TestMethod]
-        public void TestGetProjectList()
-        {
-            var projectList = Manager.GetProjectList();
-            Assert.IsTrue(projectList.Any());
-        }
-
-        [TestMethod]
-        public void TestGetCruiseServerSnapshot()
-        {
-            var projectList = Manager.GetProjectList();
-            Manager.ProjectsAndCurrentStatus.Add(projectList[0].ProjectName, null);
-
-            var snapshot = Manager.GetCruiseServerSnapshot();
-            Assert.IsNotNull(snapshot);
-            Assert.IsTrue(snapshot.ProjectStatuses.Any());
-            Assert.IsTrue(snapshot.ProjectStatuses.Count() == 1);
-        }
-
+        
         [TestMethod]
         public void TestLoginAndLogout()
         {

@@ -63,6 +63,8 @@
       <DependentUpon>ConfigurationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="EnumUtils.cs" />
+    <Compile Include="Interface\IWebRequest.cs" />
+    <Compile Include="Interface\IWebRequestFactory.cs" />
     <Compile Include="JenkinsBuildInformation.cs" />
     <Compile Include="JenkinsJob.cs" />
     <Compile Include="JenkinsProjectManager.cs" />
@@ -70,6 +72,8 @@
     <Compile Include="JenkinsTransportExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="WebRequestFactory.cs" />
+    <Compile Include="WebRequestWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

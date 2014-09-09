@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<freeStyleProject>
+  <description>&lt;img src="http://hadoop.apache.org/core/images/hadoop-logo.jpg" height="50"&gt;&lt;/img&gt;
+&lt;p&gt;
+This project builds and tests the Hadoop branches/branch-1-win, polling subversion every 4hrs.</description>
+  <displayName>Hadoop-1-win</displayName>
+  <name>Hadoop-1-win</name>
+  <url>https://builds.apache.org/job/Hadoop-1-win/</url>
+  <buildable>true</buildable>
+  <color>red</color>
+  <firstBuild>
+    <number>117</number>
+    <url>https://builds.apache.org/job/Hadoop-1-win/117/</url>
+  </firstBuild>
+  <inQueue>false</inQueue>
+  <keepDependencies>false</keepDependencies>
+  <lastBuild>
+    <number>119</number>
+    <url>https://builds.apache.org/job/Hadoop-1-win/119/</url>
+  </lastBuild>
+  <lastCompletedBuild>
+    <number>119</number>
+    <url>https://builds.apache.org/job/Hadoop-1-win/119/</url>
+  </lastCompletedBuild>
+  <lastFailedBuild>
+    <number>119</number>
+    <url>https://builds.apache.org/job/Hadoop-1-win/119/</url>
+  </lastFailedBuild>
+  <lastUnsuccessfulBuild>
+    <number>119</number>
+    <url>https://builds.apache.org/job/Hadoop-1-win/119/</url>
+  </lastUnsuccessfulBuild>
+  <nextBuildNumber>120</nextBuildNumber>
+  <property />
+  <property>
+    <parameterDefinition>
+      <defaultParameterValue>
+        <name>VERSION</name>
+        <value>1.0.4</value>
+      </defaultParameterValue>
+      <description />
+      <name>VERSION</name>
+      <type>StringParameterDefinition</type>
+    </parameterDefinition>
+  </property>
+  <concurrentBuild>false</concurrentBuild>
+  <scm />
+</freeStyleProject>

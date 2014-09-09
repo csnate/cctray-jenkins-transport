@@ -7,6 +7,7 @@ using System.Text;
 using System.Web;
 using System.Xml.Linq;
 using JenkinsTransport.BuildParameters;
+using JenkinsTransport.Interface;
 using ThoughtWorks.CruiseControl.Remote;
 using ThoughtWorks.CruiseControl.Remote.Parameters;
 
@@ -14,23 +15,26 @@ namespace JenkinsTransport
 {
     public class Api
     {
+        protected readonly IWebRequestFactory WebRequestFactory;
+
         #region Constants
-        private const string XmlApi = "/api/xml";
-        private const string AllJobs = XmlApi + "?xpath=/hudson/job&wrapper=jobs";
-        private const string ExcludeBuild = XmlApi + "?exclude=freeStyleProject/build&exclude=freeStyleProject/healthReport&exclude=freeStyleProject/action";
-        private const string ForceBuildParams = "/build?delay=0sec";
-        private const string ForceBuildWithParametersParams = "/buildWithParameters";
-        private const string StopProjectParams = "/disable";
-        private const string StartProjectParams = "/enable";
+        protected const string XmlApi = "/api/xml";
+        protected const string AllJobs = XmlApi + "?depth=1&xpath=/hudson/job&wrapper=jobs";
+        protected const string ExcludeBuild = XmlApi + "?exclude=freeStyleProject/build&exclude=freeStyleProject/healthReport&exclude=freeStyleProject/action";
+        protected const string ForceBuildParams = "/build?delay=0sec";
+        protected const string ForceBuildWithParametersParams = "/buildWithParameters";
+        protected const string StopProjectParams = "/disable";
+        protected const string StartProjectParams = "/enable";
         #endregion
 
         protected string BaseUrl { get; set; }
         protected string ProjectBaseUrl { get; private set; }
         protected string AuthInfo { get; set; }
 
-        protected static XDocument GetXDocument(string url, string authInfo)
+        protected XDocument GetXDocument(string url, string authInfo)
         {
-            var request = WebRequest.Create(url);
+            var request = WebRequestFactory.Create(url);
+
             if (!String.IsNullOrEmpty(authInfo))
             {
                 request.Headers["Authorization"] = "Basic " + authInfo;
@@ -40,7 +44,7 @@ namespace JenkinsTransport
             return GetXDocument(request);
         }
 
-        protected static XDocument GetXDocument(WebRequest request)
+        protected XDocument GetXDocument(IWebRequest request)
         {
             using (var response = request.GetResponse())
             {
@@ -89,8 +93,12 @@ namespace JenkinsTransport
             
         }
 
-        public Api(string baseUrl, string authInfo)
+        public Api(string baseUrl, string authInfo, IWebRequestFactory webRequestFactory)
         {
+            if (webRequestFactory == null) 
+                throw new ArgumentNullException("webRequestFactory");
+
+            WebRequestFactory = webRequestFactory;
             BaseUrl = baseUrl;
             ProjectBaseUrl = baseUrl + "/job/";
             AuthInfo = authInfo;
@@ -184,7 +192,13 @@ namespace JenkinsTransport
         public JenkinsBuildInformation GetBuildInformation(string buildInformationUrl)
         {
             var xDoc = GetXDocument(buildInformationUrl + XmlApi, AuthInfo);
+
             return new JenkinsBuildInformation(xDoc);
+        }
+
+        public XDocument GetBuildInformationDoc(string buildInformationUrl)
+        {
+            return GetXDocument(buildInformationUrl + XmlApi, AuthInfo);
         }
 
         /// <summary>
