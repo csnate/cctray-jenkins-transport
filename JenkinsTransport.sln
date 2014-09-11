@@ -5,6 +5,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JenkinsTransport", "Jenkins
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JenkinsTransport.UnitTests", "JenkinsTransport.UnitTests\JenkinsTransport.UnitTests.csproj", "{75AA65FB-1567-4608-A95E-ACE1FA0F1956}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9EDA3AA5-20EA-4211-96EF-FA1855DA70BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JenkinsTransport.IntegrationTests", "JenkinsTransport.IntegrationTests\JenkinsTransport.IntegrationTests.csproj", "{A973FAD7-0DC8-4454-B7E6-A111C47DFE7A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,8 +23,16 @@ Global
 		{75AA65FB-1567-4608-A95E-ACE1FA0F1956}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75AA65FB-1567-4608-A95E-ACE1FA0F1956}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75AA65FB-1567-4608-A95E-ACE1FA0F1956}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A973FAD7-0DC8-4454-B7E6-A111C47DFE7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A973FAD7-0DC8-4454-B7E6-A111C47DFE7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A973FAD7-0DC8-4454-B7E6-A111C47DFE7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A973FAD7-0DC8-4454-B7E6-A111C47DFE7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{75AA65FB-1567-4608-A95E-ACE1FA0F1956} = {9EDA3AA5-20EA-4211-96EF-FA1855DA70BE}
+		{A973FAD7-0DC8-4454-B7E6-A111C47DFE7A} = {9EDA3AA5-20EA-4211-96EF-FA1855DA70BE}
 	EndGlobalSection
 EndGlobal

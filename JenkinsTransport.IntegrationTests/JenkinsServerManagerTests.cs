@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 
-namespace JenkinsTransport.UnitTests.Integration
+namespace JenkinsTransport.IntegrationTests
 {
     [TestClass]
     public class JenkinsServerManagerTests

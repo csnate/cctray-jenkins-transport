@@ -69,14 +69,10 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ApiTests.cs" />
-    <Compile Include="Integration\JenkinsProjectManagerTests.cs" />
-    <Compile Include="Integration\JenkinsServerManagerTests.cs" />
-    <Compile Include="Integration\JenkinsTransportExtensionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="JenkinsTransportExtensionTests.cs" />
     <Compile Include="JenkinsServerManagerTests.cs" />
     <Compile Include="JenkinsProjectManagerTests.cs" />
-    <Compile Include="Integration\ApiTests.cs" />
     <Compile Include="ConfigurationFormTests.cs" />
     <Compile Include="SettingsTests.cs" />
     <Compile Include="JenkinsBuildInformationTests.cs" />
@@ -108,7 +104,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Integration\" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
