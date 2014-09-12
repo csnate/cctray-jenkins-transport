@@ -42,6 +42,13 @@ namespace JenkinsTransport.UnitTests
 
             _responses.Enqueue(webResponse);            
         }
+
+        public void EnqueueThisDocumentAsNextResponse(XDocument document)
+        {
+            var webResponse = new TestWebResponse(document);
+
+            _responses.Enqueue(webResponse);    
+        }
     }
 
     [TestClass]
@@ -115,6 +122,90 @@ namespace JenkinsTransport.UnitTests
         }
 
         [TestMethod]
+        public void GetProjectStatus_when_build_number_has_not_changed_should_return_current_status()
+        {
+            ApiTestDependencies mocks = new ApiTestDependencies();
+            var target = CreateTestTarget(mocks);
+
+            ProjectStatusSampleData projectStatusSampleData =
+                new ProjectStatusSampleData();
+
+            projectStatusSampleData.InitializeFromFile(@".\TestData\ProjectStatusSampleData1.xml");
+            projectStatusSampleData.SetLastBuildNumberTo(100);
+
+            ProjectStatus currentStatus =
+                new ProjectStatus()
+                {
+                    LastBuildLabel = "100"
+                };
+
+            // Act
+            ProjectStatus status = target.GetProjectStatus(projectStatusSampleData.Document, currentStatus);
+
+            // Assert
+            status.Should().BeSameAs(currentStatus);
+        }
+
+        [TestMethod]
+        public void GetProjectStatus_when_build_number_has_changed_should_return_new_status()
+        {
+            ApiTestDependencies mocks = new ApiTestDependencies();
+            var target = CreateTestTarget(mocks);
+
+            ProjectStatusSampleData projectStatusSampleData =
+                new ProjectStatusSampleData();
+
+            projectStatusSampleData.InitializeFromFile(@".\TestData\ProjectStatusSampleData1.xml");
+            projectStatusSampleData.SetLastBuildNumberTo(101);
+
+            ProjectStatus currentStatus =
+                new ProjectStatus()
+                {
+                    LastBuildLabel = "100"
+                };
+
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\BuildInformationSampleData1.xml");
+
+            // Act
+            ProjectStatus status = target.GetProjectStatus(projectStatusSampleData.Document, currentStatus);
+
+            // Assert
+            status.Should().NotBeSameAs(currentStatus);
+        }
+
+        [TestMethod]
+        public void GetProjectStatus_when_new_status_should_have_correct_build_number()
+        {
+            ApiTestDependencies mocks = new ApiTestDependencies();
+            var target = CreateTestTarget(mocks);
+
+            ProjectStatusSampleData projectStatusSampleData =
+                new ProjectStatusSampleData();
+
+            projectStatusSampleData.InitializeFromFile(@".\TestData\ProjectStatusSampleData1.xml");
+            projectStatusSampleData.SetLastBuildNumberTo(101);
+
+            ProjectStatus currentStatus =
+                new ProjectStatus()
+                {
+                    LastBuildLabel = "100"
+                };
+
+            var buildInformationSampleData =
+                new BuildInformationSampleData();
+            buildInformationSampleData.InitializeFromFile(@".\TestData\BuildInformationSampleData1.xml");
+            buildInformationSampleData.SetBuildNumberTo(101);
+
+            mocks.EnqueueThisDocumentAsNextResponse(buildInformationSampleData.Document);
+
+            // Act
+            ProjectStatus status = target.GetProjectStatus(projectStatusSampleData.Document, currentStatus);
+
+            // Assert
+            status.LastBuildLabel.Should().Be("101");
+        }
+
+        [TestMethod]
         public void GetBuildInformation_should_have_correct_webUrl()
         {
             ApiTestDependencies mocks = new ApiTestDependencies();
@@ -161,6 +252,57 @@ namespace JenkinsTransport.UnitTests
 
             // Assert
             status[0].Name.Should().Be("VERSION");
+        }
+    }
+
+    public class BuildInformationSampleData
+    {
+        private XDocument _document;
+
+        public XDocument Document
+        {
+            get { return _document; }
+        }
+
+        public void InitializeFromFile(string testdataBuildinformationsampledata1Xml)
+        {
+            _document = XDocument.Load(testdataBuildinformationsampledata1Xml);
+        }
+
+        public void SetBuildNumberTo(int i)
+        {
+            var firstElement = _document.Descendants().First<XElement>();
+            //var lastBuildElement = firstElement.Element("lastBuild");
+
+            firstElement.Element("number").Value = i.ToString();
+        }
+    }
+
+
+    /// <summary>
+    /// Helper class for setting up test state of ProjectStatusSampleData
+    /// </summary>
+    public class ProjectStatusSampleData
+    {
+        private XDocument _document;
+
+        public XDocument Document
+        {
+            get { return _document; }
+        }
+
+        public void InitializeFromFile(string testdataProjectstatussampledata1Xml)
+        {
+            _document = XDocument.Load(testdataProjectstatussampledata1Xml);
+        }
+
+        public void SetLastBuildNumberTo(int i)
+        {
+            var firstElement = _document.Descendants().First<XElement>(); 
+            var lastBuildElement = firstElement.Element("lastBuild");
+
+            lastBuildElement.Element("number").Value = i.ToString();
+
         }
     }
 }

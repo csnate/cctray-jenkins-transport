@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Xml.Linq;
 
 namespace JenkinsTransport.UnitTests.TestHelpers
 {
@@ -23,6 +24,19 @@ namespace JenkinsTransport.UnitTests.TestHelpers
                     _responseStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(rd.ReadToEnd()));
                 }
             }
+        }
+        /// <summary>
+        /// Initialize a new instance of TestWebResponse using the supplied
+        /// XDocument
+        /// </summary>
+        /// <param name="xdoc"></param>
+        public TestWebResponse(XDocument xdoc)
+        {
+            //using (var rd = new StreamReader(xdoc.ToString()))
+            //{
+            //    _responseStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(rd.ReadToEnd()));
+            //}
+            _responseStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xdoc.ToString()));
         }
 
         /// <summary>See <see cref="WebResponse.GetResponseStream"/>.</summary>
