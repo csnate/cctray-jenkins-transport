@@ -147,6 +147,27 @@ namespace JenkinsTransport.UnitTests
         }
 
         [TestMethod]
+        public void GetProjectStatus_when_current_status_is_null_should_return_new_status()
+        {
+            ApiTestDependencies mocks = new ApiTestDependencies();
+            var target = CreateTestTarget(mocks);
+
+            ProjectStatusSampleData projectStatusSampleData =
+                new ProjectStatusSampleData();
+
+            projectStatusSampleData.InitializeFromFile(@".\TestData\ProjectStatusSampleData1.xml");
+            projectStatusSampleData.SetLastBuildNumberTo(101);
+
+            mocks.EnqueueThisFileAsNextResponse(@".\TestData\BuildInformationSampleData1.xml");
+
+            // Act
+            ProjectStatus status = target.GetProjectStatus(projectStatusSampleData.Document, null);
+
+            // Assert
+            status.Should().NotBeNull();
+        }
+
+        [TestMethod]
         public void GetProjectStatus_when_build_number_has_changed_should_return_new_status()
         {
             ApiTestDependencies mocks = new ApiTestDependencies();

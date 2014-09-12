@@ -149,7 +149,7 @@ namespace JenkinsTransport
             var lastCompletedBuild = firstElement.Element("lastCompletedBuild");
 
             // Check if the last build number is any different from the current status.  If not, then update
-            if (currentStatus != null && lastBuildElement != null && currentStatus.LastBuildLabel == (string)lastBuildElement.Element("number"))
+            if (HasLastBuildNumberChanged(currentStatus, lastBuildElement))
             {
                 return currentStatus;
             }
@@ -183,6 +183,15 @@ namespace JenkinsTransport
                                         ShowStartStopButton = true
                                     };
             return projectStatus;
+        }
+
+
+        private bool HasLastBuildNumberChanged(ProjectStatus currentStatus, XElement lastBuildElement)
+        {
+            //if (currentStatus == null)
+            //    return true;
+
+            return currentStatus != null && lastBuildElement != null && currentStatus.LastBuildLabel == (string)lastBuildElement.Element("number");
         }
 
         /// <summary>
