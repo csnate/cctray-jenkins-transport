@@ -159,6 +159,9 @@ namespace JenkinsTransport
                                     : new JenkinsBuildInformation();
 
             // Check to see if the last successfull is the same as the last build.  If so, no need to get the details again
+            // TODO NRJ: ARRRG nested ternery operators ! Refactor required
+            // TODO NRJ: Is this even required? Given that the only thing we use lastSuccessfulBuildInfo for is the number
+            // and we already know that from our original information... pretty sure this is not adding anything 
             var lastSuccessfulBuildInfo = lastSuccessfulBuildElement != null
                                               ? lastCompletedBuildInfo.Number == (string) lastSuccessfulBuildElement.Element("number")
                                                     ? lastCompletedBuildInfo
@@ -181,6 +184,7 @@ namespace JenkinsTransport
                                         NextBuildTime = DateTime.MaxValue, // This will tell CCTray that the project isn't automatically triggered
                                         ShowStartStopButton = true
                                     };
+
             return projectStatus;
         }
 
