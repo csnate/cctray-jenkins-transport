@@ -30,6 +30,10 @@ This project builds and tests the Hadoop branches/branch-1-win, polling subversi
     <number>119</number>
     <url>https://builds.apache.org/job/Hadoop-1-win/119/</url>
   </lastUnsuccessfulBuild>
+  <lastSuccessfulBuild>
+    <number>117</number>
+    <url>https://builds.apache.org/job/Hadoop-1-win/117/</url>
+  </lastSuccessfulBuild>
   <nextBuildNumber>120</nextBuildNumber>
   <property />
   <property>

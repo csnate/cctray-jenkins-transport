@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Xml.Linq;
 using System.Collections.Generic;
 using FluentAssertions;
@@ -13,6 +14,7 @@ using ThoughtWorks.CruiseControl.Remote;
 
 namespace JenkinsTransport.UnitTests
 {
+
     internal class ApiTestDependencies
     {
         public Mock<IWebRequestFactory> MockWebRequestFactory;
@@ -64,6 +66,17 @@ namespace JenkinsTransport.UnitTests
 
             return target;
         }
+
+
+        private Api CreateTestTarget(IWebRequestFactory webRequestFactory)
+        {
+            string baseUrl = "";
+            string authInfo = "";
+            var target = new Api(baseUrl, authInfo, webRequestFactory);
+
+            return target;
+        }
+
 
         //[TestMethod]
         public void CollectTestData()
@@ -227,6 +240,78 @@ namespace JenkinsTransport.UnitTests
         }
 
         [TestMethod]
+        public void GetProjectStatus_when_valid_last_completed_build_should_get_new_status_with_it()
+        {
+            ApiTestDependencies mocks = new ApiTestDependencies();
+            var target = CreateTestTarget(mocks);
+
+            ProjectStatusSampleData projectStatusSampleData =
+                new ProjectStatusSampleData();
+
+            projectStatusSampleData.InitializeFromFile(@".\TestData\ProjectStatusSampleData1.xml");
+            projectStatusSampleData.SetLastBuildNumberTo(101);
+            projectStatusSampleData.SetLastCompletedBuildUrlTo(@"http://testurl");
+
+            ProjectStatus currentStatus =
+                new ProjectStatus()
+                {
+                    LastBuildLabel = "100"
+                };
+
+            var buildInformationSampleData =
+                new BuildInformationSampleData();
+            buildInformationSampleData.InitializeFromFile(@".\TestData\BuildInformationSampleData1.xml");
+            buildInformationSampleData.SetBuildNumberTo(101);
+  
+            mocks.EnqueueThisDocumentAsNextResponse(buildInformationSampleData.Document);
+
+            // Act
+            target.GetProjectStatus(projectStatusSampleData.Document, currentStatus);
+
+            // Assert
+            const string expectedBuildInformationUrl = @"http://testurl/api/xml";
+            mocks.MockWebRequestFactory
+                .Verify(x => x.Create(expectedBuildInformationUrl),
+               Times.Once);
+        }
+
+        [TestMethod]
+        public void GetProjectStatus_when_no_valid_last_completed_build_should_use_new_build_information()
+        {
+            ApiTestDependencies mocks = new ApiTestDependencies();
+            var target = CreateTestTarget(mocks);
+
+            ProjectStatusSampleData projectStatusSampleData =
+                new ProjectStatusSampleData();
+
+            projectStatusSampleData.InitializeFromFile(@".\TestData\ProjectStatusSampleData1.xml");
+            projectStatusSampleData.SetLastBuildNumberTo(101);
+            projectStatusSampleData.RemoveLastCompletedBuildElements();
+
+            ProjectStatus currentStatus =
+                new ProjectStatus()
+                {
+                    LastBuildLabel = "100"
+                };
+
+            var buildInformationSampleData =
+                new BuildInformationSampleData();
+            buildInformationSampleData.InitializeFromFile(@".\TestData\BuildInformationSampleData1.xml");
+            buildInformationSampleData.SetBuildNumberTo(101);
+
+            mocks.EnqueueThisDocumentAsNextResponse(buildInformationSampleData.Document);
+
+            // Act
+            target.GetProjectStatus(projectStatusSampleData.Document, currentStatus);
+
+            // Assert
+            const string expectedBuildInformationUrl = @"http://testurl/api/xml";
+            mocks.MockWebRequestFactory
+                .Verify(x => x.Create(expectedBuildInformationUrl),
+               Times.Once);
+        }
+
+        [TestMethod]
         public void GetBuildInformation_should_have_correct_webUrl()
         {
             ApiTestDependencies mocks = new ApiTestDependencies();
@@ -324,6 +409,22 @@ namespace JenkinsTransport.UnitTests
 
             lastBuildElement.Element("number").Value = i.ToString();
 
+        }
+
+        public void SetLastCompletedBuildUrlTo(string value)
+        {
+            var firstElement = _document.Descendants().First<XElement>();
+            var lastBuildElement = firstElement.Element("lastCompletedBuild");
+
+            lastBuildElement.Element("url").Value = value;
+        }
+
+        public void RemoveLastCompletedBuildElements()
+        {
+            var firstElement = _document.Descendants().First<XElement>();
+            var lastBuildElement = firstElement.Element("lastCompletedBuild");
+
+            lastBuildElement.Remove();
         }
     }
 }
