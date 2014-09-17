@@ -266,14 +266,45 @@ namespace JenkinsTransport.UnitTests
             mocks.EnqueueThisDocumentAsNextResponse(buildInformationSampleData.Document);
 
             // Act
-            target.GetProjectStatus(projectStatusSampleData.Document, currentStatus);
+            var actual = target.GetProjectStatus(projectStatusSampleData.Document, currentStatus);
 
             // Assert
-            const string expectedBuildInformationUrl = @"http://testurl/api/xml";
-            mocks.MockWebRequestFactory
-                .Verify(x => x.Create(expectedBuildInformationUrl),
-               Times.Once);
+            actual.LastBuildLabel.Should().Be("101");            
         }
+
+        [TestMethod]
+        public void GetProjectStatus_when_no_valid_last_successful_build_should_use_new_build_information()
+        {
+            ApiTestDependencies mocks = new ApiTestDependencies();
+            var target = CreateTestTarget(mocks);
+
+            ProjectStatusSampleData projectStatusSampleData =
+                new ProjectStatusSampleData();
+
+            projectStatusSampleData.InitializeFromFile(@".\TestData\ProjectStatusSampleData1.xml");
+            projectStatusSampleData.SetLastBuildNumberTo(101);
+            projectStatusSampleData.SetLastCompletedBuildUrlTo(@"http://testurl");
+
+            ProjectStatus currentStatus =
+                new ProjectStatus()
+                {
+                    LastBuildLabel = "100"
+                };
+
+            var buildInformationSampleData =
+                new BuildInformationSampleData();
+            buildInformationSampleData.InitializeFromFile(@".\TestData\BuildInformationSampleData1.xml");
+            buildInformationSampleData.SetBuildNumberTo(101);
+
+            mocks.EnqueueThisDocumentAsNextResponse(buildInformationSampleData.Document);
+
+            // Act
+            var actual = target.GetProjectStatus(projectStatusSampleData.Document, currentStatus);
+
+            // Assert
+            actual.LastSuccessfulBuildLabel.Should().Be("");
+        }
+
 
         [TestMethod]
         public void GetProjectStatus_when_no_valid_last_completed_build_should_use_new_build_information()
@@ -302,13 +333,10 @@ namespace JenkinsTransport.UnitTests
             mocks.EnqueueThisDocumentAsNextResponse(buildInformationSampleData.Document);
 
             // Act
-            target.GetProjectStatus(projectStatusSampleData.Document, currentStatus);
+            var actual = target.GetProjectStatus(projectStatusSampleData.Document, currentStatus);
 
             // Assert
-            const string expectedBuildInformationUrl = @"http://testurl/api/xml";
-            mocks.MockWebRequestFactory
-                .Verify(x => x.Create(expectedBuildInformationUrl),
-               Times.Once);
+            actual.LastBuildLabel.Should().Be(""); 
         }
 
         [TestMethod]
