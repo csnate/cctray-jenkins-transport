@@ -88,6 +88,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include=".runsettings" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
