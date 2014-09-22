@@ -146,7 +146,7 @@ namespace JenkinsTransport
             var color = (string)firstElement.Element("color");
             var lastBuildElement = firstElement.Element("lastBuild");  // Will contain the latest (in progress) build number
             var lastSuccessfulBuildElement = firstElement.Element("lastSuccessfulBuild");
-            var lastCompletedBuild = firstElement.Element("lastCompletedBuild");
+            var lastCompletedBuildElement = firstElement.Element("lastCompletedBuild");
 
             if (!HasLastBuildNumberChanged(currentStatus, lastBuildElement))
             {
@@ -154,8 +154,8 @@ namespace JenkinsTransport
             }
 
             // Otherwise, we'll need to get the new status
-            var lastCompletedBuildInfo = lastCompletedBuild != null
-                                    ? GetBuildInformation((string) lastCompletedBuild.Element("url"))
+            var lastCompletedBuildInfo = lastCompletedBuildElement != null
+                                    ? GetBuildInformation((string) lastCompletedBuildElement.Element("url"))
                                     : new JenkinsBuildInformation();
 
             // Check to see if the last successfull is the same as the last build.  If so, no need to get the details again
