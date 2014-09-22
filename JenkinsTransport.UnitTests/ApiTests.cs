@@ -250,7 +250,6 @@ namespace JenkinsTransport.UnitTests
 
             projectStatusSampleData.InitializeFromFile(@".\TestData\ProjectStatusSampleData1.xml");
             projectStatusSampleData.SetLastBuildNumberTo(101);
-            projectStatusSampleData.SetLastCompletedBuildUrlTo(@"http://testurl");
 
             ProjectStatus currentStatus =
                 new ProjectStatus()
