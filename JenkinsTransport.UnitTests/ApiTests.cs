@@ -304,6 +304,81 @@ namespace JenkinsTransport.UnitTests
             actual.LastSuccessfulBuildLabel.Should().Be("");
         }
 
+        [TestMethod]
+        public void GetProjectStatus_when_last_successful_build_matches_last_completed_build_should_use_last_successful_build_number()
+        {
+            ApiTestDependencies mocks = new ApiTestDependencies();
+            var target = CreateTestTarget(mocks);
+
+            ProjectStatusSampleData projectStatusSampleData =
+                new ProjectStatusSampleData();
+
+            projectStatusSampleData.InitializeFromFile(@".\TestData\ProjectStatusSampleData2_LastSuccessfulBuild.xml");
+            
+            ProjectStatus currentStatus =
+                new ProjectStatus()
+                {
+                    LastBuildLabel = "65833"
+                };
+
+            // Configure the first request to GetBuildInformation which will be for the lastCompletedBuild
+            // to match the last successful build number
+            var buildInformationSampleData =
+                new BuildInformationSampleData();
+            buildInformationSampleData.InitializeFromFile(@".\TestData\BuildInformationSampleData1.xml");
+            buildInformationSampleData.SetBuildNumberTo(65834);
+
+            mocks.EnqueueThisDocumentAsNextResponse(buildInformationSampleData.Document);
+
+            // Act
+            var actual = target.GetProjectStatus(projectStatusSampleData.Document, currentStatus);
+
+            // Assert
+            actual.LastSuccessfulBuildLabel.Should().Be("65834");
+        }
+
+
+        [TestMethod]
+        public void GetProjectStatus_when_last_successful_build_does_not_match_last_completed_build_should_retrieve_last_successful_build_information()
+        {
+            ApiTestDependencies mocks = new ApiTestDependencies();
+            var target = CreateTestTarget(mocks);
+
+            ProjectStatusSampleData projectStatusSampleData =
+                new ProjectStatusSampleData();
+
+            projectStatusSampleData.InitializeFromFile(@".\TestData\ProjectStatusSampleData2_LastSuccessfulBuild.xml");
+            projectStatusSampleData.SetLastSuccessfulBuildNumberTo(65835);
+
+            ProjectStatus currentStatus =
+                new ProjectStatus()
+                {
+                    LastBuildLabel = "65833"
+                };
+
+            // Configure the first request to GetBuildInformation which will be for the lastCompletedBuild
+            // to match the last successful build number
+            var buildInformationSampleData =
+                new BuildInformationSampleData();
+            buildInformationSampleData.InitializeFromFile(@".\TestData\BuildInformationSampleData1.xml");
+            buildInformationSampleData.SetBuildNumberTo(65834);
+            mocks.EnqueueThisDocumentAsNextResponse(buildInformationSampleData.Document);
+
+            // Configure the second request to GetBuildInformation which will be for the lastSuccessfulBuild
+            // to match the last successful build number
+            var lastSuccessfulBuildInformation =
+                new BuildInformationSampleData();
+            lastSuccessfulBuildInformation.InitializeFromFile(@".\TestData\BuildInformationSampleData1.xml");
+            lastSuccessfulBuildInformation.SetBuildNumberTo(65835);
+            mocks.EnqueueThisDocumentAsNextResponse(lastSuccessfulBuildInformation.Document);
+            
+            // Act
+            var actual = target.GetProjectStatus(projectStatusSampleData.Document, currentStatus);
+
+            // Assert
+            actual.LastSuccessfulBuildLabel.Should().Be("65835");
+        }
+
 
         [TestMethod]
         public void GetProjectStatus_when_no_valid_last_completed_build_should_use_new_build_information()
@@ -452,6 +527,22 @@ namespace JenkinsTransport.UnitTests
             var lastBuildElement = firstElement.Element("lastCompletedBuild");
 
             lastBuildElement.Remove();
+        }
+
+        public void SetLastCompletedBuildNumberTo(int value)
+        {
+            var firstElement = _document.Descendants().First<XElement>();
+            var lastBuildElement = firstElement.Element("lastCompletedBuild");
+
+            lastBuildElement.Element("number").Value = value.ToString();
+        }
+
+        public void SetLastSuccessfulBuildNumberTo(int value)
+        {
+            var firstElement = _document.Descendants().First<XElement>();
+            var lastBuildElement = firstElement.Element("lastSuccessfulBuild");
+
+            lastBuildElement.Element("number").Value = value.ToString();
         }
     }
 }
