@@ -153,15 +153,11 @@ namespace JenkinsTransport
                 return currentStatus;
             }
 
-            // Otherwise, we'll need to get the new status
-            JenkinsBuildInformation lastCompletedBuildInfo;
+            // Otherwise, we'll need to get the new status of the last completed build
+            JenkinsBuildInformation lastCompletedBuildInfo = new JenkinsBuildInformation();
             if (lastCompletedBuildElement != null)
             {
                 lastCompletedBuildInfo = GetBuildInformation((string) lastCompletedBuildElement.Element("url"));
-            }
-            else
-            {
-                lastCompletedBuildInfo = new JenkinsBuildInformation();
             }
             
             string lastSuccessfulBuildNumber = String.Empty;
