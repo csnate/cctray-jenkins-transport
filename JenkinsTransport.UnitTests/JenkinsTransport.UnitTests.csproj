@@ -101,6 +101,7 @@
     <Content Include="TestData\ProjectStatusSampleData1.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestData\ProjectStatusSampleData2_LastSuccessfulBuild.xml" />
     <Content Include="TestData\TestJobsSampleData1.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
