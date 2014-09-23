@@ -154,19 +154,37 @@ namespace JenkinsTransport
             }
 
             // Otherwise, we'll need to get the new status
-            var lastCompletedBuildInfo = lastCompletedBuildElement != null
-                                    ? GetBuildInformation((string) lastCompletedBuildElement.Element("url"))
-                                    : new JenkinsBuildInformation();
+            JenkinsBuildInformation lastCompletedBuildInfo;
+            if (lastCompletedBuildElement != null)
+            {
+                lastCompletedBuildInfo = GetBuildInformation((string) lastCompletedBuildElement.Element("url"));
+            }
+            else
+            {
+                lastCompletedBuildInfo = new JenkinsBuildInformation();
+            }
 
             // Check to see if the last successfull is the same as the last build.  If so, no need to get the details again
-            // TODO NRJ: ARRRG nested ternery operators ! Refactor required
             // TODO NRJ: Is this even required? Given that the only thing we use lastSuccessfulBuildInfo for is the number
             // and we already know that from our original information... pretty sure this is not adding anything 
-            var lastSuccessfulBuildInfo = lastSuccessfulBuildElement != null
-                                              ? lastCompletedBuildInfo.Number == (string) lastSuccessfulBuildElement.Element("number")
-                                                    ? lastCompletedBuildInfo
-                                                    : GetBuildInformation((string) lastSuccessfulBuildElement.Element("url"))
-                                              : new JenkinsBuildInformation();
+            JenkinsBuildInformation lastSuccessfulBuildInfo;
+            if (lastSuccessfulBuildElement != null)
+            {
+                if (lastCompletedBuildInfo.Number ==
+                    (string) lastSuccessfulBuildElement.Element("number"))
+                {
+                    lastSuccessfulBuildInfo = lastCompletedBuildInfo;
+                }
+                else
+                {
+                    lastSuccessfulBuildInfo = GetBuildInformation((string) lastSuccessfulBuildElement.Element("url"));
+                    
+                }
+            }
+            else
+            {
+                lastSuccessfulBuildInfo = new JenkinsBuildInformation();
+            }
 
             var name = (string) firstElement.Element("name");
             var projectStatus = new ProjectStatus(name, EnumUtils.GetIntegrationStatus(color),
