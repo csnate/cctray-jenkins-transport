@@ -143,15 +143,17 @@ namespace JenkinsTransport
         {
             // The first element in the document is named based on the type of project (freeStyleProject, mavenModuleSet, etc). Can't access based on name.
             var firstElement = xDoc.Descendants().First<XElement>(); 
-            var color = (string)firstElement.Element("color");
             var lastBuildElement = firstElement.Element("lastBuild");  // Will contain the latest (in progress) build number
-            var lastSuccessfulBuildElement = firstElement.Element("lastSuccessfulBuild");
-            var lastCompletedBuildElement = firstElement.Element("lastCompletedBuild");
 
+            // GUARD
             if (!HasLastBuildNumberChanged(currentStatus, lastBuildElement))
             {
                 return currentStatus;
             }
+
+            var color = (string)firstElement.Element("color");            
+            var lastSuccessfulBuildElement = firstElement.Element("lastSuccessfulBuild");
+            var lastCompletedBuildElement = firstElement.Element("lastCompletedBuild");
 
             // Otherwise, we'll need to get the new status of the last completed build
             JenkinsBuildInformation lastCompletedBuildInfo = new JenkinsBuildInformation();
