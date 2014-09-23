@@ -163,29 +163,13 @@ namespace JenkinsTransport
             {
                 lastCompletedBuildInfo = new JenkinsBuildInformation();
             }
-
-            // Check to see if the last successfull is the same as the last build.  If so, no need to get the details again
-            // TODO NRJ: Is this even required? Given that the only thing we use lastSuccessfulBuildInfo for is the number
-            // and we already know that from our original information... pretty sure this is not adding anything 
-            JenkinsBuildInformation lastSuccessfulBuildInfo;
+            
+            string lastSuccessfulBuildNumber = String.Empty;
             if (lastSuccessfulBuildElement != null)
             {
-                if (lastCompletedBuildInfo.Number ==
-                    (string) lastSuccessfulBuildElement.Element("number"))
-                {
-                    lastSuccessfulBuildInfo = lastCompletedBuildInfo;
-                }
-                else
-                {
-                    lastSuccessfulBuildInfo = GetBuildInformation((string) lastSuccessfulBuildElement.Element("url"));
-                    
-                }
+                lastSuccessfulBuildNumber = lastSuccessfulBuildElement.Element("number").Value;
             }
-            else
-            {
-                lastSuccessfulBuildInfo = new JenkinsBuildInformation();
-            }
-
+            
             var name = (string) firstElement.Element("name");
             var projectStatus = new ProjectStatus(name, EnumUtils.GetIntegrationStatus(color),
                                                   lastCompletedBuildInfo.Timestamp)
@@ -194,7 +178,7 @@ namespace JenkinsTransport
                                         Status = EnumUtils.GetProjectIntegratorState((bool)firstElement.Element("buildable")),
                                         WebURL = (string) firstElement.Element("url"),
                                         LastBuildLabel = lastCompletedBuildInfo.Number,
-                                        LastSuccessfulBuildLabel = lastSuccessfulBuildInfo.Number,
+                                        LastSuccessfulBuildLabel = lastSuccessfulBuildNumber,
                                         Queue = name,
                                         QueuePriority = 0,
                                         Description = (string)firstElement.Element("description"),
