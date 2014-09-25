@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Xml.Linq;
 using System.Collections.Generic;
@@ -70,8 +69,8 @@ namespace JenkinsTransport.UnitTests
 
         private Api CreateTestTarget(IWebRequestFactory webRequestFactory)
         {
-            string baseUrl = "";
-            string authInfo = "";
+            string baseUrl = String.Empty;
+            string authInfo = String.Empty;
             var target = new Api(baseUrl, authInfo, webRequestFactory);
 
             return target;
@@ -452,89 +451,6 @@ namespace JenkinsTransport.UnitTests
 
             // Assert
             status[0].Name.Should().Be("VERSION");
-        }
-    }
-
-    public class BuildInformationSampleData
-    {
-        private XDocument _document;
-
-        public XDocument Document
-        {
-            get { return _document; }
-        }
-
-        public void InitializeFromFile(string testdataBuildinformationsampledata1Xml)
-        {
-            _document = XDocument.Load(testdataBuildinformationsampledata1Xml);
-        }
-
-        public void SetBuildNumberTo(int i)
-        {
-            var firstElement = _document.Descendants().First<XElement>();
-            //var lastBuildElement = firstElement.Element("lastBuild");
-
-            firstElement.Element("number").Value = i.ToString();
-        }
-    }
-
-
-    /// <summary>
-    /// Helper class for setting up test state of ProjectStatusSampleData
-    /// </summary>
-    public class ProjectStatusSampleData
-    {
-        private XDocument _document;
-
-        public XDocument Document
-        {
-            get { return _document; }
-        }
-
-        public void InitializeFromFile(string testdataProjectstatussampledata1Xml)
-        {
-            _document = XDocument.Load(testdataProjectstatussampledata1Xml);
-        }
-
-        public void SetLastBuildNumberTo(int i)
-        {
-            var firstElement = _document.Descendants().First<XElement>(); 
-            var lastBuildElement = firstElement.Element("lastBuild");
-
-            lastBuildElement.Element("number").Value = i.ToString();
-
-        }
-
-        public void SetLastCompletedBuildUrlTo(string value)
-        {
-            var firstElement = _document.Descendants().First<XElement>();
-            var lastBuildElement = firstElement.Element("lastCompletedBuild");
-
-            lastBuildElement.Element("url").Value = value;
-        }
-
-        public void RemoveLastCompletedBuildElements()
-        {
-            var firstElement = _document.Descendants().First<XElement>();
-            var lastBuildElement = firstElement.Element("lastCompletedBuild");
-
-            lastBuildElement.Remove();
-        }
-
-        public void SetLastCompletedBuildNumberTo(int value)
-        {
-            var firstElement = _document.Descendants().First<XElement>();
-            var lastBuildElement = firstElement.Element("lastCompletedBuild");
-
-            lastBuildElement.Element("number").Value = value.ToString();
-        }
-
-        public void SetLastSuccessfulBuildNumberTo(int value)
-        {
-            var firstElement = _document.Descendants().First<XElement>();
-            var lastBuildElement = firstElement.Element("lastSuccessfulBuild");
-
-            lastBuildElement.Element("number").Value = value.ToString();
         }
     }
 }

@@ -69,6 +69,8 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ApiTests.cs" />
+    <Compile Include="TestHelpers\ProjectStatusSampleData.cs" />
+    <Compile Include="TestHelpers\BuildInformationSampleData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="JenkinsTransportExtensionTests.cs" />
     <Compile Include="JenkinsServerManagerTests.cs" />
