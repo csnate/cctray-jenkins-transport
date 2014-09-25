@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<freeStyleProject>
+  <description>
+    This job runs every 10 mins looking for BOOKKEEPER JIRAs with new patches
+    &lt;p/&gt;
+    and submits them to the BOOKKEEPER precommit Jenkins job
+    &lt;a href="https://builds.apache.org/job/bookkeeper-trunk-precommit-build/"&gt;https://builds.apache.org/job/bookkeeper-trunk-precommit-build/&lt;/a&gt;
+    &lt;p/&gt;
+  </description>
+  <displayName>bookkeeper-trunk-find-patches-available</displayName>
+  <name>bookkeeper-trunk-find-patches-available</name>
+  <url>https://builds.apache.org/job/bookkeeper-trunk-find-patches-available/</url>
+  <buildable>true</buildable>
+  <color>blue</color>
+  <firstBuild>
+    <number>65785</number>
+    <url>https://builds.apache.org/job/bookkeeper-trunk-find-patches-available/65785/</url>
+  </firstBuild>
+  <inQueue>false</inQueue>
+  <keepDependencies>false</keepDependencies>
+  <lastBuild>
+    <number>65834</number>
+    <url>https://builds.apache.org/job/bookkeeper-trunk-find-patches-available/65834/</url>
+  </lastBuild>
+  <lastCompletedBuild>
+    <number>65834</number>
+    <url>https://builds.apache.org/job/bookkeeper-trunk-find-patches-available/65834/</url>
+  </lastCompletedBuild>
+  <lastStableBuild>
+    <number>65834</number>
+    <url>https://builds.apache.org/job/bookkeeper-trunk-find-patches-available/65834/</url>
+  </lastStableBuild>
+  <lastSuccessfulBuild>
+    <number>65834</number>
+    <url>https://builds.apache.org/job/bookkeeper-trunk-find-patches-available/65834/</url>
+  </lastSuccessfulBuild>
+  <nextBuildNumber>65835</nextBuildNumber>
+  <property/>
+  <property>
+    <parameterDefinition>
+      <defaultParameterValue>
+        <name>OPTIONS</name>
+        <value>--submit</value>
+      </defaultParameterValue>
+      <description>--delete-history-file : use this to reset the already submitted patches file.</description>
+      <name>OPTIONS</name>
+      <type>StringParameterDefinition</type>
+    </parameterDefinition>
+  </property>
+  <property/>
+  <property/>
+  <concurrentBuild>false</concurrentBuild>
+  <scm/>
+</freeStyleProject>

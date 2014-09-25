@@ -143,29 +143,31 @@ namespace JenkinsTransport
         {
             // The first element in the document is named based on the type of project (freeStyleProject, mavenModuleSet, etc). Can't access based on name.
             var firstElement = xDoc.Descendants().First<XElement>(); 
-            var color = (string)firstElement.Element("color");
             var lastBuildElement = firstElement.Element("lastBuild");  // Will contain the latest (in progress) build number
-            var lastSuccessfulBuildElement = firstElement.Element("lastSuccessfulBuild");
-            var lastCompletedBuild = firstElement.Element("lastCompletedBuild");
 
-            // Check if the last build number is any different from the current status.  If not, then update
-            if (currentStatus != null && lastBuildElement != null && currentStatus.LastBuildLabel == (string)lastBuildElement.Element("number"))
+            // GUARD
+            if (!HasLastBuildNumberChanged(currentStatus, lastBuildElement))
             {
                 return currentStatus;
             }
 
-            // Otherwise, we'll need to get the new status
-            var lastCompletedBuildInfo = lastCompletedBuild != null
-                                    ? GetBuildInformation((string) lastCompletedBuild.Element("url"))
-                                    : new JenkinsBuildInformation();
+            var color = (string)firstElement.Element("color");            
+            var lastSuccessfulBuildElement = firstElement.Element("lastSuccessfulBuild");
+            var lastCompletedBuildElement = firstElement.Element("lastCompletedBuild");
 
-            // Check to see if the last successfull is the same as the last build.  If so, no need to get the details again
-            var lastSuccessfulBuildInfo = lastSuccessfulBuildElement != null
-                                              ? lastCompletedBuildInfo.Number == (string) lastSuccessfulBuildElement.Element("number")
-                                                    ? lastCompletedBuildInfo
-                                                    : GetBuildInformation((string) lastSuccessfulBuildElement.Element("url"))
-                                              : new JenkinsBuildInformation();
-
+            // Otherwise, we'll need to get the new status of the last completed build
+            JenkinsBuildInformation lastCompletedBuildInfo = new JenkinsBuildInformation();
+            if (lastCompletedBuildElement != null)
+            {
+                lastCompletedBuildInfo = GetBuildInformation((string) lastCompletedBuildElement.Element("url"));
+            }
+            
+            string lastSuccessfulBuildNumber = String.Empty;
+            if (lastSuccessfulBuildElement != null)
+            {
+                lastSuccessfulBuildNumber = lastSuccessfulBuildElement.Element("number").Value;
+            }
+            
             var name = (string) firstElement.Element("name");
             var projectStatus = new ProjectStatus(name, EnumUtils.GetIntegrationStatus(color),
                                                   lastCompletedBuildInfo.Timestamp)
@@ -174,7 +176,7 @@ namespace JenkinsTransport
                                         Status = EnumUtils.GetProjectIntegratorState((bool)firstElement.Element("buildable")),
                                         WebURL = (string) firstElement.Element("url"),
                                         LastBuildLabel = lastCompletedBuildInfo.Number,
-                                        LastSuccessfulBuildLabel = lastSuccessfulBuildInfo.Number,
+                                        LastSuccessfulBuildLabel = lastSuccessfulBuildNumber,
                                         Queue = name,
                                         QueuePriority = 0,
                                         Description = (string)firstElement.Element("description"),
@@ -182,7 +184,20 @@ namespace JenkinsTransport
                                         NextBuildTime = DateTime.MaxValue, // This will tell CCTray that the project isn't automatically triggered
                                         ShowStartStopButton = true
                                     };
+
             return projectStatus;
+        }
+
+
+        private bool HasLastBuildNumberChanged(ProjectStatus currentStatus, XElement lastBuildElement)
+        {
+            if (currentStatus == null)
+                return true;
+
+            if (lastBuildElement == null)
+                return true;
+
+            return currentStatus.LastBuildLabel != (string)lastBuildElement.Element("number");
         }
 
         /// <summary>

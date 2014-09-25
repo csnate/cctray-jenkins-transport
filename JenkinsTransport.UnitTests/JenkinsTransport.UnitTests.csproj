@@ -69,14 +69,12 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ApiTests.cs" />
-    <Compile Include="Integration\JenkinsProjectManagerTests.cs" />
-    <Compile Include="Integration\JenkinsServerManagerTests.cs" />
-    <Compile Include="Integration\JenkinsTransportExtensionTests.cs" />
+    <Compile Include="TestHelpers\ProjectStatusSampleData.cs" />
+    <Compile Include="TestHelpers\BuildInformationSampleData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="JenkinsTransportExtensionTests.cs" />
     <Compile Include="JenkinsServerManagerTests.cs" />
     <Compile Include="JenkinsProjectManagerTests.cs" />
-    <Compile Include="Integration\ApiTests.cs" />
     <Compile Include="ConfigurationFormTests.cs" />
     <Compile Include="SettingsTests.cs" />
     <Compile Include="JenkinsBuildInformationTests.cs" />
@@ -92,6 +90,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include=".runsettings" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +102,9 @@
     </Content>
     <Content Include="TestData\ProjectStatusSampleData1.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\ProjectStatusSampleData2_LastSuccessfulBuild.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestData\TestJobsSampleData1.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
