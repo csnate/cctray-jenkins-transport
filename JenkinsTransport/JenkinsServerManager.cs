@@ -78,9 +78,17 @@ namespace JenkinsTransport
         }
 
         #region ICruiseServerManager implmentations
+
+        /// <summary>
+        /// This only gets called while CCTray is polling for updates of known jobs
+        /// </summary>
+        /// <returns></returns>
         public CruiseServerSnapshot GetCruiseServerSnapshot()
         {
-            _allJobs = GetAllJobs();
+            if (_allJobs == null)
+            {
+                _allJobs = Api.GetAllJobs();
+            }
 
             var projectStatues = _allJobs
                 .Where(a => ProjectsAndCurrentStatus.ContainsKey(a.Name))
