@@ -52,12 +52,26 @@ namespace JenkinsTransport
         #region ICruiseProjectManager implmentations
         public void ForceBuild(string sessionToken, Dictionary<string, string> parameters, string userName)
         {
-            Api.ForceBuild(ProjectName, parameters);
+            if (WebURL.IsWellFormedOriginalString())
+            {
+                Api.ForceBuild(WebURL);
+            }
+            else
+            {
+                Api.ForceBuild(ProjectName, parameters);    
+            }            
         }
 
         public void AbortBuild(string sessionToken, string userName)
         {
-            Api.AbortBuild(ProjectName);
+            if (WebURL.IsWellFormedOriginalString())
+            {
+                Api.AbortBuild(WebURL);
+            }
+            else
+            {
+                Api.AbortBuild(ProjectName);    
+            }            
         }
 
         public void StopProject(string sessionToken)
@@ -67,18 +81,39 @@ namespace JenkinsTransport
 
         public void StartProject(string sessionToken)
         {
-            Api.StartProject(ProjectName);
+            if (WebURL.IsWellFormedOriginalString())
+            {
+                Api.StartProject(WebURL);    
+            }
+            else
+            {
+                Api.StartProject(ProjectName);    
+            }            
         }
 
         public ProjectStatusSnapshot RetrieveSnapshot()
         {
-            return Api.GetProjectStatusSnapshot(ProjectName);
+            if (WebURL.IsWellFormedOriginalString())
+            {
+                return Api.GetProjectStatusSnapshot(WebURL);    
+            }
+            else
+            {
+                return Api.GetProjectStatusSnapshot(ProjectName);    
+            }            
         }
 
         public List<ParameterBase> ListBuildParameters()
         {
-            // CCTray calls this method with every call to ForceBuild
-            return Api.GetBuildParameters(ProjectName);
+            if (WebURL.IsWellFormedOriginalString())
+            {
+                return Api.GetBuildParameters(WebURL);
+            }
+            else
+            {
+                // CCTray calls this method with every call to ForceBuild
+                return Api.GetBuildParameters(ProjectName);
+            }
         }
 
         #region Not Implemented
@@ -121,5 +156,7 @@ namespace JenkinsTransport
         /// This is set on a call to Login
         /// </summary>
         public string AuthorizationInformation { get; private set; }
+
+        public Uri WebURL { get; set; }
     }
 }

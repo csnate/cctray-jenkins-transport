@@ -40,7 +40,10 @@ namespace JenkinsTransport
         {
             get
             {
-                return _jenkinsServerManager ?? (_jenkinsServerManager = new JenkinsServerManager(new WebRequestFactory()));
+                return _jenkinsServerManager ?? (_jenkinsServerManager = new JenkinsServerManager(
+                    new WebRequestFactory(),
+                    new JenkinsApiFactory(),
+                    new DateTimeService()));
             }
         }
 
@@ -62,16 +65,32 @@ namespace JenkinsTransport
         public ICruiseProjectManager RetrieveProjectManager(string projectName)
         {
             var manager = new JenkinsProjectManager(WebRequestFactory);
-            manager.Initialize(Configuration, projectName, Settings);
 
             // Check to make sure the static instance of JenkinsServerManager is initialized
             var serverManager = (JenkinsServerManager)RetrieveServerManager();
 
-            // Add this project to the server manager
+            // Add this project to the server manager if it does not exist
             if (!serverManager.ProjectsAndCurrentStatus.ContainsKey(projectName))
             {
-                serverManager.ProjectsAndCurrentStatus.Add(projectName, null);
+                serverManager.ProjectsAndCurrentStatus.Add(projectName, null);                          
             }
+
+            // If this project does not have a status get it now as we need the WebURL
+            if (serverManager.ProjectsAndCurrentStatus[projectName] == null)
+            {
+                serverManager.GetCruiseServerSnapshot();
+            }
+
+            if (serverManager.ProjectsAndCurrentStatus[projectName].WebURL != String.Empty)
+            {
+                manager.WebURL = new Uri(serverManager.ProjectsAndCurrentStatus[projectName].WebURL);
+            }
+            else
+            {
+                // Really can't support nested jobs without knowning the exact WebURL for the project !!
+            }
+            
+            manager.Initialize(Configuration, projectName, Settings);
 
             return manager;
         }
