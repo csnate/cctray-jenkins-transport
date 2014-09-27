@@ -227,6 +227,63 @@ namespace JenkinsTransport.UnitTests
                 Times.Never);
         }
 
+        [TestMethod]
+        public void GetCruiseServerSnapshot_when_cache_is_popualted_should_not_retrieve_jobs_from_api()
+        {
+            JenkinsServerManagerMocks mocks = new JenkinsServerManagerMocks();
+            var target = CreateTestTarget(mocks);
+
+            target.Initialize(new BuildServer(), "", "");
+
+            ConfigureExistingCachedJobs(target);
+            target.AllJobsLastUpdate = DateTime.Parse("10-Jan-2014 10:00:00");           
+
+            // Act
+            target.GetCruiseServerSnapshot();
+
+            // Assert
+            mocks.MockJenkinsApi
+                .Verify(x => x.GetAllJobs(),
+                Times.Never);
+
+        }
+
+        [TestMethod]
+        public void GetCruiseServerSnapshot_when_cache_is_null_should_retrieve_all_jobs_from_api()
+        {
+            JenkinsServerManagerMocks mocks = new JenkinsServerManagerMocks();
+            var target = CreateTestTarget(mocks);
+
+            target.Initialize(new BuildServer(), "", "");
+          
+            target.AllJobsLastUpdate = DateTime.Parse("10-Jan-2014 10:00:00");
+
+            mocks.MockDateTimeService
+                .Setup(x => x.Now)
+                .Returns(DateTime.Parse("10-Jan-2014 10:00:03"));
+
+            List<JenkinsJob> jobsFromWeb = new List<JenkinsJob>()
+            {
+                new JenkinsJob()
+                {
+                    Color = "Green",
+                    Name = "TestJob3",
+                    Url = "http:\\someUrl3"
+                }
+            };
+
+            mocks.MockJenkinsApi
+                .Setup(x => x.GetAllJobs())
+                .Returns(jobsFromWeb);
+
+            // Act
+            target.GetCruiseServerSnapshot();
+
+            // Assert
+            mocks.MockJenkinsApi
+                .Verify(x => x.GetAllJobs(),
+                Times.Once);
+        }
    
     }
 }
