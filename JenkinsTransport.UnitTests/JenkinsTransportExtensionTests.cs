@@ -19,6 +19,7 @@ namespace JenkinsTransport.UnitTests
         public void Setup()
         {
             Transport = new JenkinsTransportExtension();
+            
             var settings = new Settings()
             {
                 Project = String.Empty,

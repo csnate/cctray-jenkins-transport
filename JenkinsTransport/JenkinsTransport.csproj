@@ -62,9 +62,14 @@
     <Compile Include="ConfigurationForm.Designer.cs">
       <DependentUpon>ConfigurationForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="DateTimeService.cs" />
     <Compile Include="EnumUtils.cs" />
+    <Compile Include="Interface\IDateTimeService.cs" />
+    <Compile Include="Interface\IJenkinsApi.cs" />
+    <Compile Include="Interface\IJenkinsApiFactory.cs" />
     <Compile Include="Interface\IWebRequest.cs" />
     <Compile Include="Interface\IWebRequestFactory.cs" />
+    <Compile Include="JenkinsApiFactory.cs" />
     <Compile Include="JenkinsBuildInformation.cs" />
     <Compile Include="JenkinsJob.cs" />
     <Compile Include="JenkinsProjectManager.cs" />

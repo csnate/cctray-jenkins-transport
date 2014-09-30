@@ -15,16 +15,30 @@ namespace JenkinsTransport
     public class JenkinsServerManager : ICruiseServerManager
     {
         private readonly IWebRequestFactory _webRequestFactory;
+        private readonly IDateTimeService _dateTimeService;
+        private readonly IJenkinsApiFactory _apiFactory;
 
-        public JenkinsServerManager(IWebRequestFactory webRequestFactory)
+        private const int CACHE_INTERVAL_MILLISECONDS = 2000;
+
+        private List<JenkinsJob> _allJobs;
+        private DateTime _allJobsLastUpdate;
+
+   
+        public JenkinsServerManager(IWebRequestFactory webRequestFactory, IJenkinsApiFactory apiFactory, IDateTimeService dateTimeService)
         {
-            _webRequestFactory = webRequestFactory;
-        }
+            if (webRequestFactory == null) 
+                throw new ArgumentNullException("webRequestFactory");
 
-        /// <summary>
-        /// The Api
-        /// </summary>
-        protected Api Api { get; private set; }
+            if (apiFactory == null) 
+                throw new ArgumentNullException("apiFactory");
+
+            if (dateTimeService == null) 
+                throw new ArgumentNullException("dateTimeService");
+
+            _webRequestFactory = webRequestFactory;
+            _apiFactory = apiFactory;
+            _dateTimeService = dateTimeService;
+        }
 
         /// <summary>
         /// Sets the configuration
@@ -58,15 +72,20 @@ namespace JenkinsTransport
             SessionToken = session;
             Settings = settings;
             Login();
-            Api = new Api(Configuration.Url, AuthorizationInformation, _webRequestFactory);
+            Api = _apiFactory.Create(Configuration.Url, AuthorizationInformation, _webRequestFactory);
+
             ProjectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
         }
 
         #region ICruiseServerManager implmentations
+
+        /// <summary>
+        /// This only gets called while CCTray is polling for updates of known jobs
+        /// </summary>
+        /// <returns></returns>
         public CruiseServerSnapshot GetCruiseServerSnapshot()
         {
-            var jobs = Api.GetAllJobs();
-            var projectStatues = jobs
+            var projectStatues = AllJobs
                 .Where(a => ProjectsAndCurrentStatus.ContainsKey(a.Name))
                 .Select(a => Api.GetProjectStatus(a.Url, ProjectsAndCurrentStatus[a.Name]))
                 .ToList();
@@ -78,10 +97,30 @@ namespace JenkinsTransport
             return snapshot;
         }
 
+        private void UpdateAllJobsIfCacheExpired()
+        {
+            if (HasCacheExpired())
+            {
+                AllJobsLastUpdate = _dateTimeService.Now;
+                AllJobs = Api.GetAllJobs();    
+            }            
+        }
+
+        private bool HasCacheExpired()
+        {
+            return (TimeSinceLastUpdate() > TimeSpan.FromMilliseconds(CACHE_INTERVAL_MILLISECONDS));
+        }
+
+        private TimeSpan TimeSinceLastUpdate()
+        {
+            return _dateTimeService.Now - AllJobsLastUpdate;
+        }
+
         public CCTrayProject[] GetProjectList()
         {
-            var jobs = Api.GetAllJobs();
-            return jobs.Select(a => new CCTrayProject(Configuration, a.Name)
+            UpdateAllJobsIfCacheExpired();
+
+            return AllJobs.Select(a => new CCTrayProject(Configuration, a.Name)
                                         {
                                             ShowProject = a.Color != "disabled"
                                         }).ToArray();
@@ -114,6 +153,12 @@ namespace JenkinsTransport
         #endregion
         #endregion
 
+
+        /// <summary>
+        /// The Api
+        /// </summary>
+        protected IJenkinsApi Api { get; private set; }
+
         /// <summary>
         /// The Settings. Passed from the JenkinsTransportExtension.
         /// </summary>
@@ -129,5 +174,32 @@ namespace JenkinsTransport
         /// The list of projects configured/set for this server
         /// </summary>
         public Dictionary<string, ProjectStatus> ProjectsAndCurrentStatus { get; private set; }
+
+        public DateTime AllJobsLastUpdate
+        {
+            get { return _allJobsLastUpdate; }
+            set { _allJobsLastUpdate = value; }
+        }
+
+        /// <summary>
+        /// The current list of jobs for this server
+        /// </summary>
+        public List<JenkinsJob> AllJobs
+        {
+            get
+            {
+                if (_allJobs == null)
+                {
+                    _allJobs = Api.GetAllJobs();
+                }
+                return _allJobs;
+            }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value");
+                _allJobs = value;
+            }
+        }
     }
 }

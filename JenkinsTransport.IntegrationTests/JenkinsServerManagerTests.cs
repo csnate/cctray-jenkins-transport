@@ -13,7 +13,7 @@ namespace JenkinsTransport.IntegrationTests
         [TestInitialize]
         public void Setup()
         {
-            Manager = new JenkinsServerManager(new WebRequestFactory());
+            Manager = new JenkinsServerManager(new WebRequestFactory(), new JenkinsApiFactory(), new DateTimeService());
             var settings = new Settings()
             {
                 Project = String.Empty,

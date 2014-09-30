@@ -13,7 +13,7 @@ using ThoughtWorks.CruiseControl.Remote.Parameters;
 
 namespace JenkinsTransport
 {
-    public class Api
+    public class Api : IJenkinsApi
     {
         protected readonly IWebRequestFactory WebRequestFactory;
 
@@ -216,6 +216,7 @@ namespace JenkinsTransport
             return GetXDocument(buildInformationUrl + XmlApi, AuthInfo);
         }
 
+        
         /// <summary>
         /// Returns the build parameters for a project
         /// </summary>
@@ -225,6 +226,19 @@ namespace JenkinsTransport
             var buildProjectUrl = ProjectBaseUrl + HttpUtility.HtmlEncode(projectName);
             var xDoc = GetXDocument(buildProjectUrl + XmlApi, AuthInfo);
 
+            return GetBuildParameters(xDoc);          
+        }
+
+        public List<ParameterBase> GetBuildParameters(Uri projectUri)
+        {
+            var buildProjectUrl = projectUri;
+            var xDoc = GetXDocument(buildProjectUrl + XmlApi, AuthInfo);
+
+            return GetBuildParameters(xDoc);
+        }
+
+        private List<ParameterBase> GetBuildParameters(XDocument xDoc)
+        {
             // Construct the build parameters
             var buildParameters = new List<ParameterBase>();
             var parametersNodes = xDoc.Descendants("action").Elements("parameterDefinition");
@@ -254,7 +268,7 @@ namespace JenkinsTransport
             }
 
             return buildParameters;
-        } 
+        }
 
         /// <summary>
         /// Get the project snapshot for a project
@@ -263,6 +277,13 @@ namespace JenkinsTransport
         public ProjectStatusSnapshot GetProjectStatusSnapshot(string projectName)
         {
             var url = ProjectBaseUrl + HttpUtility.HtmlEncode(projectName) + ExcludeBuild;
+            var xDoc = GetXDocument(url, AuthInfo);
+            return GetProjectStatusSnapshot(xDoc);
+        }
+
+        public ProjectStatusSnapshot GetProjectStatusSnapshot(Uri projectUrl)
+        {
+            var url = projectUrl + ExcludeBuild;
             var xDoc = GetXDocument(url, AuthInfo);
             return GetProjectStatusSnapshot(xDoc);
         }
@@ -304,6 +325,10 @@ namespace JenkinsTransport
 
         // --- Project specific apis
 
+        public void ForceBuild(Uri projectUrl)
+        {
+            MakeRequest(projectUrl + ForceBuildParams);
+        }
         /// <summary>
         /// Forces a build of a project
         /// </summary>
@@ -370,7 +395,21 @@ namespace JenkinsTransport
             // Need to get the last build number/url
             var projectUrl = ProjectBaseUrl + projectName;
             var xDoc = GetXDocument(projectUrl + ExcludeBuild, AuthInfo);
-            var lastBuildUrl = (string) xDoc.Descendants().First<XElement>().Element("lastBuild").Element("url");
+
+            AbortBuild(xDoc);          
+        }
+
+        public void AbortBuild(Uri projectUrl)
+        {
+            // Need to get the last build number/url
+            var xDoc = GetXDocument(projectUrl + ExcludeBuild, AuthInfo);
+
+            AbortBuild(xDoc);
+        }
+
+        private void AbortBuild(XDocument xDoc)
+        {
+            var lastBuildUrl = (string)xDoc.Descendants().First<XElement>().Element("lastBuild").Element("url");
 
             MakeRequest(lastBuildUrl + "stop");
         }
@@ -391,6 +430,11 @@ namespace JenkinsTransport
         public void StartProject(string projectName)
         {
             MakeRequest(ProjectBaseUrl + projectName + StartProjectParams);
+        }
+
+        public void StartProject(Uri projectUrl)
+        {
+            MakeRequest(projectUrl + StartProjectParams);
         }
     }
 }
