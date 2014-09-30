@@ -110,7 +110,6 @@ namespace JenkinsTransport
         public List<JenkinsJob> GetAllJobs()
         {
             var xDoc = GetXDocument(BaseUrl + AllJobs, AuthInfo);
-            //xDoc.Save("GetAllJobs.xml");
             return GetAllJobs(xDoc);
         }
 
@@ -132,8 +131,6 @@ namespace JenkinsTransport
         public ProjectStatus GetProjectStatus(string projectUrl, ProjectStatus currentStatus)
         {
             var xDoc = GetXDocument(projectUrl + ExcludeBuild, AuthInfo);
-
-            //xDoc.Save("GetProjectStatusXmlResponse.xml");
             return GetProjectStatus(xDoc, currentStatus);
         }
 

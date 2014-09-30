@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JenkinsTransport
+namespace JenkinsTransport.Interface
 {
     public interface IDateTimeService
     {

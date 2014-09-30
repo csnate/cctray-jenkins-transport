@@ -4,7 +4,7 @@ using System.Xml.Linq;
 using ThoughtWorks.CruiseControl.Remote;
 using ThoughtWorks.CruiseControl.Remote.Parameters;
 
-namespace JenkinsTransport
+namespace JenkinsTransport.Interface
 {
     public interface IJenkinsApi
     {

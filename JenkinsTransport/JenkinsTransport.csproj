@@ -64,9 +64,9 @@
     </Compile>
     <Compile Include="DateTimeService.cs" />
     <Compile Include="EnumUtils.cs" />
-    <Compile Include="IDateTimeService.cs" />
-    <Compile Include="IJenkinsApi.cs" />
-    <Compile Include="IJenkinsApiFactory.cs" />
+    <Compile Include="Interface\IDateTimeService.cs" />
+    <Compile Include="Interface\IJenkinsApi.cs" />
+    <Compile Include="Interface\IJenkinsApiFactory.cs" />
     <Compile Include="Interface\IWebRequest.cs" />
     <Compile Include="Interface\IWebRequestFactory.cs" />
     <Compile Include="JenkinsApiFactory.cs" />

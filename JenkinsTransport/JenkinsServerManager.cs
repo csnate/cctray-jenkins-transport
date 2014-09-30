@@ -85,12 +85,7 @@ namespace JenkinsTransport
         /// <returns></returns>
         public CruiseServerSnapshot GetCruiseServerSnapshot()
         {
-            if (_allJobs == null)
-            {
-                _allJobs = Api.GetAllJobs();
-            }
-
-            var projectStatues = _allJobs
+            var projectStatues = AllJobs
                 .Where(a => ProjectsAndCurrentStatus.ContainsKey(a.Name))
                 .Select(a => Api.GetProjectStatus(a.Url, ProjectsAndCurrentStatus[a.Name]))
                 .ToList();
@@ -102,33 +97,30 @@ namespace JenkinsTransport
             return snapshot;
         }
 
-        private List<JenkinsJob> GetAllJobs()
+        private void UpdateAllJobsIfCacheExpired()
         {
             if (HasCacheExpired())
             {
                 AllJobsLastUpdate = _dateTimeService.Now;
-                return Api.GetAllJobs();    
-            }
-            else
-            {
-                return _allJobs;
-            }
+                AllJobs = Api.GetAllJobs();    
+            }            
         }
 
         private bool HasCacheExpired()
         {
-            if ((_dateTimeService.Now - AllJobsLastUpdate) > TimeSpan.FromMilliseconds(CACHE_INTERVAL_MILLISECONDS))
-            {
-                return true;
-            }
-            return false;
+            return (TimeSinceLastUpdate() > TimeSpan.FromMilliseconds(CACHE_INTERVAL_MILLISECONDS));
+        }
+
+        private TimeSpan TimeSinceLastUpdate()
+        {
+            return _dateTimeService.Now - AllJobsLastUpdate;
         }
 
         public CCTrayProject[] GetProjectList()
         {
-            _allJobs = GetAllJobs();
+            UpdateAllJobsIfCacheExpired();
 
-            return _allJobs.Select(a => new CCTrayProject(Configuration, a.Name)
+            return AllJobs.Select(a => new CCTrayProject(Configuration, a.Name)
                                         {
                                             ShowProject = a.Color != "disabled"
                                         }).ToArray();
@@ -187,6 +179,27 @@ namespace JenkinsTransport
         {
             get { return _allJobsLastUpdate; }
             set { _allJobsLastUpdate = value; }
+        }
+
+        /// <summary>
+        /// The current list of jobs for this server
+        /// </summary>
+        public List<JenkinsJob> AllJobs
+        {
+            get
+            {
+                if (_allJobs == null)
+                {
+                    _allJobs = Api.GetAllJobs();
+                }
+                return _allJobs;
+            }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value");
+                _allJobs = value;
+            }
         }
     }
 }
