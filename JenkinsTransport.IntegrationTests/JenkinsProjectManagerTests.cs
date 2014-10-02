@@ -21,7 +21,7 @@ namespace JenkinsTransport.IntegrationTests
                 Server = "https://builds.apache.org/"
             };
             var buildServer = new BuildServer(settings.Server);
-            Manager = new JenkinsProjectManager(new WebRequestFactory());
+            Manager = new JenkinsProjectManager(new WebRequestFactory(), new JenkinsApiFactory());
             Manager.Initialize(buildServer, "Hadoop-1-win", settings);
         }
 
