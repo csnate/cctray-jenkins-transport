@@ -95,6 +95,10 @@ namespace JenkinsTransport.Interface
         /// <param name="projectName">the project name to abort</param>
         void AbortBuild(string projectName);
 
+        /// <summary>
+        /// Abort the latest build
+        /// </summary>
+        /// <param name="projectUrl">the project url to abort</param>
         void AbortBuild(Uri projectUrl);
 
         /// <summary>
