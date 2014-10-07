@@ -182,7 +182,7 @@ namespace JenkinsTransport
                                         Description = (string)firstElement.Element("description"),
                                         ShowForceBuildButton = true,
                                         NextBuildTime = DateTime.MaxValue, // This will tell CCTray that the project isn't automatically triggered
-                                        ShowStartStopButton = true
+                                        ShowStartStopButton = true                                     
                                     };
 
             return projectStatus;
@@ -304,7 +304,7 @@ namespace JenkinsTransport
                                    Status = status,
                                    Name = (string) firstElement.Element("name"),
                                    TimeOfSnapshot = DateTime.Now,
-                                   Description = (string) firstElement.Element("description"),
+                                   Description = (string) firstElement.Element("description"),                                   
                                    Error = String.Empty // Not sure what to do with this yet
                                };
 
@@ -383,6 +383,49 @@ namespace JenkinsTransport
                     }
                 }
                 
+            }
+        }
+
+        public void ForceBuild(Uri projectUrl, Dictionary<string, string> parameters)
+        {
+            if (parameters == null || !parameters.Any())
+            {
+                ForceBuild(projectUrl);
+                return;
+            }
+
+            // Construct the query string
+            var queryString = new StringBuilder();
+            foreach (var parameter in parameters)
+            {
+                queryString.Append(parameter.Key + "=" + parameter.Value + "&");
+            }
+            queryString.Remove(queryString.Length - 1, 1);
+
+            // I've see some Jenkins instances require this to be a POST request if Authentication is supplied.
+            // Check if Auth info is empty and make the appropriate change to the method and post data
+            if (String.IsNullOrEmpty(AuthInfo))
+            {
+                MakeRequest(projectUrl + ForceBuildWithParametersParams + "?" + queryString.ToString(), "GET");
+            }
+            else
+            {
+                var postByteData = Encoding.UTF8.GetBytes(queryString.ToString());
+
+                // With POST requests, the server will sometimes return a 403 Forbidden response
+                // However, the build still goes through correctly, so I'm catching and ignoring any WebExecptions with response code of 403
+                try
+                {
+                    MakeRequest(projectUrl + ForceBuildWithParametersParams, "POST", postByteData);
+                }
+                catch (WebException e)
+                {
+                    if (e.Status != WebExceptionStatus.ProtocolError || !e.Message.Contains("403"))
+                    {
+                        throw;
+                    }
+                }
+
             }
         }
 

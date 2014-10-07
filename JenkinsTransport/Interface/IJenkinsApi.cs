@@ -63,13 +63,17 @@ namespace JenkinsTransport.Interface
         /// <param name="xDoc">the XDcoument to parse</param>
         ProjectStatusSnapshot GetProjectStatusSnapshot(XDocument xDoc);
 
-        void ForceBuild(Uri projectUrl);
-
         /// <summary>
         /// Forces a build of a project
         /// </summary>
         /// <param name="projectName">the project name to build</param>
         void ForceBuild(string projectName);
+
+        /// <summary>
+        /// Forces a build of a project
+        /// </summary>
+        /// <param name="projectUrl">the project url to build</param>
+        void ForceBuild(Uri projectUrl);
 
         /// <summary>
         /// Forces a build of a project with parameters
@@ -79,11 +83,22 @@ namespace JenkinsTransport.Interface
         void ForceBuild(string projectName, Dictionary<string, string> parameters);
 
         /// <summary>
+        /// Forces a build of a project with parameters
+        /// </summary>
+        /// <param name="projectUrl">the project url to build</param>
+        /// <param name="parameters">the parameters to the build</param>
+        void ForceBuild(Uri projectUrl, Dictionary<string, string> parameters);
+
+        /// <summary>
         /// Abort the latest build
         /// </summary>
         /// <param name="projectName">the project name to abort</param>
         void AbortBuild(string projectName);
 
+        /// <summary>
+        /// Abort the latest build
+        /// </summary>
+        /// <param name="projectUrl">the project url to abort</param>
         void AbortBuild(Uri projectUrl);
 
         /// <summary>
@@ -99,5 +114,6 @@ namespace JenkinsTransport.Interface
         void StartProject(string projectName);
 
         void StartProject(Uri projectUrl);
+        
     }
 }

@@ -12,16 +12,18 @@ namespace JenkinsTransport
     public class JenkinsProjectManager : ICruiseProjectManager
     {
         private readonly IWebRequestFactory _webRequestFactory;
+        private readonly IJenkinsApiFactory _jenkinsApiFactory;
 
-        public JenkinsProjectManager(IWebRequestFactory webRequestFactory)
+        public JenkinsProjectManager(IWebRequestFactory webRequestFactory, IJenkinsApiFactory jenkinsApiFactory)
         {
             _webRequestFactory = webRequestFactory;
+            _jenkinsApiFactory = jenkinsApiFactory;
         }
 
         /// <summary>
         /// The Api
         /// </summary>
-        protected Api Api { get; private set; }
+        protected IJenkinsApi Api { get; private set; }
 
         /// <summary>
         /// Sets the Configuration for this server manager
@@ -46,7 +48,8 @@ namespace JenkinsTransport
             ProjectName = projectName;
             Settings = settings;
             AuthorizationInformation = Settings.AuthorizationInformation;
-            Api = new Api(Settings.Server, AuthorizationInformation, _webRequestFactory);
+            
+            Api = _jenkinsApiFactory.Create(Settings.Server, AuthorizationInformation, _webRequestFactory);
         }
 
         #region ICruiseProjectManager implmentations
@@ -54,7 +57,7 @@ namespace JenkinsTransport
         {
             if (WebURL.IsWellFormedOriginalString())
             {
-                Api.ForceBuild(WebURL);
+                Api.ForceBuild(WebURL, parameters);
             }
             else
             {

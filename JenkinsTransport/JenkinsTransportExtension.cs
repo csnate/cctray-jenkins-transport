@@ -17,6 +17,8 @@ namespace JenkinsTransport
         private static JenkinsServerManager _jenkinsServerManager;
 
         private IWebRequestFactory _webRequestFactory;
+        private IJenkinsApiFactory _jenkinsApiFactory;
+
         protected IWebRequestFactory WebRequestFactory
         {
             get
@@ -31,8 +33,27 @@ namespace JenkinsTransport
             set
             {
                 if (value == null)
-                    throw new NullReferenceException();
+                    throw new ArgumentNullException("value");
                 _webRequestFactory = value;
+            }
+        }
+
+        public IJenkinsApiFactory JenkinsApiFactory
+        {
+            get
+            {
+                // Use local default if none injected
+                if (_jenkinsApiFactory == null)
+                {
+                    _jenkinsApiFactory = new JenkinsApiFactory();
+                }
+                return _jenkinsApiFactory;
+            }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value");
+                _jenkinsApiFactory = value;
             }
         }
 
@@ -64,7 +85,7 @@ namespace JenkinsTransport
         //  Add each one to an internal property to be used when we get the server manager
         public ICruiseProjectManager RetrieveProjectManager(string projectName)
         {
-            var manager = new JenkinsProjectManager(WebRequestFactory);
+            var manager = new JenkinsProjectManager(WebRequestFactory, JenkinsApiFactory);
 
             // Check to make sure the static instance of JenkinsServerManager is initialized
             var serverManager = (JenkinsServerManager)RetrieveServerManager();
