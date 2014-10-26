@@ -76,41 +76,26 @@ namespace JenkinsTransport.UnitTests
             return new JenkinsServerManager(mockWebRequestFactory.Object, mockJenkinsApiFactory.Object, mockDateTimeService.Object);
         }
 
-        [TestInitialize]
-        public void Setup()
-        {
-            Manager = new JenkinsServerManager(new WebRequestFactory(), new JenkinsApiFactory(), new DateTimeService());
-            var settings = new Settings()
-            {
-                Project = String.Empty,
-                Username = String.Empty,
-                Password = String.Empty,
-                Server = "https://builds.apache.org/"
-            };
-            var buildServer = new BuildServer(settings.Server);
-            Manager.Initialize(buildServer, String.Empty, settings);
-        }
-
         [TestMethod]
-        public void TestInstanciation()
+        public void SetConfiguration_should_update_configuration()
         {
-            Assert.IsNotNull(Manager);
-            Assert.IsNotNull(Manager.Settings);
-            Assert.AreEqual(Manager.AuthorizationInformation, String.Empty);
-            Assert.IsFalse(Manager.ProjectsAndCurrentStatus.Any());
-        }
-
-        [TestMethod]
-        public void TestSetConfiguration()
-        {
+            JenkinsServerManagerMocks mocks = new JenkinsServerManagerMocks();
             var buildServer = new BuildServer("http://test.com");
-            Manager.SetConfiguration(buildServer);
-            Assert.AreEqual(Manager.Configuration.Url, "http://test.com");
+            var target = CreateTestTarget(mocks);
+             
+            // Act
+            target.SetConfiguration(buildServer);
+
+            // Assert
+            target.Configuration.Url.Should().Be("http://test.com");
         }
         
         [TestMethod]
-        public void TestLoginAndLogout()
+        public void Login_should_set_authorization_information()
         {
+            JenkinsServerManagerMocks mocks = new JenkinsServerManagerMocks();
+            var target = CreateTestTarget(mocks);
+
             var settings = new Settings()
             {
                 Project = String.Empty,
@@ -119,15 +104,39 @@ namespace JenkinsTransport.UnitTests
                 Server = "https://builds.apache.org/"
             };
             var buildServer = new BuildServer(settings.Server);
-            Manager.Initialize(buildServer, String.Empty, settings);
-            Manager.Login();
+            target.Initialize(buildServer, String.Empty, settings);
 
-            Assert.IsFalse(String.IsNullOrEmpty(Manager.AuthorizationInformation));
+            // Act
+            target.Login();
 
-            Manager.Logout();
-
-            Assert.IsTrue(String.IsNullOrEmpty(Manager.AuthorizationInformation));
+            // Assert
+            target.AuthorizationInformation.Should().NotBeNullOrEmpty();
         }
+
+        [TestMethod]
+        public void Logout_should_clear_authorization_information()
+        {
+            JenkinsServerManagerMocks mocks = new JenkinsServerManagerMocks();
+            var target = CreateTestTarget(mocks);
+
+            var settings = new Settings()
+            {
+                Project = String.Empty,
+                Username = "test",
+                Password = "test",
+                Server = "https://builds.apache.org/"
+            };
+            var buildServer = new BuildServer(settings.Server);
+            target.Initialize(buildServer, String.Empty, settings);
+            target.Login();
+
+            // Act
+            target.Logout();
+
+            // Assert
+            target.AuthorizationInformation.Should().Be(String.Empty);
+        }
+
 
         [TestMethod]
         public void GetProjectList_when_cache_expired_should_retrieve_all_jobs_from_api()
@@ -244,7 +253,7 @@ namespace JenkinsTransport.UnitTests
             // Assert
             mocks.MockJenkinsApi
                 .Verify(x => x.GetAllJobs(),
-                Times.Never);
+                Times.Never); 
 
         }
 
