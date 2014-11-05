@@ -181,6 +181,32 @@ namespace JenkinsTransport.UnitTests
         }
 
         [TestMethod]
+        public void ForceBuild_when_weburl_is_null_should_not_throw()
+        {
+            Mocks mocks = new Mocks();
+            SetupDefaultMockState(mocks);
+
+            var target = CreateTestTarget(mocks);
+
+            target.Initialize(new BuildServer(), "TestProjectName", new Settings());
+
+            Dictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                {"SomeParameter", "SomeValue"}
+            };
+
+            string userName = "TestUser";
+
+            target.WebURL = null;
+
+            // Act
+            Action act = () => target.ForceBuild("", parameters, userName);
+
+            // Assert
+            act.ShouldNotThrow();
+        }
+
+        [TestMethod]
         public void AbortBuild_when_using_weburl_should_call_api()
         {
             Mocks mocks = new Mocks();
@@ -207,6 +233,152 @@ namespace JenkinsTransport.UnitTests
             mocks.MockJenkinsApi
                 .Verify(x => x.AbortBuild(target.WebURL),
                     Times.Once);
+        }
+
+        [TestMethod]
+        public void AbortBuild_when_weburl_is_null_should_not_throw()
+        {
+            Mocks mocks = new Mocks();
+            SetupDefaultMockState(mocks);
+
+            var target = CreateTestTarget(mocks);
+
+            target.Initialize(new BuildServer(), "TestProjectName", new Settings());
+
+            string userName = "TestUser";
+            string sessionToken = "";
+
+            target.WebURL = null;
+
+            // Act
+            Action act = () => target.AbortBuild(sessionToken, userName);
+
+            // Assert
+            act.ShouldNotThrow();
+        }
+
+        [TestMethod]
+        public void StartProject_when_using_weburl_should_call_api()
+        {
+            Mocks mocks = new Mocks();
+            SetupDefaultMockState(mocks);
+
+            var target = CreateTestTarget(mocks);
+
+            target.Initialize(new BuildServer(), "TestProjectName", new Settings());
+
+            string sessionToken = "";
+
+            target.WebURL = new Uri(@"http://test");
+
+            // Act
+            target.StartProject(sessionToken);
+
+            // Assert
+            mocks.MockJenkinsApi
+                .Verify(x => x.StartProject(target.WebURL),
+                    Times.Once);
+        }
+
+        [TestMethod]
+        public void StartProject_when_weburl_is_null_should_not_throw()
+        {
+            Mocks mocks = new Mocks();
+            SetupDefaultMockState(mocks);
+
+            var target = CreateTestTarget(mocks);
+
+            target.Initialize(new BuildServer(), "TestProjectName", new Settings());
+
+            string sessionToken = "";
+
+            target.WebURL = null;
+
+            // Act
+            Action act = () => target.StartProject(sessionToken);
+
+            // Assert
+            act.ShouldNotThrow();
+        }
+
+        [TestMethod]
+        public void RetrieveSnapshot_when_using_weburl_should_call_api()
+        {
+            Mocks mocks = new Mocks();
+            SetupDefaultMockState(mocks);
+
+            var target = CreateTestTarget(mocks);
+
+            target.Initialize(new BuildServer(), "TestProjectName", new Settings());
+
+            target.WebURL = new Uri(@"http://test");
+
+            // Act
+            target.RetrieveSnapshot();
+
+            // Assert
+            mocks.MockJenkinsApi
+               .Verify(x => x.GetProjectStatusSnapshot(target.WebURL),
+                   Times.Once);
+        }
+
+        [TestMethod]
+        public void RetrieveSnapshot_when_weburl_is_null_should_not_throw()
+        {
+            Mocks mocks = new Mocks();
+            SetupDefaultMockState(mocks);
+
+            var target = CreateTestTarget(mocks);
+
+            target.Initialize(new BuildServer(), "TestProjectName", new Settings());
+
+            target.WebURL = null;
+
+            // Act
+            Action act = () => target.RetrieveSnapshot();
+
+            // Assert
+            act.ShouldNotThrow();
+        }
+
+        [TestMethod]
+        public void ListBuildParameters_when_using_weburl_should_call_api()
+        {
+            Mocks mocks = new Mocks();
+            SetupDefaultMockState(mocks);
+
+            var target = CreateTestTarget(mocks);
+
+            target.Initialize(new BuildServer(), "TestProjectName", new Settings());
+
+            target.WebURL = new Uri(@"http://test");
+
+            // Act
+            target.ListBuildParameters();
+
+            // Assert
+            mocks.MockJenkinsApi
+                .Verify(x => x.GetBuildParameters(target.WebURL),
+                    Times.Once);
+        }
+
+        [TestMethod]
+        public void ListBuildParameters_when_weburl_is_null_should_not_throw()
+        {
+            Mocks mocks = new Mocks();
+            SetupDefaultMockState(mocks);
+
+            var target = CreateTestTarget(mocks);
+
+            target.Initialize(new BuildServer(), "TestProjectName", new Settings());
+
+            target.WebURL = null;
+
+            // Act
+            Action act = () => target.ListBuildParameters();
+
+            // Assert
+            act.ShouldNotThrow();
         }
     }
 }
