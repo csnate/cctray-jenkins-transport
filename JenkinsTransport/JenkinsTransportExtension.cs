@@ -19,7 +19,7 @@ namespace JenkinsTransport
         private IWebRequestFactory _webRequestFactory;
         private IJenkinsApiFactory _jenkinsApiFactory;
 
-        protected IWebRequestFactory WebRequestFactory
+        public IWebRequestFactory WebRequestFactory
         {
             get
             {
@@ -57,14 +57,36 @@ namespace JenkinsTransport
             }
         }
 
+        private IDateTimeService _dateTimeService;
+        public IDateTimeService DateTimeService
+        {
+            get
+            {
+                // Lazy instantiation of default class
+                if (_dateTimeService == null)
+                {
+                    _dateTimeService = new DateTimeService();
+                }
+                return _dateTimeService;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+                _dateTimeService = value;
+            }
+        }
+
         protected JenkinsServerManager JenkinsServerManager
         {
             get
             {
                 return _jenkinsServerManager ?? (_jenkinsServerManager = new JenkinsServerManager(
-                    new WebRequestFactory(),
-                    new JenkinsApiFactory(),
-                    new DateTimeService()));
+                    WebRequestFactory,
+                    JenkinsApiFactory,
+                    DateTimeService));
             }
         }
 
