@@ -21,9 +21,8 @@ namespace JenkinsTransport
         private const int CACHE_INTERVAL_MILLISECONDS = 2000;
 
         private List<JenkinsJob> _allJobs;
-        private DateTime _allJobsLastUpdate;
 
-   
+
         public JenkinsServerManager(IWebRequestFactory webRequestFactory, IJenkinsApiFactory apiFactory, IDateTimeService dateTimeService)
         {
             if (webRequestFactory == null) 
@@ -175,25 +174,14 @@ namespace JenkinsTransport
         /// </summary>
         public Dictionary<string, ProjectStatus> ProjectsAndCurrentStatus { get; private set; }
 
-        public DateTime AllJobsLastUpdate
-        {
-            get { return _allJobsLastUpdate; }
-            set { _allJobsLastUpdate = value; }
-        }
+        public DateTime AllJobsLastUpdate { get; set; }
 
         /// <summary>
         /// The current list of jobs for this server
         /// </summary>
         public List<JenkinsJob> AllJobs
         {
-            get
-            {
-                if (_allJobs == null)
-                {
-                    _allJobs = Api.GetAllJobs();
-                }
-                return _allJobs;
-            }
+            get { return _allJobs ?? (_allJobs = Api.GetAllJobs()); }
             set
             {
                 if (value == null)

@@ -55,7 +55,7 @@ namespace JenkinsTransport
         #region ICruiseProjectManager implmentations
         public void ForceBuild(string sessionToken, Dictionary<string, string> parameters, string userName)
         {
-            if (WebURL.IsWellFormedOriginalString())
+            if (WebURL != null && WebURL.IsWellFormedOriginalString())
             {
                 Api.ForceBuild(WebURL, parameters);
             }
@@ -67,7 +67,7 @@ namespace JenkinsTransport
 
         public void AbortBuild(string sessionToken, string userName)
         {
-            if (WebURL.IsWellFormedOriginalString())
+            if (WebURL != null && WebURL.IsWellFormedOriginalString())
             {
                 Api.AbortBuild(WebURL);
             }
@@ -84,7 +84,7 @@ namespace JenkinsTransport
 
         public void StartProject(string sessionToken)
         {
-            if (WebURL.IsWellFormedOriginalString())
+            if (WebURL != null && WebURL.IsWellFormedOriginalString())
             {
                 Api.StartProject(WebURL);    
             }
@@ -96,7 +96,7 @@ namespace JenkinsTransport
 
         public ProjectStatusSnapshot RetrieveSnapshot()
         {
-            if (WebURL.IsWellFormedOriginalString())
+            if (WebURL != null && WebURL.IsWellFormedOriginalString())
             {
                 return Api.GetProjectStatusSnapshot(WebURL);    
             }
@@ -108,7 +108,7 @@ namespace JenkinsTransport
 
         public List<ParameterBase> ListBuildParameters()
         {
-            if (WebURL.IsWellFormedOriginalString())
+            if (WebURL != null && WebURL.IsWellFormedOriginalString())
             {
                 return Api.GetBuildParameters(WebURL);
             }

@@ -50,8 +50,6 @@ namespace JenkinsTransport.UnitTests
             Assert.AreEqual(Transport.Configuration, jenkinsProjectManager.Configuration);
             Assert.AreEqual(jenkinsProjectManager.ProjectName, "Test Project");
             Assert.IsNotNull(jenkinsProjectManager.AuthorizationInformation);
-
-            Assert.IsTrue(((JenkinsServerManager)Transport.RetrieveServerManager()).ProjectsAndCurrentStatus.Any());
         }
 
 
