@@ -93,7 +93,7 @@ namespace JenkinsTransport
             // Add this project to the server manager if it does not exist
             if (!serverManager.ProjectsAndCurrentStatus.ContainsKey(projectName))
             {
-                serverManager.ProjectsAndCurrentStatus.Add(projectName, null);                          
+                serverManager.ProjectsAndCurrentStatus.Add(projectName, null);
             }
 
             // If this project does not have a status get it now as we need the WebURL
@@ -102,7 +102,9 @@ namespace JenkinsTransport
                 serverManager.GetCruiseServerSnapshot();
             }
 
-            if (serverManager.ProjectsAndCurrentStatus[projectName].WebURL != String.Empty)
+            if (serverManager.ProjectsAndCurrentStatus.ContainsKey(projectName) &&
+                serverManager.ProjectsAndCurrentStatus[projectName] != null &&
+                !String.IsNullOrEmpty(serverManager.ProjectsAndCurrentStatus[projectName].WebURL))
             {
                 manager.WebURL = new Uri(serverManager.ProjectsAndCurrentStatus[projectName].WebURL);
             }
@@ -110,7 +112,7 @@ namespace JenkinsTransport
             {
                 // Really can't support nested jobs without knowning the exact WebURL for the project !!
             }
-            
+
             manager.Initialize(Configuration, projectName, Settings);
 
             return manager;
