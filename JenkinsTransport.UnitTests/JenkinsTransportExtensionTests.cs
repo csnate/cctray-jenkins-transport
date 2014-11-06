@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using System.Windows.Forms;
 using FluentAssertions;
 using JenkinsTransport;
@@ -11,6 +12,7 @@ using JenkinsTransport.Interface;
 using Moq;
 using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ThoughtWorks.CruiseControl.Remote;
 
 namespace JenkinsTransport.UnitTests
 {
@@ -183,6 +185,39 @@ namespace JenkinsTransport.UnitTests
 
             // Assert
             projectManager.AuthorizationInformation.Should().NotBeNull();
+        }
+
+        [TestMethod]
+        [Ignore]
+        // Test currently not compatible with static ServerManager - TODO NJ - Provide extension method to set static
+        public void RetrieveProjectManager_when_project_does_not_exist_already_should_add_to_dictionary()
+        {
+            TestMocks mocks = new TestMocks();
+            var target = CreateTestTarget(mocks);
+
+            List<JenkinsJob> allJobs = new List<JenkinsJob>()
+            {
+                new JenkinsJob() {Name = "Test Project"}
+            };
+
+            mocks.MockApi
+                .Setup(x => x.GetAllJobs())
+                .Returns(allJobs);
+
+            mocks.MockApi
+                .Setup(x => x.GetProjectStatus(
+                    It.IsAny<string>(),
+                    It.IsAny<ProjectStatus>()))
+                .Returns(new ProjectStatus() { Name = "Test Project" });
+
+            // Act
+            target.RetrieveProjectManager("Test Project");
+
+            // Assert
+            target.RetrieveServerManager()
+                .As<IJenkinsServerManager>()
+                .ProjectsAndCurrentStatus.Should()
+                .ContainKey("Test Project");
         }
 
         [TestMethod]
