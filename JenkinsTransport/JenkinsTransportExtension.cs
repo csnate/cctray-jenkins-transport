@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -14,11 +15,14 @@ namespace JenkinsTransport
     public class JenkinsTransportExtension : ITransportExtension
     {
         private static bool _isServerManagerInitialized = false;
-        private static JenkinsServerManager _jenkinsServerManager;
+        private static IJenkinsServerManagerFactory _jenkinsServerManagerFactory;
+        public static IJenkinsServerManagerFactory JenkinsServerManagerFactory
+        {
+            // Allow the JenkinsServerManagerFactory to be set for test purposes
+            set { _jenkinsServerManagerFactory = value; }
+        }
 
         private IWebRequestFactory _webRequestFactory;
-        private IJenkinsApiFactory _jenkinsApiFactory;
-
         public IWebRequestFactory WebRequestFactory
         {
             get
@@ -38,6 +42,7 @@ namespace JenkinsTransport
             }
         }
 
+        private IJenkinsApiFactory _jenkinsApiFactory;
         public IJenkinsApiFactory JenkinsApiFactory
         {
             get
@@ -83,10 +88,13 @@ namespace JenkinsTransport
         {
             get
             {
-                return _jenkinsServerManager ?? (_jenkinsServerManager = new JenkinsServerManager(
-                    WebRequestFactory,
-                    JenkinsApiFactory,
-                    DateTimeService));
+                if (_jenkinsServerManagerFactory == null)
+                {
+                    _jenkinsServerManagerFactory = new JenkinsServerManagerSingletonFactory(WebRequestFactory,
+                    JenkinsApiFactory, DateTimeService);
+                }
+
+                return _jenkinsServerManagerFactory.GetInstance();               
             }
         }
 
@@ -107,6 +115,7 @@ namespace JenkinsTransport
         //  Add each one to an internal property to be used when we get the server manager
         public ICruiseProjectManager RetrieveProjectManager(string projectName)
         {
+            Debugger.Break();
             var manager = new JenkinsProjectManager(WebRequestFactory, JenkinsApiFactory);
 
             // Check to make sure the static instance of JenkinsServerManager is initialized
@@ -176,6 +185,9 @@ namespace JenkinsTransport
         public string DisplayName { get { return "Jenkins Transport Extension"; } }
         public string Settings { get; set; }
         public BuildServer Configuration { get; set; }
+
+     
+
         #endregion
     }
 }
