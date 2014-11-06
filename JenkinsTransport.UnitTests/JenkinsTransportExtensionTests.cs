@@ -21,6 +21,15 @@ namespace JenkinsTransport.UnitTests
         {
             public Mock<IWebRequestFactory> MockWebRequestFactory { get; set; }
             public Mock<IJenkinsApiFactory> MockJenkinsApiFactory { get; set; }
+            public Mock<IJenkinsApi> MockApi;
+            public IJenkinsApi Api
+            {
+                get
+                {
+                    return MockApi.Object;
+                }
+            }
+            
             public IWebRequestFactory WebRequestFactory { get { return MockWebRequestFactory.Object; } }
             public IJenkinsApiFactory JenkinsApiFactory { get { return MockJenkinsApiFactory.Object; }}
 
@@ -28,6 +37,16 @@ namespace JenkinsTransport.UnitTests
             {
                 MockWebRequestFactory = new Mock<IWebRequestFactory>();
                 MockJenkinsApiFactory = new Mock<IJenkinsApiFactory>();
+                MockApi = new Mock<IJenkinsApi>();
+
+                // Default configuration for ApiFactory is to return this mock
+                MockJenkinsApiFactory
+                    .Setup(x => x.Create(
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<IWebRequestFactory>()))
+                    .Returns(Api);
+
             }
         }
 
@@ -91,21 +110,80 @@ namespace JenkinsTransport.UnitTests
         }
 
         [TestMethod]
-        public void TestRetrieveProjectManager()
+        public void RetrieveProjectManager_should_return_instance_of_JenkinsProjectManager()
         {
             TestMocks mocks = new TestMocks();
             var target = CreateTestTarget(mocks);
 
+            List<JenkinsJob> allJobs = new List<JenkinsJob>();
+
+            mocks.MockApi
+                .Setup(x => x.GetAllJobs())
+                .Returns(allJobs);
+
             // Act
             var projectManager = target.RetrieveProjectManager("Test Project");
-            Assert.IsInstanceOfType(projectManager, typeof(JenkinsProjectManager));
 
-            var jenkinsProjectManager = (JenkinsProjectManager)projectManager;
-            Assert.AreEqual(target.Configuration, jenkinsProjectManager.Configuration);
-            Assert.AreEqual(jenkinsProjectManager.ProjectName, "Test Project");
-            Assert.IsNotNull(jenkinsProjectManager.AuthorizationInformation);
+            // Assert
+            projectManager.Should().BeAssignableTo<JenkinsProjectManager>();
         }
 
+        [TestMethod]
+        public void RetrieveProjectManager_instance_should_use_configuration()
+        {
+            TestMocks mocks = new TestMocks();
+            var target = CreateTestTarget(mocks);
+
+            List<JenkinsJob> allJobs = new List<JenkinsJob>();
+
+            mocks.MockApi
+                .Setup(x => x.GetAllJobs())
+                .Returns(allJobs);
+
+            // Act
+            var projectManager = (JenkinsProjectManager) target.RetrieveProjectManager("Test Project");
+            
+            // Assert
+            target.Configuration.Should().Be(projectManager.Configuration);
+        }
+
+        [TestMethod]
+        public void RetrieveProjectManager_instance_should_use_supplied_projectName()
+        {
+            TestMocks mocks = new TestMocks();
+            var target = CreateTestTarget(mocks);
+
+            List<JenkinsJob> allJobs = new List<JenkinsJob>();
+
+            mocks.MockApi
+                .Setup(x => x.GetAllJobs())
+                .Returns(allJobs);
+
+            // Act
+            var projectManager = (JenkinsProjectManager)target.RetrieveProjectManager("Test Project");
+
+            // Assert
+            projectManager.ProjectName.Should().Be("Test Project");
+        }
+
+        [TestMethod]
+        public void RetrieveProjectManager_instance_AuthorizationInformation_should_not_be_null()
+        {
+            TestMocks mocks = new TestMocks();
+            var target = CreateTestTarget(mocks);
+
+            List<JenkinsJob> allJobs = new List<JenkinsJob>();
+
+            mocks.MockApi
+                .Setup(x => x.GetAllJobs())
+                .Returns(allJobs);
+
+            // Act
+            var projectManager = (JenkinsProjectManager)target.RetrieveProjectManager("Test Project");
+
+            // Assert
+            projectManager.AuthorizationInformation.Should().NotBeNull();
+        }
 
         [TestMethod]
         public void TestRetrieveServerManager()
