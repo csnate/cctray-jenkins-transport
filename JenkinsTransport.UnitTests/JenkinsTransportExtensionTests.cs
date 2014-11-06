@@ -14,6 +14,7 @@ using JenkinsTransport.UnitTests.ExtensionMethods;
 using Moq;
 using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ThoughtWorks.CruiseControl.CCTrayLib.Monitoring;
 using ThoughtWorks.CruiseControl.Remote;
 
 namespace JenkinsTransport.UnitTests
@@ -44,12 +45,24 @@ namespace JenkinsTransport.UnitTests
             public IWebRequestFactory WebRequestFactory { get { return MockWebRequestFactory.Object; } }
             public IJenkinsApiFactory JenkinsApiFactory { get { return MockJenkinsApiFactory.Object; }}
 
+            public Mock<IJenkinsServerManagerFactory> MockJenkinsServerManagerFactory { get; set; }
+            public IJenkinsServerManagerFactory JenkinsServerManagerFactory
+            {
+                get { return MockJenkinsServerManagerFactory.Object; }
+            }
+
+            public Mock<IJenkinsServerManager> MockJenkinsServerManager { get; set; }
+            public IJenkinsServerManager JenkinsServerManager { get { return MockJenkinsServerManager.Object; } }
+
             public TestMocks()
             {
                 MockWebRequestFactory = new Mock<IWebRequestFactory>();
                 MockJenkinsApiFactory = new Mock<IJenkinsApiFactory>();
                 MockApi = new Mock<IJenkinsApi>();
+                MockJenkinsServerManagerFactory = new Mock<IJenkinsServerManagerFactory>();
+                MockJenkinsServerManager = new Mock<IJenkinsServerManager>();
 
+                MockJenkinsServerManager.As<ICruiseServerManager>();
 
                 // Default configuration for ApiFactory is to return this mock
                 MockJenkinsApiFactory
@@ -58,6 +71,11 @@ namespace JenkinsTransport.UnitTests
                         It.IsAny<string>(),
                         It.IsAny<IWebRequestFactory>()))
                     .Returns(Api);
+                
+                // Default configuration for unit tests is to return a new instance of JenkinsServerManager rather than the static singleton
+                MockJenkinsServerManagerFactory
+                    .Setup(x => x.GetInstance())
+                    .Returns(JenkinsServerManager);
 
             }
         }
@@ -79,9 +97,6 @@ namespace JenkinsTransport.UnitTests
         {
             var Transport = new JenkinsTransportExtension();
 
-            // Set the static server manager instance to null
-            //Transport.SetServerManager(null);
-
             var settings = new Settings()
             {
                 Project = String.Empty,
@@ -90,8 +105,10 @@ namespace JenkinsTransport.UnitTests
                 Server = "https://builds.apache.org/"
             };
 
+            Transport.JenkinsServerManagerFactory = mocks.JenkinsServerManagerFactory;
             Transport.WebRequestFactory = mocks.WebRequestFactory;
             Transport.JenkinsApiFactory = mocks.JenkinsApiFactory;
+
             Transport.Settings = settings.ToString();
             Transport.Configuration = new BuildServer(settings.Server);
 
@@ -145,6 +162,11 @@ namespace JenkinsTransport.UnitTests
                 .Setup(x => x.GetAllJobs())
                 .Returns(allJobs);
 
+            Dictionary<string, ProjectStatus> projectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.ProjectsAndCurrentStatus)
+                .Returns(projectsAndCurrentStatus);
+
             // Act
             var projectManager = target.RetrieveProjectManager("Test Project");
 
@@ -163,6 +185,11 @@ namespace JenkinsTransport.UnitTests
             mocks.MockApi
                 .Setup(x => x.GetAllJobs())
                 .Returns(allJobs);
+            
+            Dictionary<string, ProjectStatus> projectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.ProjectsAndCurrentStatus)
+                .Returns(projectsAndCurrentStatus);
 
             // Act
             var projectManager = (JenkinsProjectManager) target.RetrieveProjectManager("Test Project");
@@ -183,6 +210,11 @@ namespace JenkinsTransport.UnitTests
                 .Setup(x => x.GetAllJobs())
                 .Returns(allJobs);
 
+            Dictionary<string, ProjectStatus> projectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.ProjectsAndCurrentStatus)
+                .Returns(projectsAndCurrentStatus);
+
             // Act
             var projectManager = (JenkinsProjectManager)target.RetrieveProjectManager("Test Project");
 
@@ -202,63 +234,70 @@ namespace JenkinsTransport.UnitTests
                 .Setup(x => x.GetAllJobs())
                 .Returns(allJobs);
 
+            Dictionary<string, ProjectStatus> projectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.ProjectsAndCurrentStatus)
+                .Returns(projectsAndCurrentStatus);
+
             // Act
             var projectManager = (JenkinsProjectManager)target.RetrieveProjectManager("Test Project");
 
             // Assert
             projectManager.AuthorizationInformation.Should().NotBeNull();
         }
-
+       
         [TestMethod]
-        [Ignore]
-        // Test currently not compatible with static ServerManager - TODO NJ - Provide extension method to set static
-        public void RetrieveProjectManager_when_project_does_not_exist_already_should_add_to_dictionary()
+        public void RetrieveServerManager_should_access_factory_singleton_instance()
         {
             TestMocks mocks = new TestMocks();
             var target = CreateTestTarget(mocks);
 
-            List<JenkinsJob> allJobs = new List<JenkinsJob>()
-            {
-                new JenkinsJob() {Name = "Test Project"}
-            };
+            List<JenkinsJob> allJobs = new List<JenkinsJob>();
 
             mocks.MockApi
                 .Setup(x => x.GetAllJobs())
                 .Returns(allJobs);
 
-            mocks.MockApi
-                .Setup(x => x.GetProjectStatus(
-                    It.IsAny<string>(),
-                    It.IsAny<ProjectStatus>()))
-                .Returns(new ProjectStatus() { Name = "Test Project" });
+            Dictionary<string, ProjectStatus> projectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.ProjectsAndCurrentStatus)
+                .Returns(projectsAndCurrentStatus);
 
             // Act
-            target.RetrieveProjectManager("Test Project");
+            target.RetrieveServerManager();
 
             // Assert
-            target.RetrieveServerManager()
-                .As<IJenkinsServerManager>()
-                .ProjectsAndCurrentStatus.Should()
-                .ContainKey("Test Project");
+            mocks.MockJenkinsServerManagerFactory
+                .Verify(x => x.GetInstance(),
+                    Times.AtLeastOnce);
         }
 
         [TestMethod]
-        public void TestRetrieveServerManager()
+        // Still needs work on multithreadedness
+        public void RetrieveServerManager_should_initialize_server_manager()
         {
             TestMocks mocks = new TestMocks();
             var target = CreateTestTarget(mocks);
 
-            var serverManager = target.RetrieveServerManager();
-            
-            Assert.IsInstanceOfType(serverManager, typeof(JenkinsServerManager));
+            List<JenkinsJob> allJobs = new List<JenkinsJob>();
 
-            var jenkinsServerManager = (JenkinsServerManager)serverManager;
+            mocks.MockApi
+                .Setup(x => x.GetAllJobs())
+                .Returns(allJobs);
 
-            Assert.AreEqual(target.Configuration, jenkinsServerManager.Configuration);
-            Assert.AreEqual(jenkinsServerManager.SessionToken, String.Empty);
+            Dictionary<string, ProjectStatus> projectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.ProjectsAndCurrentStatus)
+                .Returns(projectsAndCurrentStatus);
 
-            // This assert is disabled as there is a static conflict with the TestRetrieveProjectManager test
-            //Assert.IsFalse(jenkinsServerManager.ProjectsAndCurrentStatus.Any());
+            // Act
+            target.RetrieveServerManager();
+
+            // Assert
+            mocks.MockJenkinsServerManager
+                .Verify(x => x.Initialize(It.IsAny<BuildServer>(),
+                    It.IsAny<string>(), It.IsAny<string>()),
+                    Times.Once);
         }
     }
 }

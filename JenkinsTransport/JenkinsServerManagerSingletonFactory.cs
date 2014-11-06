@@ -21,7 +21,7 @@ namespace JenkinsTransport
             _dateTimeService = dateTimeService;
         }
 
-        public JenkinsServerManager GetInstance()
+        public IJenkinsServerManager GetInstance()
         {
             if (_instance == null)
             {
@@ -33,6 +33,6 @@ namespace JenkinsTransport
 
     public interface IJenkinsServerManagerFactory
     {
-        JenkinsServerManager GetInstance();
+        IJenkinsServerManager GetInstance();
     }
 }

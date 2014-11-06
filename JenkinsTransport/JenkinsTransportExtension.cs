@@ -16,7 +16,7 @@ namespace JenkinsTransport
     {
         private static bool _isServerManagerInitialized = false;
         private static IJenkinsServerManagerFactory _jenkinsServerManagerFactory;
-        public static IJenkinsServerManagerFactory JenkinsServerManagerFactory
+        public IJenkinsServerManagerFactory JenkinsServerManagerFactory
         {
             // Allow the JenkinsServerManagerFactory to be set for test purposes
             set { _jenkinsServerManagerFactory = value; }
@@ -84,7 +84,7 @@ namespace JenkinsTransport
             }
         }
 
-        protected JenkinsServerManager JenkinsServerManager
+        protected IJenkinsServerManager JenkinsServerManager
         {
             get
             {
@@ -92,6 +92,7 @@ namespace JenkinsTransport
                 {
                     _jenkinsServerManagerFactory = new JenkinsServerManagerSingletonFactory(WebRequestFactory,
                     JenkinsApiFactory, DateTimeService);
+                    _isServerManagerInitialized = false;
                 }
 
                 return _jenkinsServerManagerFactory.GetInstance();               
@@ -101,7 +102,7 @@ namespace JenkinsTransport
         #region ITransportExtension implementations
         public CCTrayProject[] GetProjectList(BuildServer server)
         {
-            var manager = (JenkinsServerManager)RetrieveServerManager();
+            var manager = (IJenkinsServerManager)RetrieveServerManager();
             manager.SetConfiguration(server);
 
             // If we are getting the project list, then we should reset the ServerManager's project list
@@ -115,11 +116,10 @@ namespace JenkinsTransport
         //  Add each one to an internal property to be used when we get the server manager
         public ICruiseProjectManager RetrieveProjectManager(string projectName)
         {
-            Debugger.Break();
             var manager = new JenkinsProjectManager(WebRequestFactory, JenkinsApiFactory);
 
             // Check to make sure the static instance of JenkinsServerManager is initialized
-            var serverManager = (JenkinsServerManager)RetrieveServerManager();
+            var serverManager = (IJenkinsServerManager)RetrieveServerManager();
 
             // Add this project to the server manager if it does not exist
             if (!serverManager.ProjectsAndCurrentStatus.ContainsKey(projectName))
@@ -156,7 +156,7 @@ namespace JenkinsTransport
                 JenkinsServerManager.Initialize(Configuration, String.Empty, Settings);
                 _isServerManagerInitialized = true;
             }
-            return JenkinsServerManager;
+            return (ICruiseServerManager) JenkinsServerManager;
         }
 
         public bool Configure(IWin32Window owner)
