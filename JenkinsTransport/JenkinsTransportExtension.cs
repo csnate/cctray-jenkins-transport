@@ -137,7 +137,7 @@ namespace JenkinsTransport
         {
             var manager = new JenkinsProjectManager(WebRequestFactory, JenkinsApiFactory);
 
-            // Check to make sure the static instance of JenkinsServerManager is initialized
+            // Use factory to get reference to singleton ServerManager
             var serverManager = (IJenkinsServerManager)RetrieveServerManager();
 
             // Add this project to the server manager if it does not exist

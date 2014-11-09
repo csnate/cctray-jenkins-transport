@@ -8,9 +8,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using System.Windows.Forms;
 using FluentAssertions;
-using JenkinsTransport;
 using JenkinsTransport.Interface;
-using JenkinsTransport.UnitTests.ExtensionMethods;
 using Moq;
 using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -64,9 +62,9 @@ namespace JenkinsTransport.UnitTests
                 MockApi = new Mock<IJenkinsApi>();
                 MockJenkinsServerManagerFactory = new Mock<IJenkinsServerManagerFactory>();
                 MockJenkinsServerManager = new Mock<IJenkinsServerManager>();
-                MockConfigurationFormFactory = new Mock<IFormFactory>();
-
                 MockJenkinsServerManager.As<ICruiseServerManager>();
+
+                MockConfigurationFormFactory = new Mock<IFormFactory>();
 
                 // Default configuration for ApiFactory is to return this mock
                 MockJenkinsApiFactory
@@ -76,7 +74,7 @@ namespace JenkinsTransport.UnitTests
                         It.IsAny<IWebRequestFactory>()))
                     .Returns(Api);
                 
-                // Default configuration for unit tests is to return a new instance of JenkinsServerManager rather than the static singleton
+                // Default configuration for unit tests is to return the JenkinsServerManager mocks
                 MockJenkinsServerManagerFactory
                     .Setup(x => x.GetInstance())
                     .Returns(JenkinsServerManager);
@@ -108,7 +106,6 @@ namespace JenkinsTransport.UnitTests
             };
 
             Transport.JenkinsServerManagerFactory = mocks.JenkinsServerManagerFactory;
-            //Transport.SetIsServerManagerInitialized(false);
             Transport.WebRequestFactory = mocks.WebRequestFactory;
             Transport.JenkinsApiFactory = mocks.JenkinsApiFactory;
             Transport.ConfigurationFormFactory = mocks.ConfigurationFormFactory;
@@ -179,7 +176,113 @@ namespace JenkinsTransport.UnitTests
         }
 
         [TestMethod]
-        public void RetrieveProjectManager_instance_should_use_configuration()
+        public void RetrieveProjectManager_when_projectName_does_not_exist_in_serverManager_should_be_added()
+        {
+            TestMocks mocks = new TestMocks();
+            var target = CreateTestTarget(mocks);
+
+            List<JenkinsJob> allJobs = new List<JenkinsJob>();
+
+            mocks.MockApi
+                .Setup(x => x.GetAllJobs())
+                .Returns(allJobs);
+
+            Dictionary<string, ProjectStatus> projectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.ProjectsAndCurrentStatus)
+                .Returns(projectsAndCurrentStatus);
+
+            // Act
+            var projectManager = target.RetrieveProjectManager("Test Project");
+
+            // Assert
+            mocks.JenkinsServerManager.ProjectsAndCurrentStatus.Should()
+                .Contain(new KeyValuePair<string, ProjectStatus>("Test Project", null));
+        }
+        
+        [TestMethod]
+        public void RetrieveProjectManager_when_projectName_does_not_have_current_status_should_get_server_snapshot()
+        {
+            TestMocks mocks = new TestMocks();
+            var target = CreateTestTarget(mocks);
+
+            List<JenkinsJob> allJobs = new List<JenkinsJob>();
+
+            mocks.MockApi
+                .Setup(x => x.GetAllJobs())
+                .Returns(allJobs);
+
+            Dictionary<string, ProjectStatus> projectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.ProjectsAndCurrentStatus)
+                .Returns(projectsAndCurrentStatus);
+
+            // Act
+            var projectManager = target.RetrieveProjectManager("Test Project");
+
+            // Assert
+            mocks.MockJenkinsServerManager
+                .Verify(x => x.GetCruiseServerSnapshot(),
+                Times.Once);
+        }
+
+        [TestMethod]
+        public void RetrieveProjectManager_when_projectName_already_has_current_status_should_not_get_server_snapshot()
+        {
+            TestMocks mocks = new TestMocks();
+            var target = CreateTestTarget(mocks);
+
+            List<JenkinsJob> allJobs = new List<JenkinsJob>();
+
+            mocks.MockApi
+                .Setup(x => x.GetAllJobs())
+                .Returns(allJobs);
+
+            Dictionary<string, ProjectStatus> projectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
+            projectsAndCurrentStatus.Add("Test Project", new ProjectStatus());
+
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.ProjectsAndCurrentStatus)
+                .Returns(projectsAndCurrentStatus);
+
+            // Act
+            var projectManager = target.RetrieveProjectManager("Test Project");
+
+            // Assert
+            mocks.MockJenkinsServerManager
+                .Verify(x => x.GetCruiseServerSnapshot(),
+                Times.Never);
+        }
+
+        [TestMethod]
+        public void RetrieveProjectManager_when_project_has_valid_webUrl_then_instance_should_use_it()
+        {
+            TestMocks mocks = new TestMocks();
+            var target = CreateTestTarget(mocks);
+
+            List<JenkinsJob> allJobs = new List<JenkinsJob>();
+
+            mocks.MockApi
+                .Setup(x => x.GetAllJobs())
+                .Returns(allJobs);
+
+            Dictionary<string, ProjectStatus> projectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
+            projectsAndCurrentStatus.Add("Test Project", new ProjectStatus());
+            projectsAndCurrentStatus["Test Project"].WebURL = @"http://SomeTestServer5.com";
+
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.ProjectsAndCurrentStatus)
+                .Returns(projectsAndCurrentStatus);
+
+            // Act
+            var projectManager = target.RetrieveProjectManager("Test Project");
+
+            // Assert
+            ((JenkinsProjectManager) projectManager).WebURL.Should().Be(@"http://SomeTestServer5.com");
+        }
+
+        [TestMethod]
+        public void RetrieveProjectManager_instance_should_be_initialized_with_current_configuration()
         {
             TestMocks mocks = new TestMocks();
             var target = CreateTestTarget(mocks);
@@ -200,6 +303,30 @@ namespace JenkinsTransport.UnitTests
             
             // Assert
             target.Configuration.Should().Be(projectManager.Configuration);
+        }
+
+        [TestMethod]
+        public void RetrieveProjectManager_instance_should_be_initialized_with_current_settings()
+        {
+            TestMocks mocks = new TestMocks();
+            var target = CreateTestTarget(mocks);
+
+            List<JenkinsJob> allJobs = new List<JenkinsJob>();
+
+            mocks.MockApi
+                .Setup(x => x.GetAllJobs())
+                .Returns(allJobs);
+
+            Dictionary<string, ProjectStatus> projectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.ProjectsAndCurrentStatus)
+                .Returns(projectsAndCurrentStatus);
+
+            // Act
+            var projectManager = (JenkinsProjectManager)target.RetrieveProjectManager("Test Project");
+
+            // Assert
+            target.Settings.Should().Be(projectManager.Settings.ToString());
         }
 
         [TestMethod]
