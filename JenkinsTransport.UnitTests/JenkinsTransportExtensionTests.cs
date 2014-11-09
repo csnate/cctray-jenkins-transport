@@ -106,6 +106,7 @@ namespace JenkinsTransport.UnitTests
             };
 
             Transport.JenkinsServerManagerFactory = mocks.JenkinsServerManagerFactory;
+            Transport.SetIsServerManagerInitialized(false);
             Transport.WebRequestFactory = mocks.WebRequestFactory;
             Transport.JenkinsApiFactory = mocks.JenkinsApiFactory;
 
