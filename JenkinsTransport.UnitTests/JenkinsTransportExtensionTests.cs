@@ -117,7 +117,7 @@ namespace JenkinsTransport.UnitTests
             };
 
             Transport.JenkinsServerManagerFactory = mocks.JenkinsServerManagerFactory;
-            Transport.SetIsServerManagerInitialized(false);
+            //Transport.SetIsServerManagerInitialized(false);
             Transport.WebRequestFactory = mocks.WebRequestFactory;
             Transport.JenkinsApiFactory = mocks.JenkinsApiFactory;
             Transport.ConfigurationFormFactory = mocks.ConfigurationFormFactory;
@@ -317,13 +317,11 @@ namespace JenkinsTransport.UnitTests
         /// the interface method RetrieveServerManager is called
         /// </summary>
         [TestMethod]
-        public void RetrieveServerManager_when_configure_window_has_been_shown_should_initialze_serverManager()
+        public void RetrieveServerManager_when_configure_window_has_been_shown_should_set_isInitialized_to_false()
         {
             TestMocks mocks = new TestMocks();
             var target = CreateTestTarget(mocks);
-
-            target.SetIsServerManagerInitialized(true);
-
+           
             Mock<IForm> mockConfigurationForm = new Mock<IForm>();
             mockConfigurationForm
                 .Setup(x => x.ShowDialog(It.IsAny<IWin32Window>()))
@@ -336,17 +334,13 @@ namespace JenkinsTransport.UnitTests
             mocks.MockConfigurationFormFactory
                 .Setup(x => x.Create())
                 .Returns(mockConfigurationForm.Object);
-
+            
+            // Act
             target.Configure(null);
 
-            // Act
-            target.RetrieveServerManager();
-
             // Assert
-            mocks.MockJenkinsServerManager
-                .Verify(x => x.Initialize(It.IsAny<BuildServer>(),
-                    It.IsAny<string>(), It.IsAny<string>()),
-                    Times.Once);
+            mocks.MockJenkinsServerManagerFactory
+                .VerifySet(x => x.IsServerManagerInitialized = false);
         }
 
     }
