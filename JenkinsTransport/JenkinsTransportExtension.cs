@@ -15,11 +15,25 @@ namespace JenkinsTransport
     public class JenkinsTransportExtension : ITransportExtension
     {
         private static bool _isServerManagerInitialized = false;
-        private static IJenkinsServerManagerFactory _jenkinsServerManagerFactory;
+        private IJenkinsServerManagerFactory _jenkinsServerManagerFactory;
         public IJenkinsServerManagerFactory JenkinsServerManagerFactory
         {
+            get
+            {
+                if (_jenkinsServerManagerFactory == null)
+                {
+                    _jenkinsServerManagerFactory = new JenkinsServerManagerSingletonFactory(WebRequestFactory,
+                    JenkinsApiFactory, DateTimeService);
+                }
+                return _jenkinsServerManagerFactory;
+            }
             // Allow the JenkinsServerManagerFactory to be set for test purposes
-            set { _jenkinsServerManagerFactory = value; }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value");
+                _jenkinsServerManagerFactory = value;
+            }
         }
 
         private IWebRequestFactory _webRequestFactory;
@@ -84,21 +98,6 @@ namespace JenkinsTransport
             }
         }
 
-        protected IJenkinsServerManager JenkinsServerManager
-        {
-            get
-            {
-                if (_jenkinsServerManagerFactory == null)
-                {
-                    _jenkinsServerManagerFactory = new JenkinsServerManagerSingletonFactory(WebRequestFactory,
-                    JenkinsApiFactory, DateTimeService);
-                    _isServerManagerInitialized = false;
-                }
-
-                return _jenkinsServerManagerFactory.GetInstance();               
-            }
-        }
-
         #region ITransportExtension implementations
         public CCTrayProject[] GetProjectList(BuildServer server)
         {
@@ -151,12 +150,13 @@ namespace JenkinsTransport
 
         public ICruiseServerManager RetrieveServerManager()
         {
+            var serverManager = JenkinsServerManagerFactory.GetInstance();
             if (!_isServerManagerInitialized)
             {
-                JenkinsServerManager.Initialize(Configuration, String.Empty, Settings);
+                serverManager.Initialize(Configuration, String.Empty, Settings);
                 _isServerManagerInitialized = true;
             }
-            return (ICruiseServerManager) JenkinsServerManager;
+            return (ICruiseServerManager)serverManager;
         }
 
         public bool Configure(IWin32Window owner)
