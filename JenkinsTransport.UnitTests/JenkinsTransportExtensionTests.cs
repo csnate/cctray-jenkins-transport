@@ -21,14 +21,7 @@ namespace JenkinsTransport.UnitTests
 {
     [TestClass]
     public class JenkinsTransportExtensionTests
-    {
-        // Because this class contains a static that must be initialized for repeatable/non dependent test runs
-        // the tests can only run in single threaded mode otherwise a running test can be corrupted by a another 
-        // test setting the static to null
-        // Thus we must use a static lock object (static beause MsTest creates new instances of the test fixture for
-        // each thread) so that all threads are locking on the same object before a test is run
-        private static object syncLock = new object();
-
+    {    
         internal class TestMocks
         {
             public Mock<IWebRequestFactory> MockWebRequestFactory { get; set; }
@@ -95,13 +88,11 @@ namespace JenkinsTransport.UnitTests
         [TestInitialize]
         public void Setup()
         {
-            Monitor.Enter(syncLock);
         }
 
         [TestCleanup]
         public void Teardown()
         {
-            Monitor.Exit(syncLock);
         }
 
         private JenkinsTransportExtension CreateTestTarget(TestMocks mocks)
