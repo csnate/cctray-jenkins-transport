@@ -14,7 +14,6 @@ namespace JenkinsTransport
 {
     public class JenkinsTransportExtension : ITransportExtension
     {
-        private static bool _isServerManagerInitialized = false;
         private IJenkinsServerManagerFactory _jenkinsServerManagerFactory;
         public IJenkinsServerManagerFactory JenkinsServerManagerFactory
         {
@@ -172,10 +171,10 @@ namespace JenkinsTransport
         public ICruiseServerManager RetrieveServerManager()
         {
             var serverManager = JenkinsServerManagerFactory.GetInstance();
-            if (!_isServerManagerInitialized)
+            if (!JenkinsServerManagerFactory.IsServerManagerInitialized)
             {
                 serverManager.Initialize(Configuration, String.Empty, Settings);
-                _isServerManagerInitialized = true;
+                JenkinsServerManagerFactory.IsServerManagerInitialized = true;
             }
             return (ICruiseServerManager)serverManager;
         }
@@ -197,7 +196,8 @@ namespace JenkinsTransport
                                             Password = form.GetPassword()
                                         };
                     Settings = settings.ToString();
-                    _isServerManagerInitialized = false;  // We will need to initialize the server manager again if their information has changed
+                    //We will need to initialize the server manager again if their information has changed
+                    JenkinsServerManagerFactory.IsServerManagerInitialized = false; 
                     return true;
                 }
                 return false;

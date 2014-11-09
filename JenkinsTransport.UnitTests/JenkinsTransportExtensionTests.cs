@@ -54,6 +54,16 @@ namespace JenkinsTransport.UnitTests
             public Mock<IJenkinsServerManager> MockJenkinsServerManager { get; set; }
             public IJenkinsServerManager JenkinsServerManager { get { return MockJenkinsServerManager.Object; } }
 
+            public Mock<IFormFactory> MockConfigurationFormFactory { get; set; }
+
+            public IFormFactory ConfigurationFormFactory
+            {
+                get
+                {
+                    return MockConfigurationFormFactory.Object;
+                }
+            }
+
             public TestMocks()
             {
                 MockWebRequestFactory = new Mock<IWebRequestFactory>();
@@ -61,6 +71,7 @@ namespace JenkinsTransport.UnitTests
                 MockApi = new Mock<IJenkinsApi>();
                 MockJenkinsServerManagerFactory = new Mock<IJenkinsServerManagerFactory>();
                 MockJenkinsServerManager = new Mock<IJenkinsServerManager>();
+                MockConfigurationFormFactory = new Mock<IFormFactory>();
 
                 MockJenkinsServerManager.As<ICruiseServerManager>();
 
@@ -109,6 +120,7 @@ namespace JenkinsTransport.UnitTests
             Transport.SetIsServerManagerInitialized(false);
             Transport.WebRequestFactory = mocks.WebRequestFactory;
             Transport.JenkinsApiFactory = mocks.JenkinsApiFactory;
+            Transport.ConfigurationFormFactory = mocks.ConfigurationFormFactory;
 
             Transport.Settings = settings.ToString();
             Transport.Configuration = new BuildServer(settings.Server);
@@ -274,8 +286,7 @@ namespace JenkinsTransport.UnitTests
         }
 
         [TestMethod]
-        // Still needs work on multithreadedness
-        public void RetrieveServerManager_should_initialize_server_manager()
+        public void RetrieveServerManager_should_initialize_serverManager()
         {
             TestMocks mocks = new TestMocks();
             var target = CreateTestTarget(mocks);
@@ -301,6 +312,42 @@ namespace JenkinsTransport.UnitTests
                     Times.Once);
         }
 
+        /// <summary>
+        /// Verify that showing the configuration window will cause the ServerManager to be initialized next time
+        /// the interface method RetrieveServerManager is called
+        /// </summary>
+        [TestMethod]
+        public void RetrieveServerManager_when_configure_window_has_been_shown_should_initialze_serverManager()
+        {
+            TestMocks mocks = new TestMocks();
+            var target = CreateTestTarget(mocks);
+
+            target.SetIsServerManagerInitialized(true);
+
+            Mock<IForm> mockConfigurationForm = new Mock<IForm>();
+            mockConfigurationForm
+                .Setup(x => x.ShowDialog(It.IsAny<IWin32Window>()))
+                .Returns(DialogResult.OK);
+
+            mockConfigurationForm
+                .Setup(x => x.GetServer())
+                .Returns(@"https://SeomServer.com");
+
+            mocks.MockConfigurationFormFactory
+                .Setup(x => x.Create())
+                .Returns(mockConfigurationForm.Object);
+
+            target.Configure(null);
+
+            // Act
+            target.RetrieveServerManager();
+
+            // Assert
+            mocks.MockJenkinsServerManager
+                .Verify(x => x.Initialize(It.IsAny<BuildServer>(),
+                    It.IsAny<string>(), It.IsAny<string>()),
+                    Times.Once);
+        }
 
     }
 }
