@@ -62,6 +62,7 @@
     <Compile Include="ConfigurationForm.Designer.cs">
       <DependentUpon>ConfigurationForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ConfigurationFormFactory.cs" />
     <Compile Include="DateTimeService.cs" />
     <Compile Include="EnumUtils.cs" />
     <Compile Include="IJenkinsServerManager.cs" />

@@ -98,6 +98,27 @@ namespace JenkinsTransport
             }
         }
 
+        private IFormFactory _configurationFormFactory;
+        public IFormFactory ConfigurationFormFactory
+        {
+            get
+            {
+                // Lazy instantiation of default class
+                if (_configurationFormFactory == null)
+                {
+                    _configurationFormFactory = new ConfigurationFormFactory();
+                }
+                return _configurationFormFactory;
+            }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value"); 
+                _configurationFormFactory = value;
+            }
+        }
+
+
         #region ITransportExtension implementations
         public CCTrayProject[] GetProjectList(BuildServer server)
         {
@@ -159,9 +180,10 @@ namespace JenkinsTransport
             return (ICruiseServerManager)serverManager;
         }
 
+      
         public bool Configure(IWin32Window owner)
         {
-            using (var form = new ConfigurationForm())
+            using (var form = ConfigurationFormFactory.Create())
             {
                 if (form.ShowDialog(owner) == DialogResult.OK)
                 {
@@ -186,7 +208,7 @@ namespace JenkinsTransport
         public string Settings { get; set; }
         public BuildServer Configuration { get; set; }
 
-     
+        
 
         #endregion
     }
