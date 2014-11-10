@@ -2,7 +2,7 @@
 using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using ThoughtWorks.CruiseControl.Remote;
 
-namespace JenkinsTransport
+namespace JenkinsTransport.Interface
 {
     /// <summary>
     /// Internal interface for abstraction of ServerManager
