@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using JenkinsTransport.Interface;
 
 namespace JenkinsTransport
 {
@@ -63,13 +64,5 @@ namespace JenkinsTransport
             return PasswordTextBox.Text;
         }
 
-    }
-
-    public interface IForm : IDisposable
-    {
-        DialogResult ShowDialog(IWin32Window owner);
-        string GetServer();
-        string GetUsername();
-        string GetPassword();
     }
 }

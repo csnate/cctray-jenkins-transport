@@ -65,6 +65,7 @@
     <Compile Include="ConfigurationFormFactory.cs" />
     <Compile Include="DateTimeService.cs" />
     <Compile Include="EnumUtils.cs" />
+    <Compile Include="Interface\IForm.cs" />
     <Compile Include="Interface\IJenkinsServerManagerFactory.cs" />
     <Compile Include="Interface\IFormFactory.cs" />
     <Compile Include="Interface\IJenkinsServerManager.cs" />
