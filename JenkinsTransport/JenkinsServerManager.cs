@@ -12,7 +12,7 @@ using ThoughtWorks.CruiseControl.Remote.Parameters;
 
 namespace JenkinsTransport
 {
-    public class JenkinsServerManager : ICruiseServerManager
+    public class JenkinsServerManager : ICruiseServerManager, IJenkinsServerManager
     {
         private readonly IWebRequestFactory _webRequestFactory;
         private readonly IDateTimeService _dateTimeService;

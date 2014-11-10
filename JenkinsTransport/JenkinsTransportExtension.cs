@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -13,13 +14,29 @@ namespace JenkinsTransport
 {
     public class JenkinsTransportExtension : ITransportExtension
     {
-        private static bool _isServerManagerInitialized = false;
-        private static JenkinsServerManager _jenkinsServerManager;
+        private IJenkinsServerManagerFactory _jenkinsServerManagerFactory;
+        public IJenkinsServerManagerFactory JenkinsServerManagerFactory
+        {
+            get
+            {
+                if (_jenkinsServerManagerFactory == null)
+                {
+                    _jenkinsServerManagerFactory = new JenkinsServerManagerSingletonFactory(WebRequestFactory,
+                    JenkinsApiFactory, DateTimeService);
+                }
+                return _jenkinsServerManagerFactory;
+            }
+            // Allow the JenkinsServerManagerFactory to be set for test purposes
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value");
+                _jenkinsServerManagerFactory = value;
+            }
+        }
 
         private IWebRequestFactory _webRequestFactory;
-        private IJenkinsApiFactory _jenkinsApiFactory;
-
-        protected IWebRequestFactory WebRequestFactory
+        public IWebRequestFactory WebRequestFactory
         {
             get
             {
@@ -38,6 +55,7 @@ namespace JenkinsTransport
             }
         }
 
+        private IJenkinsApiFactory _jenkinsApiFactory;
         public IJenkinsApiFactory JenkinsApiFactory
         {
             get
@@ -57,21 +75,53 @@ namespace JenkinsTransport
             }
         }
 
-        protected JenkinsServerManager JenkinsServerManager
+        private IDateTimeService _dateTimeService;
+        public IDateTimeService DateTimeService
         {
             get
             {
-                return _jenkinsServerManager ?? (_jenkinsServerManager = new JenkinsServerManager(
-                    new WebRequestFactory(),
-                    new JenkinsApiFactory(),
-                    new DateTimeService()));
+                // Lazy instantiation of default class
+                if (_dateTimeService == null)
+                {
+                    _dateTimeService = new DateTimeService();
+                }
+                return _dateTimeService;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("value");
+                }
+                _dateTimeService = value;
             }
         }
+
+        private IFormFactory _configurationFormFactory;
+        public IFormFactory ConfigurationFormFactory
+        {
+            get
+            {
+                // Lazy instantiation of default class
+                if (_configurationFormFactory == null)
+                {
+                    _configurationFormFactory = new ConfigurationFormFactory();
+                }
+                return _configurationFormFactory;
+            }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value"); 
+                _configurationFormFactory = value;
+            }
+        }
+
 
         #region ITransportExtension implementations
         public CCTrayProject[] GetProjectList(BuildServer server)
         {
-            var manager = (JenkinsServerManager)RetrieveServerManager();
+            var manager = (IJenkinsServerManager)RetrieveServerManager();
             manager.SetConfiguration(server);
 
             // If we are getting the project list, then we should reset the ServerManager's project list
@@ -87,8 +137,8 @@ namespace JenkinsTransport
         {
             var manager = new JenkinsProjectManager(WebRequestFactory, JenkinsApiFactory);
 
-            // Check to make sure the static instance of JenkinsServerManager is initialized
-            var serverManager = (JenkinsServerManager)RetrieveServerManager();
+            // Use factory to get reference to singleton ServerManager
+            var serverManager = (IJenkinsServerManager)RetrieveServerManager();
 
             // Add this project to the server manager if it does not exist
             if (!serverManager.ProjectsAndCurrentStatus.ContainsKey(projectName))
@@ -120,17 +170,19 @@ namespace JenkinsTransport
 
         public ICruiseServerManager RetrieveServerManager()
         {
-            if (!_isServerManagerInitialized)
+            var serverManager = JenkinsServerManagerFactory.GetInstance();
+            if (!JenkinsServerManagerFactory.IsServerManagerInitialized)
             {
-                JenkinsServerManager.Initialize(Configuration, String.Empty, Settings);
-                _isServerManagerInitialized = true;
+                serverManager.Initialize(Configuration, String.Empty, Settings);
+                JenkinsServerManagerFactory.IsServerManagerInitialized = true;
             }
-            return JenkinsServerManager;
+            return (ICruiseServerManager)serverManager;
         }
 
+      
         public bool Configure(IWin32Window owner)
         {
-            using (var form = new ConfigurationForm())
+            using (var form = ConfigurationFormFactory.Create())
             {
                 if (form.ShowDialog(owner) == DialogResult.OK)
                 {
@@ -144,7 +196,8 @@ namespace JenkinsTransport
                                             Password = form.GetPassword()
                                         };
                     Settings = settings.ToString();
-                    _isServerManagerInitialized = false;  // We will need to initialize the server manager again if their information has changed
+                    //We will need to initialize the server manager again if their information has changed
+                    JenkinsServerManagerFactory.IsServerManagerInitialized = false; 
                     return true;
                 }
                 return false;
@@ -154,6 +207,9 @@ namespace JenkinsTransport
         public string DisplayName { get { return "Jenkins Transport Extension"; } }
         public string Settings { get; set; }
         public BuildServer Configuration { get; set; }
+
+        
+
         #endregion
     }
 }

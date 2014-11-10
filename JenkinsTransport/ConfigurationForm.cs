@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace JenkinsTransport
 {
-    public partial class ConfigurationForm : Form
+    public partial class ConfigurationForm : Form, IForm
     {
         private static Regex _serverRegex = new Regex("^http(s)?://\\w+", RegexOptions.IgnoreCase);
         private static bool IsValidServer(string server)
@@ -63,5 +63,13 @@ namespace JenkinsTransport
             return PasswordTextBox.Text;
         }
 
+    }
+
+    public interface IForm : IDisposable
+    {
+        DialogResult ShowDialog(IWin32Window owner);
+        string GetServer();
+        string GetUsername();
+        string GetPassword();
     }
 }

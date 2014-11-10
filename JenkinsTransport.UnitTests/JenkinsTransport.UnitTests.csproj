@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="ApiTests.cs" />
     <Compile Include="ExtensionMethods\JenkinsServerManagerTestExtensions.cs" />
+    <Compile Include="ExtensionMethods\JenkinsTransportExtensionTestExtenions.cs" />
     <Compile Include="TestHelpers\ProjectStatusSampleData.cs" />
     <Compile Include="TestHelpers\BuildInformationSampleData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
