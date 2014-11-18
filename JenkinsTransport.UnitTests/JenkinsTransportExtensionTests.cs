@@ -221,7 +221,7 @@ namespace JenkinsTransport.UnitTests
 
             // Assert
             mocks.MockJenkinsServerManager
-                .Verify(x => x.GetCruiseServerSnapshot(),
+                .Verify(x => x.GetCruiseServerSnapshotEx(),
                 Times.Once);
         }
 
@@ -254,7 +254,7 @@ namespace JenkinsTransport.UnitTests
         }
 
         [TestMethod]
-        public void RetrieveProjectManager_when_project_has_valid_webUrl_then_instance_should_use_it()
+        public void RetrieveProjectManager_when_project_status_has_valid_webUrl_projectManager_should_use_it()
         {
             TestMocks mocks = new TestMocks();
             var target = CreateTestTarget(mocks);
@@ -266,13 +266,21 @@ namespace JenkinsTransport.UnitTests
                 .Returns(allJobs);
 
             Dictionary<string, ProjectStatus> projectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
-            projectsAndCurrentStatus.Add("Test Project", new ProjectStatus());
-            projectsAndCurrentStatus["Test Project"].WebURL = @"http://SomeTestServer5.com";
+            projectsAndCurrentStatus.Add("Test Project", null);
 
             mocks.MockJenkinsServerManager
                 .Setup(x => x.ProjectsAndCurrentStatus)
                 .Returns(projectsAndCurrentStatus);
 
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.GetCruiseServerSnapshotEx())
+                .Callback(() =>
+                {
+                    // Simulate the project status being updated as per normal
+                    projectsAndCurrentStatus["Test Project"] = new ProjectStatus();
+                    projectsAndCurrentStatus["Test Project"].WebURL = @"http://SomeTestServer5.com";
+                });
+            
             // Act
             var projectManager = target.RetrieveProjectManager("Test Project");
 
