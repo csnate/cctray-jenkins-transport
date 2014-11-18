@@ -14,10 +14,7 @@ namespace JenkinsTransport.BuildParameters
         public BuildParameterType ParameterType { get; protected set; }
         public string DefaultValue { get; private set; }
 
-        public virtual ParameterBase ToParameterBase()
-        {
-            throw new NotImplementedException("Must be overridden in derived class");
-        }
+        public abstract ParameterBase ToParameterBase();
 
         protected BaseBuildParameter(XContainer document)
         {
