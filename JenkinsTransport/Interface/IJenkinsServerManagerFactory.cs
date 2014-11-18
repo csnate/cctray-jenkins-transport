@@ -1,6 +1,4 @@
-﻿using JenkinsTransport.Interface;
-
-namespace JenkinsTransport
+﻿namespace JenkinsTransport.Interface
 {
     public interface IJenkinsServerManagerFactory
     {
