@@ -11,6 +11,7 @@ namespace JenkinsTransport.Interface
     {
         Dictionary<string, ProjectStatus> ProjectsAndCurrentStatus { get; }
         CruiseServerSnapshot GetCruiseServerSnapshot();
+        CruiseServerSnapshot GetCruiseServerSnapshotEx();
         void SetConfiguration(BuildServer server);
         CCTrayProject[] GetProjectList();
         void Initialize(BuildServer server, string session, string settings);

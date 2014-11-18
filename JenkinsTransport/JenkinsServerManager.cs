@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Windows.Forms;
 using JenkinsTransport.Interface;
 using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using ThoughtWorks.CruiseControl.CCTrayLib.Monitoring;
@@ -80,11 +81,30 @@ namespace JenkinsTransport
 
         /// <summary>
         /// This only gets called while CCTray is polling for updates of known jobs
+        /// WebException is caught and handled as CCTray will not deal with it
         /// </summary>
-        /// <returns></returns>
+        /// <returns>An unpdated CruiseServerSnapshot or null if unavailable</returns>        
         public CruiseServerSnapshot GetCruiseServerSnapshot()
         {
-            var projectStatues = AllJobs
+            try
+            {
+                return GetCruiseServerSnapshotEx();
+            }
+            catch (WebException)
+            {
+                return null;
+            }           
+        }
+
+        /// <summary>
+        /// Alternate method for retrieving current status for all projects without
+        /// exception handling, for use within other ICruiseServerManager methods
+        /// to provide user feedback
+        /// </summary>
+        /// <returns></returns>
+        public CruiseServerSnapshot GetCruiseServerSnapshotEx()
+        {
+            List<ProjectStatus> projectStatues = AllJobs
                 .Where(a => ProjectsAndCurrentStatus.ContainsKey(a.Name))
                 .Select(a => Api.GetProjectStatus(a.Url, ProjectsAndCurrentStatus[a.Name]))
                 .ToList();

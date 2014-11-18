@@ -46,7 +46,6 @@ namespace JenkinsTransport.UnitTests
             public IJenkinsServerManager JenkinsServerManager { get { return MockJenkinsServerManager.Object; } }
 
             public Mock<IFormFactory> MockConfigurationFormFactory { get; set; }
-
             public IFormFactory ConfigurationFormFactory
             {
                 get
@@ -54,6 +53,9 @@ namespace JenkinsTransport.UnitTests
                     return MockConfigurationFormFactory.Object;
                 }
             }
+
+            public Mock<IDialogService> MockDialogService { get; set; }
+            public IDialogService DialogService { get { return MockDialogService.Object; } }
 
             public TestMocks()
             {
@@ -63,6 +65,7 @@ namespace JenkinsTransport.UnitTests
                 MockJenkinsServerManagerFactory = new Mock<IJenkinsServerManagerFactory>();
                 MockJenkinsServerManager = new Mock<IJenkinsServerManager>();
                 MockJenkinsServerManager.As<ICruiseServerManager>();
+                MockDialogService = new Mock<IDialogService>();
 
                 MockConfigurationFormFactory = new Mock<IFormFactory>();
 
@@ -109,6 +112,7 @@ namespace JenkinsTransport.UnitTests
             Transport.WebRequestFactory = mocks.WebRequestFactory;
             Transport.JenkinsApiFactory = mocks.JenkinsApiFactory;
             Transport.ConfigurationFormFactory = mocks.ConfigurationFormFactory;
+            Transport.DialogService = mocks.DialogService;
 
             Transport.Settings = settings.ToString();
             Transport.Configuration = new BuildServer(settings.Server);
@@ -401,6 +405,35 @@ namespace JenkinsTransport.UnitTests
             mocks.MockJenkinsServerManagerFactory
                 .Verify(x => x.GetInstance(),
                     Times.AtLeastOnce);
+        }
+
+        [TestMethod]
+        public void RetrieveProjectManager_when_server_unavailable_should_display_dialog()
+        {
+            TestMocks mocks = new TestMocks();
+            var target = CreateTestTarget(mocks);
+
+            List<JenkinsJob> allJobs = new List<JenkinsJob>();
+
+            mocks.MockApi
+                .Setup(x => x.GetAllJobs())
+                .Returns(allJobs);
+
+            Dictionary<string, ProjectStatus> projectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.ProjectsAndCurrentStatus)
+                .Returns(projectsAndCurrentStatus);
+
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.GetCruiseServerSnapshotEx())
+                .Throws(new WebException("Test WebException Message"));
+
+            // Act
+            var projectManager = target.RetrieveProjectManager("Test Project");
+
+            // Assert
+            mocks.MockDialogService
+                .Verify(x => x.Show("Test WebException Message"));
         }
 
         [TestMethod]
