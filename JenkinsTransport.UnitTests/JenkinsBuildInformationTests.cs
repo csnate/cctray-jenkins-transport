@@ -1,9 +1,6 @@
-﻿using System;
-using System.IO.IsolatedStorage;
-using System.Linq;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Xml.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ThoughtWorks.CruiseControl.Remote.Parameters;
 
 namespace JenkinsTransport.UnitTests
 {

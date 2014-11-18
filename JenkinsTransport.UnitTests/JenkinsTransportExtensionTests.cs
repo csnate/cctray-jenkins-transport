@@ -1,17 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Runtime.InteropServices.ComTypes;
-using System.Threading;
-using System.Windows.Forms;
-using FluentAssertions;
+﻿using FluentAssertions;
 using JenkinsTransport.Interface;
-using Moq;
-using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Windows.Forms;
+using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using ThoughtWorks.CruiseControl.CCTrayLib.Monitoring;
 using ThoughtWorks.CruiseControl.Remote;
 

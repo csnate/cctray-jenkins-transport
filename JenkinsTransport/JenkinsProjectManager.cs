@@ -1,7 +1,6 @@
-﻿using System;
+﻿using JenkinsTransport.Interface;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using JenkinsTransport.Interface;
 using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using ThoughtWorks.CruiseControl.CCTrayLib.Monitoring;
 using ThoughtWorks.CruiseControl.Remote;

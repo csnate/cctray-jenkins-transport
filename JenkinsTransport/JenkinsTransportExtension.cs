@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
-using System.IO;
+﻿using JenkinsTransport.Interface;
+using System;
 using System.Net;
-using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
-using JenkinsTransport.Interface;
 using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using ThoughtWorks.CruiseControl.CCTrayLib.Monitoring;
-using ThoughtWorks.CruiseControl.Remote;
 
 namespace JenkinsTransport
 {

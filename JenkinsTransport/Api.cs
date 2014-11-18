@@ -1,4 +1,6 @@
-﻿using System;
+﻿using JenkinsTransport.BuildParameters;
+using JenkinsTransport.Interface;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,8 +8,6 @@ using System.Net;
 using System.Text;
 using System.Web;
 using System.Xml.Linq;
-using JenkinsTransport.BuildParameters;
-using JenkinsTransport.Interface;
 using ThoughtWorks.CruiseControl.Remote;
 using ThoughtWorks.CruiseControl.Remote.Parameters;
 

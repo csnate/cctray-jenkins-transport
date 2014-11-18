@@ -1,13 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using System.Xml.Linq;
-using System.Collections.Generic;
-using FluentAssertions;
+﻿using FluentAssertions;
 using JenkinsTransport.Interface;
 using JenkinsTransport.UnitTests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Linq;
 using ThoughtWorks.CruiseControl.Remote;
 
 

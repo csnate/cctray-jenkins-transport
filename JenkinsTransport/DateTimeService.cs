@@ -1,5 +1,5 @@
-﻿using System;
-using JenkinsTransport.Interface;
+﻿using JenkinsTransport.Interface;
+using System;
 
 namespace JenkinsTransport
 {

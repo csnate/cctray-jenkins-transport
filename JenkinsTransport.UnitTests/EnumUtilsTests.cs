@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ThoughtWorks.CruiseControl.Remote;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JenkinsTransport.UnitTests
 {
