@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using JenkinsTransport.Interface;
+﻿using JenkinsTransport.Interface;
+using System;
 
 namespace JenkinsTransport
 {

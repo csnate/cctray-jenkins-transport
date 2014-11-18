@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using JenkinsTransport.Interface;
+﻿using JenkinsTransport.Interface;
 
 namespace JenkinsTransport
 {
@@ -37,11 +33,5 @@ namespace JenkinsTransport
             return _instance;
         }
 
-    }
-
-    public interface IJenkinsServerManagerFactory
-    {
-        IJenkinsServerManager GetInstance();
-        bool IsServerManagerInitialized { get; set; }
     }
 }

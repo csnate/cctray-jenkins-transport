@@ -64,8 +64,13 @@
     </Compile>
     <Compile Include="ConfigurationFormFactory.cs" />
     <Compile Include="DateTimeService.cs" />
+    <Compile Include="MessageBoxService.cs" />
     <Compile Include="EnumUtils.cs" />
-    <Compile Include="IJenkinsServerManager.cs" />
+    <Compile Include="Interface\IDialogService.cs" />
+    <Compile Include="Interface\IForm.cs" />
+    <Compile Include="Interface\IJenkinsServerManagerFactory.cs" />
+    <Compile Include="Interface\IFormFactory.cs" />
+    <Compile Include="Interface\IJenkinsServerManager.cs" />
     <Compile Include="Interface\IDateTimeService.cs" />
     <Compile Include="Interface\IJenkinsApi.cs" />
     <Compile Include="Interface\IJenkinsApiFactory.cs" />

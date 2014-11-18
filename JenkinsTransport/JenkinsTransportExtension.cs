@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Text;
+﻿using JenkinsTransport.Interface;
+using System;
+using System.Net;
 using System.Windows.Forms;
-using JenkinsTransport.Interface;
 using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using ThoughtWorks.CruiseControl.CCTrayLib.Monitoring;
 
@@ -117,6 +112,27 @@ namespace JenkinsTransport
             }
         }
 
+        private IDialogService _dialogService;
+
+        public IDialogService DialogService
+        {
+            get
+            {
+                // Lazy instantiation of default class
+                if (_dialogService == null)
+                {
+                    _dialogService = new MessageBoxService();
+                }
+                return _dialogService;
+            }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value");
+                _dialogService = value;
+            }
+        }
+
 
         #region ITransportExtension implementations
         public CCTrayProject[] GetProjectList(BuildServer server)
@@ -149,19 +165,26 @@ namespace JenkinsTransport
             // If this project does not have a status get it now as we need the WebURL
             if (serverManager.ProjectsAndCurrentStatus[projectName] == null)
             {
-                serverManager.GetCruiseServerSnapshot();
-            }
+                try
+                {
+                    serverManager.GetCruiseServerSnapshotEx();
 
-            if (serverManager.ProjectsAndCurrentStatus.ContainsKey(projectName) &&
-                serverManager.ProjectsAndCurrentStatus[projectName] != null &&
-                !String.IsNullOrEmpty(serverManager.ProjectsAndCurrentStatus[projectName].WebURL))
-            {
-                manager.WebURL = new Uri(serverManager.ProjectsAndCurrentStatus[projectName].WebURL);
-            }
-            else
-            {
-                // Really can't support nested jobs without knowning the exact WebURL for the project !!
-            }
+                    if (serverManager.ProjectsAndCurrentStatus.ContainsKey(projectName) &&
+                        serverManager.ProjectsAndCurrentStatus[projectName] != null &&
+                        !String.IsNullOrEmpty(serverManager.ProjectsAndCurrentStatus[projectName].WebURL))
+                    {
+                        manager.WebURL = new Uri(serverManager.ProjectsAndCurrentStatus[projectName].WebURL);
+                    }
+                    else
+                    {
+                        // Really can't support nested jobs without knowning the exact WebURL for the project !!
+                    }
+                }
+                catch (WebException ex)
+                {
+                    DialogService.Show(ex.Message);
+                }                
+            }        
 
             manager.Initialize(Configuration, projectName, Settings);
 

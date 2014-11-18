@@ -1,17 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Runtime.InteropServices.ComTypes;
-using System.Threading;
-using System.Windows.Forms;
-using FluentAssertions;
+﻿using FluentAssertions;
 using JenkinsTransport.Interface;
-using Moq;
-using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Windows.Forms;
+using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 using ThoughtWorks.CruiseControl.CCTrayLib.Monitoring;
 using ThoughtWorks.CruiseControl.Remote;
 
@@ -46,7 +41,6 @@ namespace JenkinsTransport.UnitTests
             public IJenkinsServerManager JenkinsServerManager { get { return MockJenkinsServerManager.Object; } }
 
             public Mock<IFormFactory> MockConfigurationFormFactory { get; set; }
-
             public IFormFactory ConfigurationFormFactory
             {
                 get
@@ -54,6 +48,9 @@ namespace JenkinsTransport.UnitTests
                     return MockConfigurationFormFactory.Object;
                 }
             }
+
+            public Mock<IDialogService> MockDialogService { get; set; }
+            public IDialogService DialogService { get { return MockDialogService.Object; } }
 
             public TestMocks()
             {
@@ -63,6 +60,7 @@ namespace JenkinsTransport.UnitTests
                 MockJenkinsServerManagerFactory = new Mock<IJenkinsServerManagerFactory>();
                 MockJenkinsServerManager = new Mock<IJenkinsServerManager>();
                 MockJenkinsServerManager.As<ICruiseServerManager>();
+                MockDialogService = new Mock<IDialogService>();
 
                 MockConfigurationFormFactory = new Mock<IFormFactory>();
 
@@ -109,6 +107,7 @@ namespace JenkinsTransport.UnitTests
             Transport.WebRequestFactory = mocks.WebRequestFactory;
             Transport.JenkinsApiFactory = mocks.JenkinsApiFactory;
             Transport.ConfigurationFormFactory = mocks.ConfigurationFormFactory;
+            Transport.DialogService = mocks.DialogService;
 
             Transport.Settings = settings.ToString();
             Transport.Configuration = new BuildServer(settings.Server);
@@ -222,7 +221,7 @@ namespace JenkinsTransport.UnitTests
 
             // Assert
             mocks.MockJenkinsServerManager
-                .Verify(x => x.GetCruiseServerSnapshot(),
+                .Verify(x => x.GetCruiseServerSnapshotEx(),
                 Times.Once);
         }
 
@@ -255,7 +254,7 @@ namespace JenkinsTransport.UnitTests
         }
 
         [TestMethod]
-        public void RetrieveProjectManager_when_project_has_valid_webUrl_then_instance_should_use_it()
+        public void RetrieveProjectManager_when_project_status_has_valid_webUrl_projectManager_should_use_it()
         {
             TestMocks mocks = new TestMocks();
             var target = CreateTestTarget(mocks);
@@ -267,13 +266,21 @@ namespace JenkinsTransport.UnitTests
                 .Returns(allJobs);
 
             Dictionary<string, ProjectStatus> projectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
-            projectsAndCurrentStatus.Add("Test Project", new ProjectStatus());
-            projectsAndCurrentStatus["Test Project"].WebURL = @"http://SomeTestServer5.com";
+            projectsAndCurrentStatus.Add("Test Project", null);
 
             mocks.MockJenkinsServerManager
                 .Setup(x => x.ProjectsAndCurrentStatus)
                 .Returns(projectsAndCurrentStatus);
 
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.GetCruiseServerSnapshotEx())
+                .Callback(() =>
+                {
+                    // Simulate the project status being updated as per normal
+                    projectsAndCurrentStatus["Test Project"] = new ProjectStatus();
+                    projectsAndCurrentStatus["Test Project"].WebURL = @"http://SomeTestServer5.com";
+                });
+            
             // Act
             var projectManager = target.RetrieveProjectManager("Test Project");
 
@@ -401,6 +408,35 @@ namespace JenkinsTransport.UnitTests
             mocks.MockJenkinsServerManagerFactory
                 .Verify(x => x.GetInstance(),
                     Times.AtLeastOnce);
+        }
+
+        [TestMethod]
+        public void RetrieveProjectManager_when_server_unavailable_should_display_dialog()
+        {
+            TestMocks mocks = new TestMocks();
+            var target = CreateTestTarget(mocks);
+
+            List<JenkinsJob> allJobs = new List<JenkinsJob>();
+
+            mocks.MockApi
+                .Setup(x => x.GetAllJobs())
+                .Returns(allJobs);
+
+            Dictionary<string, ProjectStatus> projectsAndCurrentStatus = new Dictionary<string, ProjectStatus>();
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.ProjectsAndCurrentStatus)
+                .Returns(projectsAndCurrentStatus);
+
+            mocks.MockJenkinsServerManager
+                .Setup(x => x.GetCruiseServerSnapshotEx())
+                .Throws(new WebException("Test WebException Message"));
+
+            // Act
+            var projectManager = target.RetrieveProjectManager("Test Project");
+
+            // Assert
+            mocks.MockDialogService
+                .Verify(x => x.Show("Test WebException Message"));
         }
 
         [TestMethod]

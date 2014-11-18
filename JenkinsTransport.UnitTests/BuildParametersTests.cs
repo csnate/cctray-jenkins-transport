@@ -1,8 +1,8 @@
-﻿using System;
+﻿using JenkinsTransport.BuildParameters;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Linq;
 using System.Xml.Linq;
-using JenkinsTransport.BuildParameters;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JenkinsTransport.UnitTests
 {

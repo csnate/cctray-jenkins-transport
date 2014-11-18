@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using JenkinsTransport.Interface;
 
 namespace JenkinsTransport
 {
@@ -11,10 +8,5 @@ namespace JenkinsTransport
         {
             return new ConfigurationForm();
         }
-    }
-
-    public interface IFormFactory
-    {
-        IForm Create();
     }
 }

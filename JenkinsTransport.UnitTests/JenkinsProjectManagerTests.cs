@@ -1,11 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Collections.Generic;
-using FluentAssertions;
+﻿using FluentAssertions;
 using JenkinsTransport.Interface;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System;
+using System.Collections.Generic;
 using ThoughtWorks.CruiseControl.CCTrayLib.Configuration;
 
 namespace JenkinsTransport.UnitTests

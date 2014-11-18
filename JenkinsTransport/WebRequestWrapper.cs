@@ -1,6 +1,6 @@
+using JenkinsTransport.Interface;
 using System;
 using System.Net;
-using JenkinsTransport.Interface;
 
 namespace JenkinsTransport
 {

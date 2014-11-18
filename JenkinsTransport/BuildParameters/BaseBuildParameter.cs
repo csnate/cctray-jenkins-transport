@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Xml.Linq;
 using ThoughtWorks.CruiseControl.Remote.Parameters;
 
@@ -14,10 +11,7 @@ namespace JenkinsTransport.BuildParameters
         public BuildParameterType ParameterType { get; protected set; }
         public string DefaultValue { get; private set; }
 
-        public virtual ParameterBase ToParameterBase()
-        {
-            throw new NotImplementedException("Must be overridden in derived class");
-        }
+        public abstract ParameterBase ToParameterBase();
 
         protected BaseBuildParameter(XContainer document)
         {
