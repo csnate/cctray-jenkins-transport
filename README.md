@@ -11,7 +11,7 @@ Benefits
 --------
 * You can keep your Jenkins instance locked down with any authorization scheme - no need to use the "Anyone can do anything" authorization
 * You can manage any Jenkins project via CCTray - no need to use the interface or the CLI to force a build
-* You can login to Jenkins server using your API token. Simply enter the API token as the password for your user account/
+* You can login to Jenkins server using your API token. Simply enter the API token as the password for your user account
 
 Drawbacks
 ---------
