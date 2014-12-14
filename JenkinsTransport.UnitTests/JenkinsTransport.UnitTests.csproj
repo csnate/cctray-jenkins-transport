@@ -71,6 +71,7 @@
     <Compile Include="ApiTests.cs" />
     <Compile Include="ExtensionMethods\JenkinsServerManagerTestExtensions.cs" />
     <Compile Include="ExtensionMethods\JenkinsTransportExtensionTestExtenions.cs" />
+    <Compile Include="TestHelpers\EmbeddedResourceHelper.cs" />
     <Compile Include="TestHelpers\ProjectStatusSampleData.cs" />
     <Compile Include="TestHelpers\BuildInformationSampleData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -96,21 +97,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TestData\BuildInformationSampleData1.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\BuildParametersSampleData1.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\ProjectStatusSampleData1.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\ProjectStatusSampleData2_LastSuccessfulBuild.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TestJobsSampleData1.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="TestData\BuildInformationSampleData1.xml" />
+    <EmbeddedResource Include="TestData\BuildParametersSampleData1.xml" />
+    <EmbeddedResource Include="TestData\ProjectStatusSampleData1.xml" />
+    <EmbeddedResource Include="TestData\ProjectStatusSampleData2_LastSuccessfulBuild.xml" />
+    <EmbeddedResource Include="TestData\TestJobsSampleData1.xml" />
   </ItemGroup>
   <ItemGroup />
   <Choose>
