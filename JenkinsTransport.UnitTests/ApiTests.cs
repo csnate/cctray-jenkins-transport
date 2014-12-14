@@ -88,25 +88,6 @@ namespace JenkinsTransport.UnitTests
             return target;
         }
 
-
-        private Api CreateTestTarget(IWebRequestFactory webRequestFactory)
-        {
-            string baseUrl = String.Empty;
-            string authInfo = String.Empty;
-            var target = new Api(baseUrl, authInfo, webRequestFactory);
-
-            return target;
-        }
-
-
-        //[TestMethod]
-        public void CollectTestData()
-        {
-            var target = new Api("https://builds.apache.org/", String.Empty, new WebRequestFactory());
-            target.GetBuildParameters(ProjectUrl);
-            
-        }
-
         [TestMethod]
         public void GetAllJobs_should_return_correct_number()
         {
