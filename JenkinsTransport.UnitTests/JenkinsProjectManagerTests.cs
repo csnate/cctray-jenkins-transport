@@ -150,7 +150,7 @@ namespace JenkinsTransport.UnitTests
 
 
         [TestMethod]
-        public void ForceBuild_when_using_weburl_should_call_api_with_parameters()
+        public void ForceBuild_when_using_weburl_should_call_api_with_url()
         {
             Mocks mocks = new Mocks();
             SetupDefaultMockState(mocks);
@@ -173,13 +173,14 @@ namespace JenkinsTransport.UnitTests
 
             // Assert
             mocks.MockJenkinsApi
-                .Verify(x => x.ForceBuild(It.IsAny<Uri>(),
+                .Verify(x => x.ForceBuild(
+                    target.WebURL,
                     parameters),
                     Times.Once);
         }
 
         [TestMethod]
-        public void ForceBuild_when_weburl_is_null_should_not_throw()
+        public void ForceBuild_when_weburl_is_null_should_call_api_with_projectName()
         {
             Mocks mocks = new Mocks();
             SetupDefaultMockState(mocks);
@@ -198,14 +199,18 @@ namespace JenkinsTransport.UnitTests
             target.WebURL = null;
 
             // Act
-            Action act = () => target.ForceBuild("", parameters, userName);
+            target.ForceBuild("", parameters, userName);
 
             // Assert
-            act.ShouldNotThrow();
+            mocks.MockJenkinsApi
+                .Verify(x => x.ForceBuild(
+                    "TestProjectName",
+                    parameters),
+                    Times.Once);
         }
 
         [TestMethod]
-        public void AbortBuild_when_using_weburl_should_call_api()
+        public void AbortBuild_when_using_weburl_should_call_api_with_url()
         {
             Mocks mocks = new Mocks();
             SetupDefaultMockState(mocks);
@@ -215,11 +220,6 @@ namespace JenkinsTransport.UnitTests
             target.WebURL = new Uri(@"http://test");
 
             target.Initialize(new BuildServer(), "TestProjectName", new Settings());
-
-            Dictionary<string, string> parameters = new Dictionary<string, string>()
-            {
-                {"SomeParameter", "SomeValue"}
-            };
 
             string userName = "TestUser";
             string sessionToken = "";
@@ -234,7 +234,7 @@ namespace JenkinsTransport.UnitTests
         }
 
         [TestMethod]
-        public void AbortBuild_when_weburl_is_null_should_not_throw()
+        public void AbortBuild_when_weburl_is_null_should_call_api_with_projectName()
         {
             Mocks mocks = new Mocks();
             SetupDefaultMockState(mocks);
@@ -249,14 +249,16 @@ namespace JenkinsTransport.UnitTests
             target.WebURL = null;
 
             // Act
-            Action act = () => target.AbortBuild(sessionToken, userName);
+            target.AbortBuild(sessionToken, userName);
 
             // Assert
-            act.ShouldNotThrow();
+            mocks.MockJenkinsApi
+                .Verify(x => x.AbortBuild("TestProjectName"),
+                    Times.Once);
         }
 
         [TestMethod]
-        public void StartProject_when_using_weburl_should_call_api()
+        public void StartProject_when_using_weburl_should_call_api_with_url()
         {
             Mocks mocks = new Mocks();
             SetupDefaultMockState(mocks);
@@ -279,7 +281,7 @@ namespace JenkinsTransport.UnitTests
         }
 
         [TestMethod]
-        public void StartProject_when_weburl_is_null_should_not_throw()
+        public void StartProject_when_weburl_is_null_should_call_api_with_projectName()
         {
             Mocks mocks = new Mocks();
             SetupDefaultMockState(mocks);
@@ -293,14 +295,40 @@ namespace JenkinsTransport.UnitTests
             target.WebURL = null;
 
             // Act
-            Action act = () => target.StartProject(sessionToken);
+            target.StartProject(sessionToken);
 
             // Assert
-            act.ShouldNotThrow();
+            mocks.MockJenkinsApi
+                .Verify(x => x.StartProject("TestProjectName"),
+                    Times.Once);
         }
 
         [TestMethod]
-        public void RetrieveSnapshot_when_using_weburl_should_call_api()
+        public void StopProject_when_weburl_is_null_should_call_api_with_projectName()
+        {
+            Mocks mocks = new Mocks();
+            SetupDefaultMockState(mocks);
+
+            var target = CreateTestTarget(mocks);
+
+            target.Initialize(new BuildServer(), "TestProjectName", new Settings());
+
+            string sessionToken = "";
+
+            target.WebURL = null;
+
+            // Act
+            target.StopProject(sessionToken);
+
+            // Assert
+            mocks.MockJenkinsApi
+               .Verify(x => x.StopProject("TestProjectName"),
+                   Times.Once);
+        }
+
+
+        [TestMethod]
+        public void RetrieveSnapshot_when_using_weburl_should_call_api_with_url()
         {
             Mocks mocks = new Mocks();
             SetupDefaultMockState(mocks);
@@ -321,7 +349,7 @@ namespace JenkinsTransport.UnitTests
         }
 
         [TestMethod]
-        public void RetrieveSnapshot_when_weburl_is_null_should_not_throw()
+        public void RetrieveSnapshot_when_weburl_is_null_should_call_api_with_projectName()
         {
             Mocks mocks = new Mocks();
             SetupDefaultMockState(mocks);
@@ -333,14 +361,16 @@ namespace JenkinsTransport.UnitTests
             target.WebURL = null;
 
             // Act
-            Action act = () => target.RetrieveSnapshot();
+            target.RetrieveSnapshot();
 
             // Assert
-            act.ShouldNotThrow();
+            mocks.MockJenkinsApi
+              .Verify(x => x.GetProjectStatusSnapshot("TestProjectName"),
+                  Times.Once);
         }
 
         [TestMethod]
-        public void ListBuildParameters_when_using_weburl_should_call_api()
+        public void ListBuildParameters_when_using_weburl_should_call_api_with_url()
         {
             Mocks mocks = new Mocks();
             SetupDefaultMockState(mocks);
@@ -361,7 +391,7 @@ namespace JenkinsTransport.UnitTests
         }
 
         [TestMethod]
-        public void ListBuildParameters_when_weburl_is_null_should_not_throw()
+        public void ListBuildParameters_when_weburl_is_null_should_call_api_with_projectName()
         {
             Mocks mocks = new Mocks();
             SetupDefaultMockState(mocks);
@@ -373,10 +403,12 @@ namespace JenkinsTransport.UnitTests
             target.WebURL = null;
 
             // Act
-            Action act = () => target.ListBuildParameters();
+            target.ListBuildParameters();
 
             // Assert
-            act.ShouldNotThrow();
+            mocks.MockJenkinsApi
+                .Verify(x => x.GetBuildParameters("TestProjectName"),
+                    Times.Once);
         }
     }
 }
