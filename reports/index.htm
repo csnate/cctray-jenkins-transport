@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html data-ng-app="coverageApp">
+<head>
+<meta charset="utf-8" />
+<title>Summary - Coverage Report</title>
+<link rel="stylesheet" type="text/css" href="report.css" />
+</head><body data-ng-controller="SummaryViewCtrl"><div class="container">
+<h1>Summary</h1>
+<table class="overview">
+<colgroup>
+<col style="width: 135px;" />
+<col />
+</colgroup>
+<tbody>
+<tr><th>Generated on:</th><td>14/12/2014 - 10:31:11 p.m.</td></tr>
+<tr><th>Parser:</th><td>OpenCoverParser</td></tr>
+<tr><th>Assemblies:</th><td>2</td></tr>
+<tr><th>Classes:</th><td>37</td></tr>
+<tr><th>Files:</th><td>37</td></tr>
+<tr><th>Coverage:</th><td>85%</td></tr>
+<tr><th>Covered lines:</th><td>1837</td></tr>
+<tr><th>Uncovered lines:</th><td>324</td></tr>
+<tr><th>Coverable lines:</th><td>2161</td></tr>
+<tr><th>Total lines:</th><td>4643</td></tr>
+</tbody>
+</table>
+<h1>Assemblies</h1>
+<div data-ng-if="filteringEnabled" data-reactive-table data-data="assemblies"></div>
+<div data-ng-if="!filteringEnabled">
+<script type="text/javascript">
+/* <![CDATA[ */
+document.write('<div class="customizebox"><input data-ng-click="enableFiltering()" value="Enable filtering" title="This may take some time since the report contains many classes." type="submit" /></div>');
+/* ]]> */
+</script>
+</div>
+<table data-ng-if="!filteringEnabled" class="overview">
+<colgroup>
+<col />
+<col style="width: 90px;" />
+<col style="width: 105px;" />
+<col style="width: 100px;" />
+<col style="width: 70px;" />
+<col style="width: 60px;" />
+<col style="width: 112px;" />
+</colgroup>
+<thead><tr><th>Name</th><th class="right">Covered</th><th class="right">Uncovered</th><th class="right">Coverable</th><th class="right">Total</th><th class="center" colspan="2">Coverage</th></tr></thead>
+<tbody>
+<tr><th>JenkinsTransport</th><th class="right">662</th><th class="right">288</th><th class="right">950</th><th class="right">1860</th><th title="LineCoverage" class="right">69.6%</th><th><table class="coverage"><tr><td class="green" style="width: 70px;">&nbsp;</td><td class="red" style="width: 30px;">&nbsp;</td></tr></table></th></tr>
+<tr><td><a href="JenkinsTransport_Api.htm">JenkinsTransport.Api</a></td><td class="right">107</td><td class="right">162</td><td class="right">269</td><td class="right">483</td><td title="LineCoverage" class="right">39.7%</td><td><table class="coverage"><tr><td class="green" style="width: 40px;">&nbsp;</td><td class="red" style="width: 60px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_BaseBuildParameter.htm">JenkinsTransport.BuildParameters.BaseBuildParameter</a></td><td class="right">10</td><td class="right">0</td><td class="right">10</td><td class="right">23</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_BooleanParameter.htm">JenkinsTransport.BuildParameters.BooleanParameter</a></td><td class="right">16</td><td class="right">0</td><td class="right">16</td><td class="right">28</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_ChoiceParameter.htm">JenkinsTransport.BuildParameters.ChoiceParameter</a></td><td class="right">6</td><td class="right">11</td><td class="right">17</td><td class="right">35</td><td title="LineCoverage" class="right">35.2%</td><td><table class="coverage"><tr><td class="green" style="width: 35px;">&nbsp;</td><td class="red" style="width: 65px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_StringParameter.htm">JenkinsTransport.BuildParameters.StringParameter</a></td><td class="right">14</td><td class="right">0</td><td class="right">14</td><td class="right">25</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_ConfigurationForm.htm">JenkinsTransport.ConfigurationForm</a></td><td class="right">139</td><td class="right">0</td><td class="right">139</td><td class="right">249</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_ConfigurationFormFactory.htm">JenkinsTransport.ConfigurationFormFactory</a></td><td class="right">0</td><td class="right">3</td><td class="right">3</td><td class="right">12</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_DateTimeService.htm">JenkinsTransport.DateTimeService</a></td><td class="right">0</td><td class="right">3</td><td class="right">3</td><td class="right">16</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_EnumUtils.htm">JenkinsTransport.EnumUtils</a></td><td class="right">60</td><td class="right">0</td><td class="right">60</td><td class="right">105</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_JenkinsApiFactory.htm">JenkinsTransport.JenkinsApiFactory</a></td><td class="right">3</td><td class="right">0</td><td class="right">3</td><td class="right">12</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_JenkinsBuildInformation.htm">JenkinsTransport.JenkinsBuildInformation</a></td><td class="right">29</td><td class="right">0</td><td class="right">29</td><td class="right">42</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_JenkinsJob.htm">JenkinsTransport.JenkinsJob</a></td><td class="right">10</td><td class="right">0</td><td class="right">10</td><td class="right">20</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_JenkinsProjectManager.htm">JenkinsTransport.JenkinsProjectManager</a></td><td class="right">65</td><td class="right">11</td><td class="right">76</td><td class="right">170</td><td title="LineCoverage" class="right">85.5%</td><td><table class="coverage"><tr><td class="green" style="width: 86px;">&nbsp;</td><td class="red" style="width: 14px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_JenkinsServerManager.htm">JenkinsTransport.JenkinsServerManager</a></td><td class="right">75</td><td class="right">10</td><td class="right">85</td><td class="right">209</td><td title="LineCoverage" class="right">88.2%</td><td><table class="coverage"><tr><td class="green" style="width: 88px;">&nbsp;</td><td class="red" style="width: 12px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_JenkinsServerManagerSingletonFactory.htm">JenkinsTransport.JenkinsServerManagerSingletonFactory</a></td><td class="right">0</td><td class="right">15</td><td class="right">15</td><td class="right">37</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_JenkinsTransportExtension.htm">JenkinsTransport.JenkinsTransportExtension</a></td><td class="right">97</td><td class="right">42</td><td class="right">139</td><td class="right">238</td><td title="LineCoverage" class="right">69.7%</td><td><table class="coverage"><tr><td class="green" style="width: 70px;">&nbsp;</td><td class="red" style="width: 30px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_MessageBoxService.htm">JenkinsTransport.MessageBoxService</a></td><td class="right">0</td><td class="right">6</td><td class="right">6</td><td class="right">21</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_Settings.htm">JenkinsTransport.Settings</a></td><td class="right">31</td><td class="right">0</td><td class="right">31</td><td class="right">70</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_WebRequestFactory.htm">JenkinsTransport.WebRequestFactory</a></td><td class="right">0</td><td class="right">6</td><td class="right">6</td><td class="right">18</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport_WebRequestWrapper.htm">JenkinsTransport.WebRequestWrapper</a></td><td class="right">0</td><td class="right">19</td><td class="right">19</td><td class="right">47</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><th>JenkinsTransport.UnitTests</th><th class="right">1175</th><th class="right">36</th><th class="right">1211</th><th class="right">2783</th><th title="LineCoverage" class="right">97%</th><th><table class="coverage"><tr><td class="green" style="width: 97px;">&nbsp;</td><td class="red" style="width: 3px;">&nbsp;</td></tr></table></th></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_ApiTestDependencies.htm">JenkinsTransport.UnitTests.ApiTestDependencies</a></td><td class="right">22</td><td class="right">0</td><td class="right">22</td><td class="right">478</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_ApiTests.htm">JenkinsTransport.UnitTests.ApiTests</a></td><td class="right">233</td><td class="right">10</td><td class="right">243</td><td class="right">478</td><td title="LineCoverage" class="right">95.8%</td><td><table class="coverage"><tr><td class="green" style="width: 96px;">&nbsp;</td><td class="red" style="width: 4px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_BuildParametersTests.htm">JenkinsTransport.UnitTests.BuildParametersTests</a></td><td class="right">77</td><td class="right">0</td><td class="right">77</td><td class="right">116</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_ConfigurationFormTests.htm">JenkinsTransport.UnitTests.ConfigurationFormTests</a></td><td class="right">27</td><td class="right">0</td><td class="right">27</td><td class="right">46</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_EnumUtilsTests.htm">JenkinsTransport.UnitTests.EnumUtilsTests</a></td><td class="right">60</td><td class="right">0</td><td class="right">60</td><td class="right">84</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_JenkinsServerManagerTestExtensions.htm">JenkinsTransport.UnitTests.ExtensionMethods.JenkinsServerManagerTestExtensions</a></td><td class="right">4</td><td class="right">0</td><td class="right">4</td><td class="right">14</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_JenkinsTransportExtensionTestExtenions.htm">JenkinsTransport.UnitTests.ExtensionMethods.JenkinsTransportExtensionTestExtenions</a></td><td class="right">0</td><td class="right">4</td><td class="right">4</td><td class="right">13</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_JenkinsBuildInformationTests.htm">JenkinsTransport.UnitTests.JenkinsBuildInformationTests</a></td><td class="right">19</td><td class="right">0</td><td class="right">19</td><td class="right">116</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_JenkinsProjectManagerTests.htm">JenkinsTransport.UnitTests.JenkinsProjectManagerTests</a></td><td class="right">184</td><td class="right">0</td><td class="right">184</td><td class="right">382</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_JenkinsServerManagerTests.htm">JenkinsTransport.UnitTests.JenkinsServerManagerTests</a></td><td class="right">176</td><td class="right">0</td><td class="right">176</td><td class="right">288</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_JenkinsTransportExtensionTests.htm">JenkinsTransport.UnitTests.JenkinsTransportExtensionTests</a></td><td class="right">281</td><td class="right">0</td><td class="right">281</td><td class="right">501</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_SettingsTests.htm">JenkinsTransport.UnitTests.SettingsTests</a></td><td class="right">26</td><td class="right">0</td><td class="right">26</td><td class="right">42</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_BuildInformationSampleData.htm">JenkinsTransport.UnitTests.TestHelpers.BuildInformationSampleData</a></td><td class="right">8</td><td class="right">0</td><td class="right">8</td><td class="right">28</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_EmbeddedResourceHelper.htm">JenkinsTransport.UnitTests.TestHelpers.EmbeddedResourceHelper</a></td><td class="right">13</td><td class="right">0</td><td class="right">13</td><td class="right">36</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_ProjectStatusSampleData.htm">JenkinsTransport.UnitTests.TestHelpers.ProjectStatusSampleData</a></td><td class="right">24</td><td class="right">5</td><td class="right">29</td><td class="right">64</td><td title="LineCoverage" class="right">82.7%</td><td><table class="coverage"><tr><td class="green" style="width: 83px;">&nbsp;</td><td class="red" style="width: 17px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_TestWebRequest.htm">JenkinsTransport.UnitTests.TestHelpers.TestWebRequest</a></td><td class="right">0</td><td class="right">17</td><td class="right">17</td><td class="right">43</td><td title="LineCoverage" class="right">0%</td><td><table class="coverage"><tr><td class="red" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+<tr><td><a href="JenkinsTransport.UnitTests_TestWebResponse.htm">JenkinsTransport.UnitTests.TestHelpers.TestWebResponse</a></td><td class="right">21</td><td class="right">0</td><td class="right">21</td><td class="right">54</td><td title="LineCoverage" class="right">100%</td><td><table class="coverage"><tr><td class="green" style="width: 100px;">&nbsp;</td></tr></table></td></tr>
+</tbody>
+</table>
+<script type="text/javascript">
+/* <![CDATA[ */
+var assemblies = [
+  {
+    "name" : "JenkinsTransport",
+    "classes" : [
+    { "name" : "JenkinsTransport.Api", "reportPath" : "JenkinsTransport_Api.htm", "coveredLines" : 107, "uncoveredLines" : 162, "coverableLines" : 269, "totalLines" : 483, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.BuildParameters.BaseBuildParameter", "reportPath" : "JenkinsTransport_BaseBuildParameter.htm", "coveredLines" : 10, "uncoveredLines" : 0, "coverableLines" : 10, "totalLines" : 23, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.BuildParameters.BooleanParameter", "reportPath" : "JenkinsTransport_BooleanParameter.htm", "coveredLines" : 16, "uncoveredLines" : 0, "coverableLines" : 16, "totalLines" : 28, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.BuildParameters.ChoiceParameter", "reportPath" : "JenkinsTransport_ChoiceParameter.htm", "coveredLines" : 6, "uncoveredLines" : 11, "coverableLines" : 17, "totalLines" : 35, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.BuildParameters.StringParameter", "reportPath" : "JenkinsTransport_StringParameter.htm", "coveredLines" : 14, "uncoveredLines" : 0, "coverableLines" : 14, "totalLines" : 25, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.ConfigurationForm", "reportPath" : "JenkinsTransport_ConfigurationForm.htm", "coveredLines" : 139, "uncoveredLines" : 0, "coverableLines" : 139, "totalLines" : 249, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.ConfigurationFormFactory", "reportPath" : "JenkinsTransport_ConfigurationFormFactory.htm", "coveredLines" : 0, "uncoveredLines" : 3, "coverableLines" : 3, "totalLines" : 12, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.DateTimeService", "reportPath" : "JenkinsTransport_DateTimeService.htm", "coveredLines" : 0, "uncoveredLines" : 3, "coverableLines" : 3, "totalLines" : 16, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.EnumUtils", "reportPath" : "JenkinsTransport_EnumUtils.htm", "coveredLines" : 60, "uncoveredLines" : 0, "coverableLines" : 60, "totalLines" : 105, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.JenkinsApiFactory", "reportPath" : "JenkinsTransport_JenkinsApiFactory.htm", "coveredLines" : 3, "uncoveredLines" : 0, "coverableLines" : 3, "totalLines" : 12, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.JenkinsBuildInformation", "reportPath" : "JenkinsTransport_JenkinsBuildInformation.htm", "coveredLines" : 29, "uncoveredLines" : 0, "coverableLines" : 29, "totalLines" : 42, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.JenkinsJob", "reportPath" : "JenkinsTransport_JenkinsJob.htm", "coveredLines" : 10, "uncoveredLines" : 0, "coverableLines" : 10, "totalLines" : 20, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.JenkinsProjectManager", "reportPath" : "JenkinsTransport_JenkinsProjectManager.htm", "coveredLines" : 65, "uncoveredLines" : 11, "coverableLines" : 76, "totalLines" : 170, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.JenkinsServerManager", "reportPath" : "JenkinsTransport_JenkinsServerManager.htm", "coveredLines" : 75, "uncoveredLines" : 10, "coverableLines" : 85, "totalLines" : 209, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.JenkinsServerManagerSingletonFactory", "reportPath" : "JenkinsTransport_JenkinsServerManagerSingletonFactory.htm", "coveredLines" : 0, "uncoveredLines" : 15, "coverableLines" : 15, "totalLines" : 37, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.JenkinsTransportExtension", "reportPath" : "JenkinsTransport_JenkinsTransportExtension.htm", "coveredLines" : 97, "uncoveredLines" : 42, "coverableLines" : 139, "totalLines" : 238, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.MessageBoxService", "reportPath" : "JenkinsTransport_MessageBoxService.htm", "coveredLines" : 0, "uncoveredLines" : 6, "coverableLines" : 6, "totalLines" : 21, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.Settings", "reportPath" : "JenkinsTransport_Settings.htm", "coveredLines" : 31, "uncoveredLines" : 0, "coverableLines" : 31, "totalLines" : 70, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.WebRequestFactory", "reportPath" : "JenkinsTransport_WebRequestFactory.htm", "coveredLines" : 0, "uncoveredLines" : 6, "coverableLines" : 6, "totalLines" : 18, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.WebRequestWrapper", "reportPath" : "JenkinsTransport_WebRequestWrapper.htm", "coveredLines" : 0, "uncoveredLines" : 19, "coverableLines" : 19, "totalLines" : 47, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+  ]},
+  {
+    "name" : "JenkinsTransport.UnitTests",
+    "classes" : [
+    { "name" : "JenkinsTransport.UnitTests.ApiTestDependencies", "reportPath" : "JenkinsTransport.UnitTests_ApiTestDependencies.htm", "coveredLines" : 22, "uncoveredLines" : 0, "coverableLines" : 22, "totalLines" : 478, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.ApiTests", "reportPath" : "JenkinsTransport.UnitTests_ApiTests.htm", "coveredLines" : 233, "uncoveredLines" : 10, "coverableLines" : 243, "totalLines" : 478, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.BuildParametersTests", "reportPath" : "JenkinsTransport.UnitTests_BuildParametersTests.htm", "coveredLines" : 77, "uncoveredLines" : 0, "coverableLines" : 77, "totalLines" : 116, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.ConfigurationFormTests", "reportPath" : "JenkinsTransport.UnitTests_ConfigurationFormTests.htm", "coveredLines" : 27, "uncoveredLines" : 0, "coverableLines" : 27, "totalLines" : 46, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.EnumUtilsTests", "reportPath" : "JenkinsTransport.UnitTests_EnumUtilsTests.htm", "coveredLines" : 60, "uncoveredLines" : 0, "coverableLines" : 60, "totalLines" : 84, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.ExtensionMethods.JenkinsServerManagerTestExtensions", "reportPath" : "JenkinsTransport.UnitTests_JenkinsServerManagerTestExtensions.htm", "coveredLines" : 4, "uncoveredLines" : 0, "coverableLines" : 4, "totalLines" : 14, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.ExtensionMethods.JenkinsTransportExtensionTestExtenions", "reportPath" : "JenkinsTransport.UnitTests_JenkinsTransportExtensionTestExtenions.htm", "coveredLines" : 0, "uncoveredLines" : 4, "coverableLines" : 4, "totalLines" : 13, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.JenkinsBuildInformationTests", "reportPath" : "JenkinsTransport.UnitTests_JenkinsBuildInformationTests.htm", "coveredLines" : 19, "uncoveredLines" : 0, "coverableLines" : 19, "totalLines" : 116, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.JenkinsProjectManagerTests", "reportPath" : "JenkinsTransport.UnitTests_JenkinsProjectManagerTests.htm", "coveredLines" : 184, "uncoveredLines" : 0, "coverableLines" : 184, "totalLines" : 382, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.JenkinsServerManagerTests", "reportPath" : "JenkinsTransport.UnitTests_JenkinsServerManagerTests.htm", "coveredLines" : 176, "uncoveredLines" : 0, "coverableLines" : 176, "totalLines" : 288, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.JenkinsTransportExtensionTests", "reportPath" : "JenkinsTransport.UnitTests_JenkinsTransportExtensionTests.htm", "coveredLines" : 281, "uncoveredLines" : 0, "coverableLines" : 281, "totalLines" : 501, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.SettingsTests", "reportPath" : "JenkinsTransport.UnitTests_SettingsTests.htm", "coveredLines" : 26, "uncoveredLines" : 0, "coverableLines" : 26, "totalLines" : 42, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.TestHelpers.BuildInformationSampleData", "reportPath" : "JenkinsTransport.UnitTests_BuildInformationSampleData.htm", "coveredLines" : 8, "uncoveredLines" : 0, "coverableLines" : 8, "totalLines" : 28, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.TestHelpers.EmbeddedResourceHelper", "reportPath" : "JenkinsTransport.UnitTests_EmbeddedResourceHelper.htm", "coveredLines" : 13, "uncoveredLines" : 0, "coverableLines" : 13, "totalLines" : 36, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.TestHelpers.ProjectStatusSampleData", "reportPath" : "JenkinsTransport.UnitTests_ProjectStatusSampleData.htm", "coveredLines" : 24, "uncoveredLines" : 5, "coverableLines" : 29, "totalLines" : 64, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.TestHelpers.TestWebRequest", "reportPath" : "JenkinsTransport.UnitTests_TestWebRequest.htm", "coveredLines" : 0, "uncoveredLines" : 17, "coverableLines" : 17, "totalLines" : 43, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+    { "name" : "JenkinsTransport.UnitTests.TestHelpers.TestWebResponse", "reportPath" : "JenkinsTransport.UnitTests_TestWebResponse.htm", "coveredLines" : 21, "uncoveredLines" : 0, "coverableLines" : 21, "totalLines" : 54, "coverageType" : "LineCoverage", "methodCoverage" : "-" },
+  ]},
+];
+/* ]]> */
+</script>
+<div class="footer">Generated by: ReportGenerator 2.0.2.0<br />14/12/2014 - 10:31:11 p.m.<br /><a href="http://www.palmmedia.de">www.palmmedia.de</a></div></div>
+<script type="text/javascript" src="combined.js"></script>
+</body></html>
