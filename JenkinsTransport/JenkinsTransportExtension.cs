@@ -205,26 +205,37 @@ namespace JenkinsTransport
       
         public bool Configure(IWin32Window owner)
         {
-            using (var form = ConfigurationFormFactory.Create())
+            if (JenkinsServerManagerFactory.IsServerManagerInitialized)
             {
-                if (form.ShowDialog(owner) == DialogResult.OK)
-                {
-                    var server = form.GetServer();
-                    Configuration = new BuildServer(server);
-                    var settings = new Settings()
-                                        {
-                                            Project = String.Empty,
-                                            Server = server,
-                                            Username = form.GetUsername(),
-                                            Password = form.GetPassword()
-                                        };
-                    Settings = settings.ToString();
-                    //We will need to initialize the server manager again if their information has changed
-                    JenkinsServerManagerFactory.IsServerManagerInitialized = false; 
-                    return true;
-                }
+                DialogService.Show(
+                    "Monitoring jobs from multiple jenkins servers is unsupported due to the CCTray interface.\n" +
+                    "If you have previously removed a jenkins server, restart CCTray first.");
                 return false;
             }
+            else
+            {
+                using (var form = ConfigurationFormFactory.Create())
+                {
+                    if (form.ShowDialog(owner) == DialogResult.OK)
+                    {
+                        var server = form.GetServer();
+                        Configuration = new BuildServer(server);
+                        var settings = new Settings()
+                        {
+                            Project = String.Empty,
+                            Server = server,
+                            Username = form.GetUsername(),
+                            Password = form.GetPassword()
+                        };
+                        Settings = settings.ToString();
+                        //We will need to initialize the server manager again if their information has changed
+                        JenkinsServerManagerFactory.IsServerManagerInitialized = false;
+                        return true;
+                    }
+                    return false;
+                } 
+            }
+            
         }
 
         public string DisplayName { get { return "Jenkins Transport Extension"; } }
