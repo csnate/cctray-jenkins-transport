@@ -165,30 +165,42 @@ namespace JenkinsTransport
             // If this project does not have a status get it now as we need the WebURL
             if (serverManager.ProjectsAndCurrentStatus[projectName] == null)
             {
-                try
-                {
-                    serverManager.GetCruiseServerSnapshotEx();
-
-                    if (serverManager.ProjectsAndCurrentStatus.ContainsKey(projectName) &&
-                        serverManager.ProjectsAndCurrentStatus[projectName] != null &&
-                        !String.IsNullOrEmpty(serverManager.ProjectsAndCurrentStatus[projectName].WebURL))
-                    {
-                        manager.WebURL = new Uri(serverManager.ProjectsAndCurrentStatus[projectName].WebURL);
-                    }
-                    else
-                    {
-                        // Really can't support nested jobs without knowning the exact WebURL for the project !!
-                    }
-                }
-                catch (WebException ex)
-                {
-                    DialogService.Show(ex.Message);
-                }                
+                GetProjectWebUrl(projectName, manager);                
             }        
 
             manager.Initialize(Configuration, projectName, Settings);
 
             return manager;
+        }
+
+        /// <summary>
+        /// Attempt to retrieve the WebUrl of the specified project
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <param name="manager"></param>
+        private void GetProjectWebUrl(string projectName, JenkinsProjectManager manager)
+        {
+            var serverManager = (IJenkinsServerManager)RetrieveServerManager();
+
+            try
+            {
+                serverManager.GetCruiseServerSnapshotEx();
+
+                if (serverManager.ProjectsAndCurrentStatus.ContainsKey(projectName) &&
+                    serverManager.ProjectsAndCurrentStatus[projectName] != null &&
+                    !String.IsNullOrEmpty(serverManager.ProjectsAndCurrentStatus[projectName].WebURL))
+                {
+                    manager.WebURL = new Uri(serverManager.ProjectsAndCurrentStatus[projectName].WebURL);
+                }
+                else
+                {
+                    // Really can't support nested jobs without knowning the exact WebURL for the project !!
+                }
+            }
+            catch (WebException ex)
+            {
+                DialogService.Show(ex.Message);
+            }
         }
 
         public ICruiseServerManager RetrieveServerManager()
@@ -201,7 +213,6 @@ namespace JenkinsTransport
             }
             return (ICruiseServerManager)serverManager;
         }
-
       
         public bool Configure(IWin32Window owner)
         {
@@ -241,9 +252,6 @@ namespace JenkinsTransport
         public string DisplayName { get { return "Jenkins Transport Extension"; } }
         public string Settings { get; set; }
         public BuildServer Configuration { get; set; }
-
-        
-
         #endregion
     }
 }
