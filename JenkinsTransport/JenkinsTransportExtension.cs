@@ -165,30 +165,42 @@ namespace JenkinsTransport
             // If this project does not have a status get it now as we need the WebURL
             if (serverManager.ProjectsAndCurrentStatus[projectName] == null)
             {
-                try
-                {
-                    serverManager.GetCruiseServerSnapshotEx();
-
-                    if (serverManager.ProjectsAndCurrentStatus.ContainsKey(projectName) &&
-                        serverManager.ProjectsAndCurrentStatus[projectName] != null &&
-                        !String.IsNullOrEmpty(serverManager.ProjectsAndCurrentStatus[projectName].WebURL))
-                    {
-                        manager.WebURL = new Uri(serverManager.ProjectsAndCurrentStatus[projectName].WebURL);
-                    }
-                    else
-                    {
-                        // Really can't support nested jobs without knowning the exact WebURL for the project !!
-                    }
-                }
-                catch (WebException ex)
-                {
-                    DialogService.Show(ex.Message);
-                }                
+                GetProjectWebUrl(projectName, manager);                
             }        
 
             manager.Initialize(Configuration, projectName, Settings);
 
             return manager;
+        }
+
+        /// <summary>
+        /// Attempt to retrieve the WebUrl of the specified project
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <param name="manager"></param>
+        private void GetProjectWebUrl(string projectName, JenkinsProjectManager manager)
+        {
+            var serverManager = (IJenkinsServerManager)RetrieveServerManager();
+
+            try
+            {
+                serverManager.GetCruiseServerSnapshotEx();
+
+                if (serverManager.ProjectsAndCurrentStatus.ContainsKey(projectName) &&
+                    serverManager.ProjectsAndCurrentStatus[projectName] != null &&
+                    !String.IsNullOrEmpty(serverManager.ProjectsAndCurrentStatus[projectName].WebURL))
+                {
+                    manager.WebURL = new Uri(serverManager.ProjectsAndCurrentStatus[projectName].WebURL);
+                }
+                else
+                {
+                    // Really can't support nested jobs without knowning the exact WebURL for the project !!
+                }
+            }
+            catch (WebException ex)
+            {
+                DialogService.Show(ex.Message);
+            }
         }
 
         public ICruiseServerManager RetrieveServerManager()
@@ -201,38 +213,45 @@ namespace JenkinsTransport
             }
             return (ICruiseServerManager)serverManager;
         }
-
       
         public bool Configure(IWin32Window owner)
         {
-            using (var form = ConfigurationFormFactory.Create())
+            if (JenkinsServerManagerFactory.IsServerManagerInitialized)
             {
-                if (form.ShowDialog(owner) == DialogResult.OK)
-                {
-                    var server = form.GetServer();
-                    Configuration = new BuildServer(server);
-                    var settings = new Settings()
-                                        {
-                                            Project = String.Empty,
-                                            Server = server,
-                                            Username = form.GetUsername(),
-                                            Password = form.GetPassword()
-                                        };
-                    Settings = settings.ToString();
-                    //We will need to initialize the server manager again if their information has changed
-                    JenkinsServerManagerFactory.IsServerManagerInitialized = false; 
-                    return true;
-                }
+                DialogService.Show(
+                    "Monitoring jobs from multiple jenkins servers is unsupported due to the CCTray interface.\n" +
+                    "If you have previously removed a jenkins server, restart CCTray first.");
                 return false;
             }
+            else
+            {
+                using (var form = ConfigurationFormFactory.Create())
+                {
+                    if (form.ShowDialog(owner) == DialogResult.OK)
+                    {
+                        var server = form.GetServer();
+                        Configuration = new BuildServer(server);
+                        var settings = new Settings()
+                        {
+                            Project = String.Empty,
+                            Server = server,
+                            Username = form.GetUsername(),
+                            Password = form.GetPassword()
+                        };
+                        Settings = settings.ToString();
+                        //We will need to initialize the server manager again if their information has changed
+                        JenkinsServerManagerFactory.IsServerManagerInitialized = false;
+                        return true;
+                    }
+                    return false;
+                } 
+            }
+            
         }
 
         public string DisplayName { get { return "Jenkins Transport Extension"; } }
         public string Settings { get; set; }
         public BuildServer Configuration { get; set; }
-
-        
-
         #endregion
     }
 }

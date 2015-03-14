@@ -497,5 +497,43 @@ namespace JenkinsTransport.UnitTests
                 .VerifySet(x => x.IsServerManagerInitialized = false);
         }
 
+        [TestMethod]
+        public void RetrieveServerManager_when_server_has_already_been_configured_should_display_warning()
+        {
+            TestMocks mocks = new TestMocks();
+            var target = CreateTestTarget(mocks);
+
+            Mock<IForm> mockConfigurationForm = new Mock<IForm>();
+            mockConfigurationForm
+                .Setup(x => x.ShowDialog(It.IsAny<IWin32Window>()))
+                .Returns(DialogResult.OK);
+
+            mockConfigurationForm
+                .Setup(x => x.GetServer())
+                .Returns(@"https://SeomServer.com");
+
+            mocks.MockConfigurationFormFactory
+                .Setup(x => x.Create())
+                .Returns(mockConfigurationForm.Object);
+
+            mocks.MockJenkinsServerManagerFactory
+                .Setup(x => x.IsServerManagerInitialized)
+                .Returns(true);
+
+            // record the value from the dialog for assertion
+            string displayedDialogText = String.Empty;
+            mocks.MockDialogService
+                .Setup(x => x.Show(It.IsAny<string>()))
+                .Callback<string>((dialogText) => { displayedDialogText = dialogText; });
+
+            // Act
+            target.Configure(null);
+
+            // Assert
+            const string expectedDialogText = "Monitoring jobs from multiple jenkins servers is unsupported due to the CCTray interface.\n" +
+                                              "If you have previously removed a jenkins server, restart CCTray first.";
+            displayedDialogText.Should().Be(expectedDialogText);
+        }
+
     }
 }

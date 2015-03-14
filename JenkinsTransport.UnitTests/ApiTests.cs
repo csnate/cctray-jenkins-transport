@@ -17,7 +17,7 @@ namespace JenkinsTransport.UnitTests
     {
         public Mock<IWebRequestFactory> MockWebRequestFactory;
         public IWebRequestFactory WebRequestFactory { get { return MockWebRequestFactory.Object; }}
-        private Queue<TestWebResponse> _responses = new Queue<TestWebResponse>(); 
+        private Queue<TestWebResponse> _responses = new Queue<TestWebResponse>();
 
         public ApiTestDependencies()
         {
@@ -57,31 +57,35 @@ namespace JenkinsTransport.UnitTests
         protected string ProjectUrl = "https://builds.apache.org/job/Hadoop-1-win/api/xml";
         protected string ProjectName = "Hadoop-1-win";
 
+        [ClassInitialize]
+        public static void TestFixtureSetup(TestContext testContext)
+        {
+            EmbeddedResourceHelper.ExtractManifestResourceToDisk(
+                "TestData.BuildInformationSampleData1.xml", 
+                ".\\TestData\\BuildInformationSampleData1.xml");
+
+            EmbeddedResourceHelper.ExtractManifestResourceToDisk(
+                "TestData.BuildParametersSampleData1.xml",
+                ".\\TestData\\BuildParametersSampleData1.xml");
+
+            EmbeddedResourceHelper.ExtractManifestResourceToDisk(
+                "TestData.ProjectStatusSampleData1.xml",
+                ".\\TestData\\ProjectStatusSampleData1.xml");
+
+            EmbeddedResourceHelper.ExtractManifestResourceToDisk(
+               "TestData.ProjectStatusSampleData2_LastSuccessfulBuild.xml",
+               ".\\TestData\\ProjectStatusSampleData2_LastSuccessfulBuild.xml");
+
+            EmbeddedResourceHelper.ExtractManifestResourceToDisk(
+               "TestData.TestJobsSampleData1.xml",
+               ".\\TestData\\TestJobsSampleData1.xml");
+        }
 
         private Api CreateTestTarget(ApiTestDependencies dependencies)
         {
             var target = new Api("https://builds.apache.org/", String.Empty, dependencies.WebRequestFactory);
 
             return target;
-        }
-
-
-        private Api CreateTestTarget(IWebRequestFactory webRequestFactory)
-        {
-            string baseUrl = String.Empty;
-            string authInfo = String.Empty;
-            var target = new Api(baseUrl, authInfo, webRequestFactory);
-
-            return target;
-        }
-
-
-        //[TestMethod]
-        public void CollectTestData()
-        {
-            var target = new Api("https://builds.apache.org/", String.Empty, new WebRequestFactory());
-            target.GetBuildParameters(ProjectUrl);
-            
         }
 
         [TestMethod]
