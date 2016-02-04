@@ -29,7 +29,7 @@ Prerequisites
 
 Installation
 ============
-1. Build the project locally or get the latest from the [releases](/releases) section.
+1. Build the project locally or get the latest from the [releases](../../releases) section.
 2. Assuming a standard CCTray installation, create a new directory at C:\Program Files (x86)\CCTray\extensions. However, users have reported that this path has changed as of v1.8.4 and this new directory may not be needed.
 3. Copy the JenkinsTransport.dll assembly to this new directory or to the installation root folder @ C:\Program Files (x86)\CCTray.
 4. Start CCTray and add a new server from File -> Settings -> Add -> Add Server
