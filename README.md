@@ -9,14 +9,15 @@ Previously, our CI environment was handled with CruiseControl.NET and all develo
 
 Benefits
 --------
-* You can keep your Jenkins instance locked down with any authorization scheme - no need to use the "Anyone can do anything" authorization
-* You can manage any Jenkins project via CCTray - no need to use the interface or the CLI to force a build
-* You can login to Jenkins server using your API token. Simply enter the API token as the password for your user account
+* You can keep your Jenkins instance locked down with any authorization scheme - no need to use the "Anyone can do anything" authorization.
+* You can manage any Jenkins project via CCTray - no need to use the interface or the CLI to force a build.
+* You can login to Jenkins server using your API token. Simply enter the API token as the password for your user account.
 
 Drawbacks
 ---------
 * If you are monitoring a large number of projects, this has the potential to cause a lot of network traffic.
 * If you are using a username and password and you change your password, you cannot update your password (clicking Configure for the server doesn't work again).  You have to remove all projects and add the server again.
+    * [WORK AROUND] As reported by [piranout](https://github.com/csnate/cctray-jenkins-transport/issues/17), as of Jenkins 2.18 if you use an API token as your password you can avoid this issue.
 
 How it works
 ------------
