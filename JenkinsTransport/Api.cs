@@ -173,7 +173,7 @@ namespace JenkinsTransport
                                                   lastCompletedBuildInfo.Timestamp)
                                     {
                                         Activity = EnumUtils.GetProjectActivity(color),
-                                        Status = EnumUtils.GetProjectIntegratorState((bool)firstElement.Element("buildable")),
+                                        Status = EnumUtils.GetProjectIntegratorState(((string)firstElement.Element("buildable"))?.EndsWith("rue") ?? false),
                                         WebURL = (string) firstElement.Element("url"),
                                         LastBuildLabel = lastCompletedBuildInfo.Number,
                                         LastSuccessfulBuildLabel = lastSuccessfulBuildNumber,

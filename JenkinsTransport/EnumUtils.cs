@@ -62,7 +62,7 @@ namespace JenkinsTransport
         /// <param name="color">the color of the build</param>
         public static IntegrationStatus GetIntegrationStatus(string color)
         {
-            return BuildStatusMap.ContainsKey(color) ? BuildStatusMap[color] : IntegrationStatus.Unknown;
+            return (color != null && BuildStatusMap.ContainsKey(color)) ? BuildStatusMap[color] : IntegrationStatus.Unknown;
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace JenkinsTransport
         /// <param name="color">the color of the build</param>
         public static ProjectActivity GetProjectActivity(string color)
         {
-            return ActivityMap.ContainsKey(color) ? ActivityMap[color] : ProjectActivity.Sleeping;
+            return (color != null && ActivityMap.ContainsKey(color)) ? ActivityMap[color] : ProjectActivity.Sleeping;
         }
 
         /// <summary>
